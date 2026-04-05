@@ -1,0 +1,17 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const client_1 = require("@prisma/client");
+const prisma = new client_1.PrismaClient();
+async function main() {
+    const video = await prisma.lessonVideo.findFirst();
+    console.log('Sample LessonVideo:', video);
+}
+main()
+    .catch((e) => {
+    console.error(e);
+    process.exit(1);
+})
+    .finally(async () => {
+    await prisma.$disconnect();
+});
+//# sourceMappingURL=check-db.js.map

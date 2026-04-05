@@ -1,0 +1,315 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String     @id @default(cuid())
+  email     String     @unique
+  password  String
+  name      String?
+  avatar    String?
+  slug      String?    @unique
+  bio       String?    @db.Text
+  role      UserRole   @default(STUDENT)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  
+  // Relations
+  enrollments   Enrollment[]
+  examResults   ExamResult[]
+  flashcardProgress FlashcardProgress[]
+  userFlashcards    UserFlashcard[]
+  orders        Order[]
+  lessonProgress    LessonProgress[]
+  courses       Course[]     @relation("TeacherCourses")
+
+
+  @@map("users")
+}
+
+enum UserRole {
+  STUDENT
+  TEACHER
+  ADMIN
+}
+
+model Course {
+  id          String    @id @default(cuid())
+  slug        String?   @unique
+  title       String    @unique
+  description String?
+  level       CourseLevel
+  price       Float
+  thumbnail   String?
+  teacherId   String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  teacher     User?       @relation("TeacherCourses", fields: [teacherId], references: [id], onDelete: SetNull)
+  lessons     Lesson[]
+  enrollments Enrollment[]
+  orderItems  OrderItem[]
+  exams       Exam[]
+
+  @@map("courses")
+}
+
+enum CourseLevel {
+  A1
+  A2
+  B1
+  B2
+  C1
+}
+
+model Lesson {
+  id        String    @id @default(cuid())
+  courseId  String
+  title     String
+  videoUrl  String?
+  content   String?
+  fileUrl   String?
+  type      String    @default("video")
+  order     Int
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  // Relations
+  course    Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessonProgress LessonProgress[]
+  videos    LessonVideo[]
+  files     LessonFile[]
+
+  @@map("lessons")
+  @@index([courseId])
+  @@unique([courseId, order])
+}
+
+model LessonVideo {
+  id        String    @id @default(cuid())
+  lessonId  String
+  title     String
+  videoUrl  String
+  order     Int       @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  lesson    Lesson    @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@map("lesson_videos")
+  @@index([lessonId])
+}
+
+model LessonFile {
+  id        String    @id @default(cuid())
+  lessonId  String
+  title     String
+  fileUrl   String
+  order     Int       @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  lesson    Lesson    @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@map("lesson_files")
+  @@index([lessonId])
+}
+
+model Enrollment {
+  id        String    @id @default(cuid())
+  userId    String
+  courseId  String
+  progress  Int       @default(0) // Percentage
+  enrolledAt DateTime @default(now())
+  updatedAt DateTime  @updatedAt
+
+  // Relations
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course    Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId])
+  @@map("enrollments")
+  @@index([userId])
+  @@index([courseId])
+}
+
+model LessonProgress {
+  id        String    @id @default(cuid())
+  userId    String
+  lessonId  String
+  completed Boolean   @default(false)
+  completedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  // Relations
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson    Lesson    @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+  @@map("lesson_progress")
+  @@index([userId])
+  @@index([lessonId])
+}
+
+model Exam {
+  id          String    @id @default(cuid())
+  title       String
+  level       CourseLevel
+  duration    Int       // In minutes
+  courseId    String?   // For course-specific exams
+  published   Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  course      Course?   @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  questions   Question[]
+  results     ExamResult[]
+
+  @@map("exams")
+  @@index([courseId])
+}
+
+enum QuestionType {
+  CHOICE
+  FILL
+  LISTENING
+}
+
+model Question {
+  id          String    @id @default(cuid())
+  examId      String
+  type        QuestionType @default(CHOICE)
+  question    String
+  audioUrl    String?   // For LISTENING type
+  options     String[]  // JSON array for CHOICE
+  correctAnswer String
+  explanation String?
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  exam        Exam      @relation(fields: [examId], references: [id], onDelete: Cascade)
+
+  @@map("questions")
+  @@index([examId])
+}
+
+model ExamResult {
+  id        String    @id @default(cuid())
+  userId    String
+  examId    String
+  score     Float
+  correctCount Int
+  timeSpent Int       // In seconds
+  submittedAt DateTime @default(now())
+
+  // Relations
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exam      Exam      @relation(fields: [examId], references: [id], onDelete: Cascade)
+
+  @@map("exam_results")
+  @@index([userId])
+  @@index([examId])
+}
+
+model Flashcard {
+  id        String    @id @default(cuid())
+  word      String
+  article   String
+  meaning   String
+  level     CourseLevel @default(A1)
+  example   String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  // Relations
+  progress  FlashcardProgress[]
+  users     UserFlashcard[]
+
+  @@map("flashcards")
+}
+
+model UserFlashcard {
+  id          String    @id @default(cuid())
+  userId      String
+  flashcardId String
+  createdAt   DateTime  @default(now())
+
+  // Relations
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  flashcard Flashcard @relation(fields: [flashcardId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, flashcardId])
+  @@map("user_flashcards")
+  @@index([userId])
+}
+
+model FlashcardProgress {
+  id        String    @id @default(cuid())
+  userId    String
+  flashcardId String
+  known     Boolean   @default(false)
+  reviewCount Int     @default(0)
+  lastReviewedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  // Relations
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  flashcard Flashcard @relation(fields: [flashcardId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, flashcardId])
+  @@map("flashcard_progress")
+  @@index([userId])
+  @@index([flashcardId])
+}
+
+model Order {
+  id        String    @id @default(cuid())
+  userId    String
+  totalPrice Float
+  status    OrderStatus @default(PENDING)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  // Relations
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     OrderItem[]
+
+  @@map("orders")
+  @@index([userId])
+}
+
+enum OrderStatus {
+  PENDING
+  COMPLETED
+  CANCELLED
+}
+
+model OrderItem {
+  id        String    @id @default(cuid())
+  orderId   String
+  courseId  String
+  price     Float
+  createdAt DateTime  @default(now())
+
+  // Relations
+  order     Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  course    Course    @relation(fields: [courseId], references: [id])
+
+  @@map("order_items")
+  @@index([orderId])
+  @@index([courseId])
+}
