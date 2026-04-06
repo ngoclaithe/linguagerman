@@ -261,4 +261,5 @@ export const adminAPI = {
 export const aiAPI = {
   chatGerman: (data: { userInput: string; conversationLog: string[]; topic: string; level: string }) =>
     apiClient.post('/ai/chat/german', data),
+  translate: (text: string) => apiClient.post('/ai/translate', { text }),
 };

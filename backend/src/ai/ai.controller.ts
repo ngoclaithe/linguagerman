@@ -10,4 +10,9 @@ export class AiController {
   async chatGerman(@Body() chatDto: ChatGermanDto) {
     return await this.aiService.processGermanChat(chatDto);
   }
+
+  @Post('translate')
+  async translate(@Body() body: { text: string }) {
+    return await this.aiService.translateText(body.text);
+  }
 }

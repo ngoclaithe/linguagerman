@@ -1,6 +1,6 @@
 'use client';
 
-import { Bot, Send, Mic, Volume2, Languages, Lightbulb, AlertCircle } from 'lucide-react';
+import { Bot, Send, Mic, Volume2, Languages, Lightbulb, AlertCircle, User } from 'lucide-react';
 import { useState } from 'react';
 import { aiAPI } from '@/lib/api';
 
@@ -16,17 +16,59 @@ export interface AiMessage {
     content: string;
     time: string;
     suggestion?: AiSuggestion;
+    translation?: string;
+    isTranslating?: boolean;
 }
 
 export default function AiChatPage() {
-    const [messages, setMessages] = useState<AiMessage[]>([
-        {
-            id: 1,
-            role: 'bot',
-            content: 'Hallo! Mein Name ist Anna, ich bin deine Deutschlehrerin. Wie geht es dir?',
-            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+    const [messages, setMessages] = useState<AiMessage[]>([]);
+    const [playingProps, setPlayingProps] = useState<{ id: string | number, charIndex: number, length: number } | null>(null);
+
+    const playText = (id: string | number, text: string) => {
+        if (typeof window !== 'undefined' && window.speechSynthesis) {
+            window.speechSynthesis.cancel(); 
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'de-DE'; 
+            
+            utterance.onstart = () => {
+                setPlayingProps({ id, charIndex: 0, length: 0 });
+            };
+            
+            utterance.onboundary = (event) => {
+                if (event.name === 'word') {
+                    const charIndex = event.charIndex;
+                    const match = text.substring(charIndex).match(/^\S+/);
+                    const length = match ? match[0].length : 0;
+                    setPlayingProps({ id, charIndex, length });
+                }
+            };
+
+            utterance.onend = () => {
+                setPlayingProps(null);
+            };
+
+            utterance.onerror = () => {
+                setPlayingProps(null);
+            };
+
+            window.speechSynthesis.speak(utterance);
         }
-    ]);
+    };
+
+    const handleTranslate = async (id: string | number, text: string) => {
+        setMessages(prev => prev.map(m => m.id === id ? { ...m, isTranslating: true } : m));
+        try {
+            const data = await aiAPI.translate(text);
+            if (data && data.translation) {
+                setMessages(prev => prev.map(m => m.id === id ? { ...m, translation: data.translation, isTranslating: false } : m));
+            } else {
+                setMessages(prev => prev.map(m => m.id === id ? { ...m, isTranslating: false } : m));
+            }
+        } catch (error) {
+            console.error("Lỗi dịch:", error);
+            setMessages(prev => prev.map(m => m.id === id ? { ...m, isTranslating: false } : m));
+        }
+    };
 
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -80,12 +122,17 @@ export default function AiChatPage() {
                 }
 
                 // Push Bot Response
+                const botMsgId = Date.now();
+                const nextPhrase = data.nextPhrase || "...";
                 setMessages(prev => [...prev, {
-                    id: Date.now(),
+                    id: botMsgId,
                     role: 'bot',
-                    content: data.nextPhrase || "...",
+                    content: nextPhrase,
                     time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
                 }]);
+                
+                // Tự động phát âm
+                playText(botMsgId, nextPhrase);
             }
         } catch (err) {
             console.error(err);
@@ -127,50 +174,95 @@ export default function AiChatPage() {
             </div>
 
             {/* Chat Area */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-6">
-                {messages.map((msg) => (
-                    <div key={msg.id} className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
-                        {msg.role === 'user' && msg.suggestion && (
-                            <div className="bg-violet-600 rounded-[1.5rem] rounded-tr-sm p-1 max-w-[80%] mb-2 shadow-sm">
-                                <div className="px-4 pt-2 text-white/90 text-sm font-medium line-through decoration-rose-400 decoration-2 mb-2">
-                                    {msg.suggestion.original}
-                                </div>
-                                <div className="bg-white rounded-[1.2rem] p-5">
-                                    <div className="flex items-center gap-2 text-violet-600 font-black text-xs uppercase mb-3">
-                                        <Lightbulb className="w-4 h-4" /> Gợi ý tự nhiên hơn
-                                    </div>
-                                    <div className="text-slate-800 font-bold text-lg mb-3">
-                                        {msg.suggestion.better}
-                                    </div>
-                                    <ul className="list-disc pl-5 text-sm font-medium text-slate-600">
-                                        <li>{msg.suggestion.reason}</li>
-                                    </ul>
-                                </div>
+            <div className="flex-1 overflow-y-auto p-6 space-y-2">
+                {messages.map((msg) => {
+                    const isPlaying = playingProps?.id === msg.id;
+
+                    return (
+                    <div key={msg.id} className={`flex w-full mb-6 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                        {/* Bot Avatar */}
+                        {msg.role === 'bot' && (
+                            <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center shrink-0 text-indigo-600 mr-3 shadow-sm border border-indigo-200 mt-auto">
+                                <Bot className="w-6 h-6" />
                             </div>
                         )}
 
-                        <div className={`max-w-[80%] ${msg.role === 'user' && msg.suggestion ? 'opacity-0 h-0 w-0 overflow-hidden m-0 p-0' : ''}`}>
-                            <div className={`p-5 rounded-[1.5rem] shadow-sm ${msg.role === 'user' ? 'bg-violet-600 text-white rounded-tr-sm' : 'bg-white border border-slate-200 text-slate-800 rounded-tl-sm'}`}>
-                                <div className={`text-[15px] font-medium leading-relaxed ${msg.role === 'user' ? '' : 'tracking-wide'}`}>
-                                    {msg.content}
-                                </div>
-                                {msg.role === 'bot' && (
-                                    <div className="flex items-center gap-2 mt-4 pt-4 border-t border-slate-100">
-                                        <button className="w-9 h-9 flex items-center justify-center rounded-xl bg-violet-600 text-white shadow-md hover:bg-violet-700 transition-colors">
-                                            <Volume2 className="w-4 h-4" />
-                                        </button>
-                                        <button className="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-500 text-white shadow-md hover:bg-slate-600 transition-colors">
-                                            <Languages className="w-4 h-4" />
-                                        </button>
+                        <div className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'} max-w-[80%]`}>
+                            {msg.role === 'user' && msg.suggestion && (
+                                <div className="bg-violet-600 rounded-[1.5rem] rounded-tr-sm p-1 w-full mb-2 shadow-sm">
+                                    <div className="px-4 pt-2 text-white/90 text-sm font-medium line-through decoration-rose-400 decoration-2 mb-2">
+                                        {msg.suggestion.original}
                                     </div>
-                                )}
-                            </div>
-                            <div className={`text-[11px] font-bold text-slate-400 mt-2 ${msg.role === 'user' ? 'text-right' : 'text-left'}`}>
-                                {msg.time}
+                                    <div className="bg-white rounded-[1.2rem] p-5">
+                                        <div className="flex items-center gap-2 text-violet-600 font-black text-xs uppercase mb-3">
+                                            <Lightbulb className="w-4 h-4" /> Gợi ý tự nhiên hơn
+                                        </div>
+                                        <div className="text-slate-800 font-bold text-lg mb-3">
+                                            {msg.suggestion.better}
+                                        </div>
+                                        <ul className="list-disc pl-5 text-sm font-medium text-slate-600">
+                                            <li>{msg.suggestion.reason}</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            )}
+
+                            <div className={`w-full ${msg.role === 'user' && msg.suggestion ? 'opacity-0 h-0 overflow-hidden m-0 p-0' : ''}`}>
+                                <div className={`p-5 rounded-[1.5rem] shadow-sm ${msg.role === 'user' ? 'bg-violet-600 text-white rounded-tr-sm' : 'bg-white border border-slate-200 text-slate-800 rounded-tl-sm'}`}>
+                                    <div className={`text-[15px] font-medium leading-relaxed ${msg.role === 'user' ? '' : 'tracking-wide'}`}>
+                                        {isPlaying && playingProps ? (
+                                            <>
+                                                {msg.content.substring(0, playingProps.charIndex)}
+                                                <span className="bg-amber-300 text-amber-900 rounded-[4px] px-1 font-bold shadow-sm transition-all duration-150">
+                                                    {msg.content.substring(playingProps.charIndex, playingProps.charIndex + playingProps.length)}
+                                                </span>
+                                                {msg.content.substring(playingProps.charIndex + playingProps.length)}
+                                            </>
+                                        ) : (
+                                            msg.content
+                                        )}
+                                    </div>
+                                    {msg.role === 'bot' && (
+                                        <div className="mt-4 pt-4 border-t border-slate-100 space-y-4">
+                                            {msg.translation && (
+                                                <div className="bg-slate-50 text-slate-700 italic border-l-4 border-indigo-400 p-3 rounded-r-lg text-sm font-medium">
+                                                    {msg.translation}
+                                                </div>
+                                            )}
+                                            <div className="flex items-center gap-2">
+                                                <button 
+                                                    type="button"
+                                                    onClick={() => playText(msg.id, msg.content)}
+                                                    className={`w-9 h-9 flex items-center justify-center rounded-xl shadow-md transition-colors ${isPlaying ? 'bg-amber-400 text-amber-900 hover:bg-amber-500' : 'bg-violet-600 text-white hover:bg-violet-700'}`}>
+                                                    <Volume2 className="w-4 h-4" />
+                                                </button>
+                                                <button 
+                                                    onClick={() => !msg.isTranslating && handleTranslate(msg.id, msg.content)}
+                                                    className="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-500 text-white shadow-md hover:bg-slate-600 transition-colors disabled:opacity-50">
+                                                    {msg.isTranslating ? (
+                                                        <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                                                    ) : (
+                                                        <Languages className="w-4 h-4" />
+                                                    )}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                                <div className={`text-[11px] font-bold text-slate-400 mt-2 ${msg.role === 'user' ? 'text-right' : 'text-left'}`}>
+                                    {msg.time}
+                                </div>
                             </div>
                         </div>
+
+                        {/* User Avatar */}
+                        {msg.role === 'user' && (
+                            <div className="w-10 h-10 rounded-full bg-violet-600 flex items-center justify-center shrink-0 text-white ml-3 shadow-sm mt-auto">
+                                <User className="w-6 h-6" />
+                            </div>
+                        )}
                     </div>
-                ))}
+                )})}
             </div>
 
             {/* Input Bar */}

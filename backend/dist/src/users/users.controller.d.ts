@@ -128,6 +128,36 @@ export declare class UsersController {
             userId: string;
             completed: boolean;
             completedAt: Date | null;
+        })[] | ({
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            userId: string;
+            questId: string;
+            current: number;
+            claimed: boolean;
+        } | {
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            userId: string;
+            questId: string;
+            current: number;
+            claimed: boolean;
+        })[] | ({
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            title: string;
+            level: import("@prisma/client").$Enums.CourseLevel;
+            userId: string;
+        } | {
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            title: string;
+            level: import("@prisma/client").$Enums.CourseLevel;
+            userId: string;
         })[] | {
             id: string;
             slug: string | null;
@@ -183,6 +213,21 @@ export declare class UsersController {
             userId: string;
             completed: boolean;
             completedAt: Date | null;
+        }[] | {
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            userId: string;
+            questId: string;
+            current: number;
+            claimed: boolean;
+        }[] | {
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            title: string;
+            level: import("@prisma/client").$Enums.CourseLevel;
+            userId: string;
         }[];
         [x: number]: never;
         [x: symbol]: never;
@@ -198,5 +243,10 @@ export declare class UsersController {
         role: import("@prisma/client").$Enums.UserRole;
         createdAt: Date;
         updatedAt: Date;
+        currentLevel: import("@prisma/client").$Enums.CourseLevel;
+        xp: number;
+        grammarScore: number;
+        vocabScore: number;
+        speakingScore: number;
     }>;
 }

@@ -28,6 +28,9 @@ const upload_module_1 = require("./upload/upload.module");
 const streaming_module_1 = require("./streaming/streaming.module");
 const serve_static_1 = require("@nestjs/serve-static");
 const path_1 = require("path");
+const quests_module_1 = require("./quests/quests.module");
+const leaderboard_module_1 = require("./leaderboard/leaderboard.module");
+const ai_module_1 = require("./ai/ai.module");
 let AppModule = class AppModule {
     configure(consumer) {
         consumer.apply(logger_middleware_1.LoggerMiddleware).forRoutes('*');
@@ -69,6 +72,9 @@ exports.AppModule = AppModule = __decorate([
                 rootPath: (0, path_1.join)(process.cwd(), 'public'),
                 serveRoot: '/',
             }),
+            quests_module_1.QuestsModule,
+            leaderboard_module_1.LeaderboardModule,
+            ai_module_1.AiModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],
