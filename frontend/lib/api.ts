@@ -1,4 +1,4 @@
-﻿import axios, { AxiosInstance, AxiosError } from 'axios';
+import axios, { AxiosInstance, AxiosError } from 'axios';
 import { useAuthStore } from './store';
 
 interface ApiResponse<T> {
@@ -256,4 +256,9 @@ export const adminAPI = {
   },
   getOrders: () => apiClient.get('/orders/admin/all'),
   updateOrderStatus: (id: string, status: string) => apiClient.patch(`/orders/${id}/status`, { status }),
+};
+
+export const aiAPI = {
+  chatGerman: (data: { userInput: string; conversationLog: string[]; topic: string; level: string }) =>
+    apiClient.post('/ai/chat/german', data),
 };

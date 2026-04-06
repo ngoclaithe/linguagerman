@@ -1,4 +1,5 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ChatGermanDto } from './dto/chat-german.dto';
 import OpenAI from 'openai';
 import { zodResponseFormat } from 'openai/helpers/zod';
@@ -8,9 +9,9 @@ import { z } from 'zod';
 export class AiService {
   private openai: OpenAI;
 
-  constructor() {
+  constructor(private configService: ConfigService) {
     this.openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
+      apiKey: this.configService.get<string>('OPENAI_API_KEY'),
     });
   }
 

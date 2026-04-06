@@ -2,9 +2,24 @@
 
 import { Bot, Send, Mic, Volume2, Languages, Lightbulb, AlertCircle } from 'lucide-react';
 import { useState } from 'react';
+import { aiAPI } from '@/lib/api';
+
+export interface AiSuggestion {
+    original: string;
+    better: string;
+    reason: string;
+}
+
+export interface AiMessage {
+    id: string | number;
+    role: 'bot' | 'user';
+    content: string;
+    time: string;
+    suggestion?: AiSuggestion;
+}
 
 export default function AiChatPage() {
-    const [messages, setMessages] = useState<any[]>([
+    const [messages, setMessages] = useState<AiMessage[]>([
         {
             id: 1,
             role: 'bot',
@@ -23,7 +38,7 @@ export default function AiChatPage() {
         const userText = input.trim();
         setInput('');
 
-        const newMsg: any = {
+        const newMsg: AiMessage = {
             id: messages.length + 1,
             role: 'user',
             content: userText,
@@ -36,19 +51,14 @@ export default function AiChatPage() {
         try {
             const conversationLog = messages.map(m => (m.role === 'user' ? 'Lernende/r: ' : 'Lehrerin: ') + m.content);
 
-            const res = await fetch('http://localhost:3054/api/v1/ai/chat/german', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    userInput: userText,
-                    conversationLog,
-                    topic: 'Chào hỏi cơ bản hằng ngày',
-                    level: 'A1'
-                })
+            const data = await aiAPI.chatGerman({
+                userInput: userText,
+                conversationLog,
+                topic: 'Chào hỏi cơ bản hằng ngày',
+                level: 'A1'
             });
 
-            if (res.ok) {
-                const data = await res.json();
+            if (data) {
                 
                 // Update User message with grammar correction suggestion if provided by AI
                 if (data.suggestion && data.suggestion !== '' && data.explanation && data.explanation !== '') {
