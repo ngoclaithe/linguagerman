@@ -109,7 +109,7 @@ export default function LehrerProfilePage() {
 
     return (
         <div className="min-h-screen bg-slate-50 pb-20 font-sans">
-            {/* Minimal Header - Premium Colored Version */}
+            {}
             <div className="sticky top-0 z-50 bg-gradient-to-r from-slate-950 via-[#9b1c1c] to-slate-950 border-b border-[#C53030]/30 shadow-xl transition-all h-24 flex items-center">
                 <div className="absolute inset-0 bg-white/5 backdrop-blur-3xl -z-10"></div>
                 <div className="container mx-auto px-4 lg:px-8 flex items-center justify-between">
@@ -128,7 +128,7 @@ export default function LehrerProfilePage() {
             <div className="container mx-auto px-4 lg:px-8 py-12">
                 <div className="max-w-5xl mx-auto flex flex-col lg:flex-row gap-8">
 
-                    {/* Sidebar Tabs */}
+                    {}
                     <div className="w-full lg:w-64 flex flex-col gap-2">
                         {tabs.map((tab) => (
                             <button
@@ -145,7 +145,7 @@ export default function LehrerProfilePage() {
                         ))}
                     </div>
 
-                    {/* Content */}
+                    {}
                     <div className="flex-1">
                         <motion.div
                             key={activeTab}

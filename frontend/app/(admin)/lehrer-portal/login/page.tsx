@@ -16,7 +16,7 @@ export default function AdminLoginPage() {
     const router = useRouter();
     const { login, user } = useAuthStore();
 
-    // If already logged in as ADMIN or TEACHER, redirect to dashboard
+    
     useEffect(() => {
         if (user && (user.role === 'ADMIN' || (user.role as any) === 'TEACHER')) {
             router.push("/lehrer-portal");
@@ -31,7 +31,7 @@ export default function AdminLoginPage() {
         try {
             const response: any = await authAPI.login(email, password);
 
-            // Check if user is an admin or teacher
+            
             if (response.role !== 'ADMIN' && (response.role as any) !== 'TEACHER') {
                 setError("Bạn không có quyền truy cập vào cng quản tr này.");
                 return;
@@ -48,7 +48,7 @@ export default function AdminLoginPage() {
 
     return (
         <div className="min-h-screen bg-[#0F172A] flex items-center justify-center p-6 selection:bg-[#C53030]/20 selection:text-[#C53030]">
-            {/* Background elements */}
+            {}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#C53030]/10 blur-[120px] rounded-full"></div>
                 <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500/5 blur-[120px] rounded-full"></div>
@@ -56,7 +56,7 @@ export default function AdminLoginPage() {
             </div>
 
             <div className="w-full max-w-lg relative z-10">
-                {/* Logo & Header */}
+                {}
                 <div className="text-center mb-10">
                     <Link href="/" className="inline-flex items-center gap-3 group mb-6">
                         <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#C53030] to-rose-600 shadow-2xl shadow-[#C53030]/20 group-hover:scale-110 transition-transform duration-500 rotate-3 group-hover:rotate-0">
@@ -69,9 +69,9 @@ export default function AdminLoginPage() {
                     <p className="text-slate-400 font-medium">Cng thông tin quản tr h thng LinguaGerman</p>
                 </div>
 
-                {/* Form Card */}
+                {}
                 <div className="bg-slate-800/50 backdrop-blur-xl border border-slate-700/50 rounded-[2.5rem] p-8 md:p-12 shadow-2xl overflow-hidden relative group">
-                    {/* Subtle glow on hover */}
+                    {}
                     <div className="absolute -inset-1 bg-gradient-to-r from-[#C53030]/20 to-blue-500/20 rounded-[2.5rem] blur opacity-0 group-hover:opacity-100 transition duration-1000"></div>
 
                     <form onSubmit={handleSubmit} className="relative space-y-6">
@@ -144,7 +144,7 @@ export default function AdminLoginPage() {
                         </button>
                     </form>
 
-                    {/* Bottom visual dots */}
+                    {}
                     <div className="absolute bottom-4 right-8 flex gap-1.5">
                         <div className="w-1.5 h-1.5 rounded-full bg-[#C53030]/20"></div>
                         <div className="w-1.5 h-1.5 rounded-full bg-[#C53030]/40"></div>

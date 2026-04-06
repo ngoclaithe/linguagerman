@@ -326,7 +326,7 @@ export default function FlashcardsPage() {
                             )}
                         </div>
 
-                        {/* Quick Controls */}
+                        {}
                         <div className="flex justify-center items-center gap-6 mt-12 mb-8">
                             <button
                                 onClick={handlePrevious}

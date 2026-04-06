@@ -57,7 +57,7 @@ export default function ProfilePage() {
 
     return (
         <div className="min-h-screen bg-slate-50 pb-20 font-sans selection:bg-[#C53030]/20 selection:text-[#C53030]">
-            {/* Header / Banner */}
+            {}
             <div className="h-48 lg:h-64 bg-slate-900 relative overflow-hidden">
                 <div className="absolute inset-0 bg-[url('/images/course-A1.jpg')] opacity-20 bg-cover bg-center"></div>
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900 to-transparent"></div>
@@ -66,7 +66,7 @@ export default function ProfilePage() {
             <div className="container mx-auto px-4 lg:px-8 -mt-24 relative z-10">
                 <div className="flex flex-col lg:flex-row gap-8">
 
-                    {/* Sidebar / Profile Info Card */}
+                    {}
                     <div className="w-full lg:w-1/3 flex flex-col gap-6">
                         <div className="bg-white rounded-[2.5rem] p-8 shadow-xl shadow-slate-200/50 border border-slate-100 text-center flex flex-col items-center">
                             <div className="relative mb-6">
@@ -98,7 +98,7 @@ export default function ProfilePage() {
                             </div>
                         </div>
 
-                        {/* Navigation Tabs (Sidebar style on Desktop) */}
+                        {}
                         <div className="bg-white rounded-3xl p-3 shadow-sm border border-slate-100 hidden lg:flex flex-col gap-1">
                             {tabs.map((tab) => (
                                 <button
@@ -116,10 +116,10 @@ export default function ProfilePage() {
                         </div>
                     </div>
 
-                    {/* Main Content Area */}
+                    {}
                     <div className="flex-1">
 
-                        {/* Mobile Tabs */}
+                        {}
                         <div className="lg:hidden flex bg-white rounded-2xl p-1 shadow-sm border border-slate-100 mb-6 overflow-x-auto scrollbar-hide">
                             {tabs.map((tab) => (
                                 <button

@@ -11,13 +11,13 @@ export function Providers({ children }: { children: ReactNode }) {
   const user = useAuthStore((state) => state.user);
 
   useEffect(() => {
-    // Only fetch if we don't have a user in store
+    
     const fetchUser = async () => {
       try {
         const userData = await authAPI.getProfile();
         setUser(userData);
       } catch (error) {
-        // Not logged in or session expired - interceptor handles cleanup if 401
+        
         setUser(null);
       }
     };
@@ -30,7 +30,7 @@ export function Providers({ children }: { children: ReactNode }) {
   const [queryClient] = useState(() => new QueryClient({
     defaultOptions: {
       queries: {
-        staleTime: 1000 * 60 * 5, // 5 minutes
+        staleTime: 1000 * 60 * 5, 
       },
     },
   }));

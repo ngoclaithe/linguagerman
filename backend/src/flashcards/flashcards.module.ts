@@ -8,4 +8,4 @@ import { PrismaModule } from '../prisma/prisma.module';
   controllers: [FlashcardsController],
   providers: [FlashcardsService],
 })
-export class FlashcardsModule {} // Re-compile trigger
+export class FlashcardsModule {} 

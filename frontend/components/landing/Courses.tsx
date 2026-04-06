@@ -6,7 +6,7 @@ import { Clock, Users, ArrowRight, Star, ChevronLeft, ChevronRight } from "lucid
 import { AnimateOnScroll } from "./AnimateOnScroll";
 
 export function Courses() {
-  const [activeIndex, setActiveIndex] = useState(2); // B1 is default active (popular)
+  const [activeIndex, setActiveIndex] = useState(2); 
 
   const courses = [
     {
@@ -88,10 +88,10 @@ export function Courses() {
           </div>
         </AnimateOnScroll>
 
-        {/* Stacked cards carousel */}
+        {}
         <AnimateOnScroll direction="up" delay={200}>
           <div className="relative flex items-center justify-center" style={{ height: "580px", perspective: "1200px" }}>
-            {/* Prev button - left side */}
+            {}
             <button
               onClick={handlePrev}
               className="absolute left-0 sm:left-4 lg:left-8 z-20 w-12 h-12 rounded-full border-2 border-[#FF2D78]/30 bg-white/80 backdrop-blur-sm flex items-center justify-center text-[#FF2D78] hover:bg-[#FF2D78] hover:text-white hover:border-[#FF2D78] transition-all duration-300 shadow-lg"
@@ -99,7 +99,7 @@ export function Courses() {
               <ChevronLeft className="w-5 h-5" />
             </button>
 
-            {/* Cards */}
+            {}
             {courses.map((course, index) => {
               const offset = index - activeIndex;
               const absOffset = Math.abs(offset);
@@ -197,7 +197,7 @@ export function Courses() {
               );
             })}
 
-            {/* Next button - right side */}
+            {}
             <button
               onClick={handleNext}
               className="absolute right-0 sm:right-4 lg:right-8 z-20 w-12 h-12 rounded-full border-2 border-[#FF2D78]/30 bg-white/80 backdrop-blur-sm flex items-center justify-center text-[#FF2D78] hover:bg-[#FF2D78] hover:text-white hover:border-[#FF2D78] transition-all duration-300 shadow-lg"
@@ -205,7 +205,7 @@ export function Courses() {
               <ChevronRight className="w-5 h-5" />
             </button>
 
-            {/* Dots indicator - top of carousel */}
+            {}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2">
               {courses.map((_, index) => (
                 <button

@@ -21,14 +21,14 @@ export function About() {
     >
       <AnimateOnScroll direction="up" delay={0}>
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Bordered card wrapper - z-[1] */}
+        {}
         <div className="relative z-[1] bg-gradient-to-br from-[#EEF2FF] via-[#F0F4FF] to-[#EDE9FE] rounded-3xl border border-[#FF2D78]/15 shadow-xl shadow-[#FF2D78]/8 rotate-[-1deg]">
 
-          {/* Background decorations */}
+          {}
           <div className="absolute top-10 right-10 w-80 h-80 bg-[#FF2D78]/8 rounded-full blur-3xl" />
           <div className="absolute bottom-10 left-10 w-60 h-60 bg-[#FF6B9D]/8 rounded-full blur-3xl" />
 
-          {/* TEXT CONTENT */}
+          {}
           <div className="relative py-12 lg:py-20 lg:w-[70%] ml-4 sm:ml-8 lg:ml-12">
             <AnimateOnScroll direction="left" delay={0}>
               <div className="lg:pr-8">
@@ -80,7 +80,7 @@ export function About() {
           </div>
         </div>
 
-        {/* STUDENT IMAGE - OUTSIDE card, higher z-index, pops above the border */}
+        {}
         <div className="hidden lg:block absolute z-[2] right-4 xl:right-8 bottom-0 pointer-events-none">
           <AnimateOnScroll direction="right" delay={200}>
             <Image
@@ -95,7 +95,7 @@ export function About() {
           </AnimateOnScroll>
         </div>
 
-        {/* Mobile: student below card */}
+        {}
         <div className="lg:hidden flex justify-center -mt-8">
           <Image
             src="/images/student-hero.webp"

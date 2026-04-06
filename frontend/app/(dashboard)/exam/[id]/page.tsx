@@ -39,17 +39,17 @@ export default function ExamSessionPage({ params }: { params: Promise<{ id: stri
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
 
-    // Timer & start state
+    
     const [examStarted, setExamStarted] = useState(false);
     const [timeLeft, setTimeLeft] = useState(0);
     const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const hasAutoSubmitted = useRef(false);
 
-    // Audio
+    
     const [isPlayingAudio, setIsPlayingAudio] = useState(false);
     const audioRef = useRef<HTMLAudioElement | null>(null);
 
-    // --- LocalStorage helpers ---
+    
     const STORAGE_KEY = `exam_session_${examId}`;
 
     const saveSession = (data: { answers: Record<string, string>; questionIdx: number; startedAt: number }) => {
@@ -73,7 +73,7 @@ export default function ExamSessionPage({ params }: { params: Promise<{ id: stri
         }
     };
 
-    // --- Fetch exam & restore session ---
+    
     useEffect(() => {
         const fetchExam = async () => {
             try {
@@ -84,18 +84,18 @@ export default function ExamSessionPage({ params }: { params: Promise<{ id: stri
                 const saved = loadSession();
 
                 if (saved && saved.startedAt) {
-                    // Restore session
+                    
                     const elapsed = Math.floor((Date.now() - saved.startedAt) / 1000);
                     const remaining = Math.max(0, durationSec - elapsed);
 
                     if (remaining > 0) {
-                        // Session still valid
+                        
                         setSelectedAnswers(saved.answers || {});
                         setCurrentQuestionIdx(saved.questionIdx || 0);
                         setTimeLeft(remaining);
                         setExamStarted(true);
                     } else {
-                        // Time expired while away
+                        
                         clearSession();
                         setTimeLeft(durationSec);
                     }
@@ -111,7 +111,7 @@ export default function ExamSessionPage({ params }: { params: Promise<{ id: stri
         fetchExam();
     }, [examId]);
 
-    // --- Persist answers & question index to localStorage ---
+    
     useEffect(() => {
         if (!examStarted || showResults) return;
         const saved = loadSession();
@@ -120,7 +120,7 @@ export default function ExamSessionPage({ params }: { params: Promise<{ id: stri
         }
     }, [selectedAnswers, currentQuestionIdx, examStarted, showResults]);
 
-    // --- Countdown timer ---
+    
     useEffect(() => {
         if (!examStarted || showResults) return;
 
@@ -139,7 +139,7 @@ export default function ExamSessionPage({ params }: { params: Promise<{ id: stri
         };
     }, [examStarted, showResults]);
 
-    // Auto-submit when time = 0
+    
     useEffect(() => {
         if (timeLeft === 0 && examStarted && !showResults && !hasAutoSubmitted.current) {
             hasAutoSubmitted.current = true;
@@ -148,7 +148,7 @@ export default function ExamSessionPage({ params }: { params: Promise<{ id: stri
         }
     }, [timeLeft, examStarted, showResults]);
 
-    // Stop audio when changing question
+    
     useEffect(() => {
         if (audioRef.current) {
             audioRef.current.pause();
@@ -229,7 +229,7 @@ export default function ExamSessionPage({ params }: { params: Promise<{ id: stri
             ...prev,
             [questionId]: value,
         }));
-        // Auto-advance for CHOICE/LISTENING only
+        
         if ((questionType === 'CHOICE' || questionType === 'LISTENING') && currentQuestionIdx < questions.length - 1) {
             setTimeout(() => {
                 handleNext();
@@ -259,7 +259,7 @@ export default function ExamSessionPage({ params }: { params: Promise<{ id: stri
     const handleSubmitInternal = async () => {
         setSubmitting(true);
         if (timerRef.current) clearInterval(timerRef.current);
-        clearSession(); // Clear saved session on submit
+        clearSession(); 
         try {
             await examsAPI.submit(examId, selectedAnswers);
             setShowResults(true);
@@ -322,9 +322,9 @@ export default function ExamSessionPage({ params }: { params: Promise<{ id: stri
         }
     };
 
-    // ================================================================
-    // PRE-EXAM START SCREEN
-    // ================================================================
+    
+    
+    
     if (!examStarted) {
         const questionTypeCounts = questions.reduce((acc: any, q: any) => {
             acc[q.type] = (acc[q.type] || 0) + 1;
@@ -340,7 +340,7 @@ export default function ExamSessionPage({ params }: { params: Promise<{ id: stri
                     className="w-full max-w-lg"
                 >
                     <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-2xl shadow-slate-200/50 overflow-hidden">
-                        {/* Header gradient */}
+                        {}
                         <div className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-[#C53030] px-8 pt-10 pb-12 text-center">
                             <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAwIDEwIEwgNDAgMTAgTSAxMCAwIEwgMTAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS1vcGFjaXR5PSIwLjAzIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-50"></div>
                             <motion.div
@@ -361,7 +361,7 @@ export default function ExamSessionPage({ params }: { params: Promise<{ id: stri
                             </motion.div>
                         </div>
 
-                        {/* Exam info */}
+                        {}
                         <div className="px-8 py-8">
                             <div className="grid grid-cols-2 gap-4 mb-6">
                                 <motion.div initial={{ opacity: 0, x: -15 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }}
@@ -378,7 +378,7 @@ export default function ExamSessionPage({ params }: { params: Promise<{ id: stri
                                 </motion.div>
                             </div>
 
-                            {/* Question type breakdown */}
+                            {}
                             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}
                                 className="flex gap-2 mb-6 flex-wrap">
                                 {questionTypeCounts['CHOICE'] && (
@@ -398,7 +398,7 @@ export default function ExamSessionPage({ params }: { params: Promise<{ id: stri
                                 )}
                             </motion.div>
 
-                            {/* Rules */}
+                            {}
                             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
                                 className="bg-amber-50 border border-amber-100 rounded-2xl p-5 mb-8">
                                 <div className="flex items-center gap-2 mb-3">
@@ -421,7 +421,7 @@ export default function ExamSessionPage({ params }: { params: Promise<{ id: stri
                                 </ul>
                             </motion.div>
 
-                            {/* Start button */}
+                            {}
                             <motion.button
                                 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}
                                 whileHover={{ scale: 1.02, y: -2 }}
@@ -443,9 +443,9 @@ export default function ExamSessionPage({ params }: { params: Promise<{ id: stri
         );
     }
 
-    // ================================================================
-    // QUESTION RENDERERS
-    // ================================================================
+    
+    
+    
     const renderChoiceQuestion = (q: any) => (
         <div className="space-y-4">
             {q.options?.map((option: string, optionIndex: number) => {
@@ -500,7 +500,7 @@ export default function ExamSessionPage({ params }: { params: Promise<{ id: stri
 
     const renderListeningQuestion = (q: any) => (
         <div className="space-y-6">
-            {/* Audio player */}
+            {}
             {q.audioUrl && (
                 <div className="p-5 bg-gradient-to-r from-indigo-50 to-blue-50 rounded-2xl border border-indigo-100 flex items-center gap-5">
                     <button
@@ -518,7 +518,7 @@ export default function ExamSessionPage({ params }: { params: Promise<{ id: stri
                 </div>
             )}
 
-            {/* Options */}
+            {}
             {q.options?.length > 0 && (
                 <div className="space-y-3">
                     {q.options.map((option: string, optionIndex: number) => {
@@ -549,12 +549,12 @@ export default function ExamSessionPage({ params }: { params: Promise<{ id: stri
         </div>
     );
 
-    // ================================================================
-    // EXAM IN PROGRESS
-    // ================================================================
+    
+    
+    
     return (
         <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
-            {/* Sub-Header with countdown */}
+            {}
             <div className="sticky top-[76px] z-40 bg-white/80 backdrop-blur-xl border-b border-slate-200/60 shadow-sm transition-all">
                 <div className="container mx-auto px-4 lg:px-8 py-2.5 flex items-center justify-between">
                     <div className="flex items-center gap-3">
@@ -643,7 +643,7 @@ export default function ExamSessionPage({ params }: { params: Promise<{ id: stri
                                         </h2>
                                     </div>
 
-                                    {/* Render based on question type */}
+                                    {}
                                     {questionType === 'FILL' && renderFillQuestion(currentQuestion)}
                                     {questionType === 'LISTENING' && renderListeningQuestion(currentQuestion)}
                                     {questionType === 'CHOICE' && renderChoiceQuestion(currentQuestion)}
@@ -678,7 +678,7 @@ export default function ExamSessionPage({ params }: { params: Promise<{ id: stri
                                 )}
                             </div>
 
-                            {/* Question quick nav */}
+                            {}
                             <div className="mt-8 bg-white rounded-2xl border border-slate-100 p-5 shadow-sm">
                                 <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">iu hng nhanh</div>
                                 <div className="flex flex-wrap gap-2">
@@ -702,7 +702,7 @@ export default function ExamSessionPage({ params }: { params: Promise<{ id: stri
                             </div>
                         </div>
                     ) : (
-                        /* ============== RESULTS SCREEN ============== */
+                        
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
@@ -764,7 +764,7 @@ export default function ExamSessionPage({ params }: { params: Promise<{ id: stri
                                                 </div>
                                             </div>
 
-                                            {/* For FILL type - show user answer vs correct */}
+                                            {}
                                             {q.type === 'FILL' ? (
                                                 <div className="grid gap-3 pt-2">
                                                     <div className={`p-4 rounded-xl border-2 flex items-center gap-3 ${
@@ -788,7 +788,7 @@ export default function ExamSessionPage({ params }: { params: Promise<{ id: stri
                                                     )}
                                                 </div>
                                             ) : (
-                                                /* For CHOICE/LISTENING - show options */
+                                                
                                                 <div className="grid gap-3 pt-2">
                                                     {q.options?.map((opt: string, oIdx: number) => {
                                                         const isSelected = userAnswer === opt;

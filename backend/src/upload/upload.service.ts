@@ -34,7 +34,7 @@ export class UploadService {
       const img = sharp(file.buffer);
       await img.webp({ quality: 80 }).toFile(filePath);
 
-      // Return the public URL
+      
       return `/uploads/${fileName}`;
     } catch (error) {
       console.error('Image processing error:', error);
@@ -62,7 +62,7 @@ export class UploadService {
 
     try {
       fs.writeFileSync(filePath, file.buffer);
-      // Internal path used by streaming service
+      
       return `storage/videos/${fileName}`;
     } catch (error) {
       console.error('Video upload error:', error);

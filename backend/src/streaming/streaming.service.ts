@@ -16,14 +16,14 @@ export class StreamingService {
   private readonly storagePath = path.join(process.cwd(), 'storage', 'hls');
 
   constructor(private prisma: PrismaService) {
-    // Ensure storage directory exists
+    
     if (!fs.existsSync(this.storagePath)) {
       fs.mkdirSync(this.storagePath, { recursive: true });
     }
   }
 
   generateSignedUrl(videoId: string) {
-    const expires = Math.floor(Date.now() / 1000) + 2 * 60 * 60; // 2 hours from now
+    const expires = Math.floor(Date.now() / 1000) + 2 * 60 * 60; 
     const data = `${videoId}:${expires}`;
     const signature = crypto
       .createHmac('sha256', this.secretKey)
@@ -38,13 +38,13 @@ export class StreamingService {
     signature: string,
     expires: string,
   ): boolean {
-    // 1. Check expiration
+    
     const now = Math.floor(Date.now() / 1000);
     if (parseInt(expires) < now) {
       return false;
     }
 
-    // 2. Re-calculate signature to verify
+    
     const data = `${videoId}:${expires}`;
     const expectedSignature = crypto
       .createHmac('sha256', this.secretKey)
@@ -54,7 +54,7 @@ export class StreamingService {
     return signature === expectedSignature;
   }
 
-  // --- HLS Logic ---
+  
 
   async convertToHls(videoId: string, inputFilePath: string) {
     const outputDir = path.join(this.storagePath, videoId);
@@ -66,18 +66,18 @@ export class StreamingService {
     const keyInfoFile = path.join(outputDir, 'video.keyinfo');
     const m3u8File = path.join(outputDir, 'index.m3u8');
 
-    // 1. Generate Random 16-byte key
+    
     const key = crypto.randomBytes(16);
     fs.writeFileSync(keyFile, key);
 
-    // 2. Create keyinfo file for FFmpeg
-    // URL is what the player will call to get the key
+    
+    
     const keyUrl = `/api/v1/streaming/hls/${videoId}/key`;
     fs.writeFileSync(keyInfoFile, `${keyUrl}\n${keyFile}`);
 
-    // 3. Run FFmpeg command for HLS with AES-128
-    // -hls_time 10: 10s segments
-    // -hls_key_info_file: link to key info
+    
+    
+    
     const ffmpegCmd = `ffmpeg -i "${inputFilePath}" -c:v libx264 -c:a aac -b:v 1M -strict -2 -hls_time 10 -hls_list_size 0 -hls_key_info_file "${keyInfoFile}" -hls_segment_filename "${path.join(outputDir, 'segment_%03d.ts')}" "${m3u8File}"`;
 
     console.log(`[StreamingService] Starting HLS conversion for ${videoId}...`);
@@ -106,19 +106,19 @@ export class StreamingService {
       return res.status(404).send('Playlist not found');
     }
 
-    // READ and MODIFY playlist content on the fly
+    
     let content = fs.readFileSync(playlistPath, 'utf8');
 
-    // Append signature to all lines ending in .ts or containing /key
+    
     const queryParams = `sig=${sig}&expires=${expires}`;
 
-    // Match .ts segments
+    
     content = content.replace(
       /segment_(\d+)\.ts/g,
       `segment_$1.ts?${queryParams}`,
     );
 
-    // Match Key URI - ensure we don't double append
+    
     content = content.replace(
       /URI="(.*)\/key"/g,
       `URI="$1/key?${queryParams}"`,
@@ -166,7 +166,7 @@ export class StreamingService {
     res.sendFile(keyPath);
   }
 
-  // --- Cleanup Logic ---
+  
 
   async deleteHlsResults(videoId: string) {
     const outputDir = path.join(this.storagePath, videoId);
@@ -200,7 +200,7 @@ export class StreamingService {
   ) {
     const { sig, expires } = query;
 
-    // Verify Signature
+    
     if (!sig || !expires || !this.verifySignature(videoId, sig, expires)) {
       console.error(
         `[StreamingService] Invalid or expired signature for video: ${videoId}`,
@@ -219,7 +219,7 @@ export class StreamingService {
     console.log(
       `[StreamingService] Request for videoId: ${videoId} | Range: ${range}`,
     );
-    // 1. Find the video in DB
+    
     const video = await (this.prisma as any).lessonVideo.findUnique({
       where: { id: videoId },
     });
@@ -228,12 +228,12 @@ export class StreamingService {
       throw new NotFoundException('Video not found');
     }
 
-    // 2. Get file path
+    
     let filePath: string;
     if (video.videoUrl.startsWith('/uploads')) {
       filePath = path.join(process.cwd(), 'public', video.videoUrl);
     } else {
-      // New internal path like storage/videos/filename.mp4
+      
       filePath = path.join(process.cwd(), video.videoUrl);
     }
 

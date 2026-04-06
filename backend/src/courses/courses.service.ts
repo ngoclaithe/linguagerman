@@ -9,12 +9,12 @@ export class CoursesService {
     return text
       .toString()
       .toLowerCase()
-      .normalize('NFD') // Normalize to decomposite accented characters
-      .replace(/[\u0300-\u036f]/g, '') // Remove accents
+      .normalize('NFD') 
+      .replace(/[\u0300-\u036f]/g, '') 
       .trim()
-      .replace(/\s+/g, '-') // Replace spaces with -
-      .replace(/[^\w-]+/g, '') // Remove all non-word chars
-      .replace(/--+/g, '-'); // Replace multiple - with single -
+      .replace(/\s+/g, '-') 
+      .replace(/[^\w-]+/g, '') 
+      .replace(/--+/g, '-'); 
   }
 
   async create(data: any, user: any) {
@@ -22,7 +22,7 @@ export class CoursesService {
       data.slug = this.slugify(data.title);
     }
 
-    // If teacher, force teacherId to themselves
+    
     if (user.role === 'TEACHER') {
       data.teacherId = user.sub;
     }
@@ -87,7 +87,7 @@ export class CoursesService {
       if (!course || (course as any).teacherId !== user.sub) {
         throw new Error('Unauthorized to update this course');
       }
-      // Teachers cannot change teacherId
+      
       delete data.teacherId;
     }
 

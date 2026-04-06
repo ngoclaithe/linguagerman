@@ -38,9 +38,9 @@ export default function CoursesPage() {
 
     return (
         <div className="min-h-screen bg-slate-50 flex flex-col">
-            {/* Hero Section - Redesigned for Clarity and Premium Feel */}
+            {}
             <section className="relative pt-44 pb-32 overflow-hidden bg-white wave-divider">
-                {/* Decorative background elements */}
+                {}
                 <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-[#FFF5F8] to-transparent -z-0"></div>
                 <div className="absolute -top-24 -right-24 w-96 h-96 bg-[#FF2D78]/5 blur-[100px] rounded-full animate-pulse"></div>
                 <div className="absolute top-20 left-10 w-72 h-72 bg-[#FF2D78]/5 rounded-full blur-3xl animate-float"></div>
@@ -64,10 +64,10 @@ export default function CoursesPage() {
                 </div>
             </section>
 
-            {/* Filters Container */}
+            {}
             <div className="container mx-auto px-4 lg:px-8 relative z-20 -mt-10 animate-in fade-in duration-700 delay-300 fill-mode-both">
                 <div className="bg-white rounded-3xl shadow-xl shadow-[#FF2D78]/5 border border-slate-100 p-2 md:p-4 flex flex-col lg:flex-row gap-4">
-                    {/* Search */}
+                    {}
                     <div className="flex-1 relative group">
                         <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-[#FF2D78] transition-colors" />
                         <input
@@ -79,7 +79,7 @@ export default function CoursesPage() {
                         />
                     </div>
 
-                    {/* Level Filter */}
+                    {}
                     <div className="flex items-center gap-2 overflow-x-auto pb-2 lg:pb-0 scrollbar-hide">
                         {levels.map((level) => (
                             <button
@@ -97,7 +97,7 @@ export default function CoursesPage() {
                 </div>
             </div>
 
-            {/* Courses Grid */}
+            {}
             <section className="py-20 flex-grow">
                 <div className="container mx-auto px-4 lg:px-8">
                     <div className="flex items-center justify-between mb-10">
@@ -116,7 +116,7 @@ export default function CoursesPage() {
                                 href={`/courses/${course.slug || course.id}`}
                                 className="group flex flex-col bg-white rounded-[2rem] overflow-hidden border border-slate-100 shadow-sm hover:shadow-2xl hover:shadow-[#FF2D78]/10 transition-all duration-500 hover:-translate-y-2"
                             >
-                                {/* Course Image */}
+                                {}
                                 <div className="relative aspect-[4/3] overflow-hidden">
                                     <img
                                         src={getImageUrl(course.thumbnail) || "/images/german_course_hero.png"}
@@ -125,7 +125,7 @@ export default function CoursesPage() {
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-80 group-hover:opacity-100 transition-opacity"></div>
 
-                                    {/* Tags & Badges */}
+                                    {}
                                     <div className="absolute top-5 left-5 right-5 flex justify-between items-start">
                                         <div className="flex flex-col gap-2 items-start">
                                             <span className="px-4 py-1.5 bg-white/95 backdrop-blur-sm text-slate-900 text-xs font-black rounded-full shadow-sm">
@@ -151,7 +151,7 @@ export default function CoursesPage() {
                                     </div>
                                 </div>
 
-                                {/* Course Info */}
+                                {}
                                 <div className="p-8 flex flex-col flex-grow">
                                     <h3 className="mb-3 text-xl font-bold text-slate-900 group-hover:text-[#FF2D78] transition-colors line-clamp-2 leading-snug">
                                         {course.title}

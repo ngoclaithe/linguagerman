@@ -51,7 +51,7 @@ export default function TeacherDetailPage() {
                 </Link>
 
                 <div className="grid lg:grid-cols-3 gap-12">
-                    {/* Left side: Info */}
+                    {}
                     <div className="lg:col-span-1">
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95 }}
@@ -99,7 +99,7 @@ export default function TeacherDetailPage() {
                         </motion.div>
                     </div>
 
-                    {/* Right side: Bio & Courses */}
+                    {}
                     <div className="lg:col-span-2 space-y-12">
                         <motion.div
                             initial={{ opacity: 0, x: 20 }}

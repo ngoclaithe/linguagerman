@@ -82,13 +82,13 @@ export default function LessonPage() {
 
     const progress = ((currentLessonIndex + 1) / lessons.length) * 100;
 
-    // Generate streaming URL
-    // We assume the backend is at process.env.NEXT_PUBLIC_API_URL or localhost:3050
+    
+    
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3050/api/v1';
 
-    // In a real app, you'd get the JWT from your storage or cookie
-    // For this example, if the video item doesn't have an ID, we can't stream.
-    // Video item usually is lesson.videos[0]
+    
+    
+    
     const activeVideo = currentLesson.videos?.[0];
     const streamUrl = activeVideo
         ? `${baseUrl}/streaming/video/${activeVideo.id}`
@@ -96,7 +96,7 @@ export default function LessonPage() {
 
     return (
         <div className="flex h-screen flex-col bg-slate-950 text-slate-50 font-sans selection:bg-[#C53030]/30 selection:text-white">
-            {/* Top Navigation Bar */}
+            {}
             <div className="flex items-center justify-between border-b border-white/10 bg-slate-900/80 backdrop-blur-md px-6 py-3 sticky top-0 z-50">
                 <div className="flex items-center gap-6">
                     <Link
@@ -139,15 +139,15 @@ export default function LessonPage() {
             </div>
 
             <div className="flex flex-1 overflow-hidden relative">
-                {/* Main Content Area (Video) */}
+                {}
                 <div className="flex flex-1 flex-col overflow-y-auto custom-scrollbar bg-slate-950">
 
-                    {/* Video Player Section */}
+                    {}
                     <div className="w-full bg-black relative group flex-shrink-0 animate-in fade-in duration-500">
                         <div className="w-full aspect-video max-h-[70vh] flex items-center justify-center relative z-0 overflow-hidden bg-black shadow-2xl">
                             {currentLesson.type === "video" && streamUrl ? (
                                 <video
-                                    key={streamUrl} // Force re-render when lesson changes
+                                    key={streamUrl} 
                                     src={streamUrl}
                                     controls
                                     crossOrigin="use-credentials"
@@ -169,7 +169,7 @@ export default function LessonPage() {
                         </div>
                     </div>
 
-                    {/* Lesson Details Info */}
+                    {}
                     <div className="max-w-5xl w-full mx-auto p-6 md:p-10 animate-in slide-in-from-bottom-8 duration-700">
                         <div className="flex flex-col md:flex-row gap-10">
                             <div className="flex-1">
@@ -181,7 +181,7 @@ export default function LessonPage() {
                                     dangerouslySetInnerHTML={{ __html: currentLesson.content || '' }}
                                 />
 
-                                {/* Lesson Materials Block */}
+                                {}
                                 {currentLesson.files && currentLesson.files.length > 0 && (
                                     <div className="rounded-2xl border border-white/10 bg-slate-900/50 p-6 backdrop-blur-sm mb-10">
                                         <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
@@ -211,7 +211,7 @@ export default function LessonPage() {
                             </div>
                         </div>
 
-                        {/* Bottom Navigation */}
+                        {}
                         <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-6 border-t border-white/10 mt-8">
                             <button
                                 onClick={handlePrevious}
@@ -234,7 +234,7 @@ export default function LessonPage() {
                     </div>
                 </div>
 
-                {/* Sidebar - Playlist */}
+                {}
                 <div className="hidden lg:flex w-96 flex-col border-l border-white/10 bg-slate-950 flex-shrink-0 z-30 shadow-2xl animate-in fade-in slide-in-from-right-8 duration-500">
                     <div className="p-6 border-b border-white/10 bg-slate-900/50 backdrop-blur-md sticky top-0 z-10">
                         <h2 className="font-black text-white text-xl flex items-center justify-between">

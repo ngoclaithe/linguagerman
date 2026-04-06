@@ -6,11 +6,11 @@ import { AnimateOnScroll } from "./AnimateOnScroll";
 export function SocialProof() {
   return (
     <section className="relative py-24 bg-white overflow-hidden">
-      {/* Top gradient fade */}
+      {}
       <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-[#FF2D78]/5 to-transparent" />
 
       <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Heading */}
+        {}
         <AnimateOnScroll direction="up">
           <div className="text-center mb-16">
             <p className="text-xl sm:text-2xl text-slate-600 mb-6 font-medium">
@@ -27,9 +27,9 @@ export function SocialProof() {
           </div>
         </AnimateOnScroll>
 
-        {/* Floating cards layout */}
+        {}
         <div className="relative h-[420px] sm:h-[380px] lg:h-[340px]">
-          {/* Dashed connection lines - SVG */}
+          {}
           <svg
             className="absolute inset-0 w-full h-full pointer-events-none hidden lg:block"
             viewBox="0 0 1000 340"
@@ -60,7 +60,7 @@ export function SocialProof() {
               fill="none"
               opacity="0.4"
             />
-            {/* Decorative dots on path */}
+            {}
             <circle cx="350" cy="95" r="3" fill="#FF2D78" opacity="0.5" />
             <circle cx="355" cy="91" r="2" fill="#FF6B9D" opacity="0.5" />
             <circle cx="360" cy="95" r="2" fill="#FF2D78" opacity="0.5" />
@@ -72,7 +72,7 @@ export function SocialProof() {
             </defs>
           </svg>
 
-          {/* Card 1 - Dàn lộ trình */}
+          {}
           <AnimateOnScroll direction="left" delay={0}>
             <div className="absolute left-0 sm:left-[2%] lg:left-[2%] top-[10px] sm:top-[20px] w-[220px] sm:w-[240px]">
               <div className="group bg-white/85 backdrop-blur-sm rounded-2xl shadow-xl border border-slate-100 p-5 hover:shadow-2xl transition-all duration-500 -rotate-6 hover:rotate-0 hover:bg-white hover:scale-105 hover:-translate-y-1" style={{ filter: 'drop-shadow(0 8px 24px rgba(37,99,235,0.12))' }}>
@@ -93,11 +93,11 @@ export function SocialProof() {
             </div>
           </AnimateOnScroll>
 
-          {/* Card 2 - Luyện nói */}
+          {}
           <AnimateOnScroll direction="up" delay={200}>
             <div className="absolute left-[30%] sm:left-[30%] lg:left-[30%] top-[140px] sm:top-[100px] lg:top-[80px] w-[200px] sm:w-[220px]">
               <div className="group bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-slate-100 p-5 hover:shadow-2xl transition-all duration-500 rotate-[4deg] hover:rotate-0 hover:bg-white hover:scale-105 hover:-translate-y-1 text-center" style={{ filter: 'drop-shadow(0 8px 24px rgba(124,58,237,0.12))' }}>
-                {/* Circular animation graphic */}
+                {}
                 <div className="relative w-20 h-20 mx-auto mb-3">
                   <svg viewBox="0 0 80 80" className="w-full h-full">
                     <circle
@@ -138,7 +138,7 @@ export function SocialProof() {
             </div>
           </AnimateOnScroll>
 
-          {/* Card 3 - Tối ưu thi cử */}
+          {}
           <AnimateOnScroll direction="up" delay={400}>
             <div className="absolute right-[20%] sm:right-[22%] lg:right-[22%] top-[0px] sm:top-[10px] w-[200px] sm:w-[220px]">
               <div className="group bg-white/85 backdrop-blur-sm rounded-2xl shadow-xl border border-slate-100 p-5 hover:shadow-2xl transition-all duration-500 rotate-[5deg] hover:rotate-0 hover:bg-white hover:scale-105 hover:-translate-y-1" style={{ filter: 'drop-shadow(0 8px 24px rgba(37,99,235,0.15))' }}>
@@ -147,7 +147,7 @@ export function SocialProof() {
                 </div>
                 <div className="flex items-center gap-2 mb-3">
                   <h3 className="text-lg font-bold text-[#0F172A]">THI CỬ</h3>
-                  {/* Bar chart visualization */}
+                  {}
                   <div className="flex items-end gap-0.5 h-10">
                     {[70, 85, 65, 90, 75].map((h, i) => (
                       <div
@@ -165,7 +165,7 @@ export function SocialProof() {
             </div>
           </AnimateOnScroll>
 
-          {/* Card 4 - Plugin / Công cụ hỗ trợ */}
+          {}
           <AnimateOnScroll direction="right" delay={600}>
             <div className="absolute right-0 sm:right-[2%] lg:right-[2%] top-[100px] sm:top-[90px] lg:top-[60px]">
               <div className="flex flex-col gap-2">

@@ -7,12 +7,12 @@ import Image from "next/image";
 export function Footer() {
   return (
     <footer className="bg-[#0F172A] text-white relative overflow-hidden">
-      {/* Background decoration */}
+      {}
       <div className="absolute top-0 left-0 w-[400px] h-[400px] bg-[#FF2D78]/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
-          {/* Brand */}
+          {}
           <AnimateOnScroll direction="up" delay={0}>
             <div>
               <div className="flex items-center gap-3 mb-5">
@@ -48,7 +48,7 @@ export function Footer() {
             </div>
           </AnimateOnScroll>
 
-          {/* Quick Links */}
+          {}
           <AnimateOnScroll direction="up" delay={100}>
             <div>
               <h3 className="text-lg font-bold mb-5">Liên kết nhanh</h3>
@@ -74,7 +74,7 @@ export function Footer() {
             </div>
           </AnimateOnScroll>
 
-          {/* Courses */}
+          {}
           <AnimateOnScroll direction="up" delay={200}>
             <div>
               <h3 className="text-lg font-bold mb-5">Khóa học</h3>
@@ -100,7 +100,7 @@ export function Footer() {
             </div>
           </AnimateOnScroll>
 
-          {/* Contact */}
+          {}
           <AnimateOnScroll direction="up" delay={300}>
             <div>
               <h3 className="text-lg font-bold mb-5">Liên hệ</h3>
@@ -142,7 +142,7 @@ export function Footer() {
           </AnimateOnScroll>
         </div>
 
-        {/* Bottom Bar */}
+        {}
         <div className="pt-8 border-t border-slate-800">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-slate-400 text-sm">

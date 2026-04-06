@@ -43,10 +43,10 @@ export default function DashboardPage() {
           const completedLessons = (safeProgress.completedLessons || []).filter((p: any) => p.lesson.courseId === e.courseId);
           const completedLessonIds = new Set(completedLessons.map((p: any) => p.lesson.id));
 
-          // Sort lessons by order
+          
           const sortedLessons = [...(e.course.lessons || [])].sort((a: any, b: any) => a.order - b.order);
 
-          // Find first uncompleted lesson
+          
           const nextLesson = sortedLessons.find((l: any) => !completedLessonIds.has(l.id)) || sortedLessons[0];
 
           return {
@@ -119,8 +119,8 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
-      {/* Header Layer */}
-      {/* Hero Content Dashboard */}
+      {}
+      {}
       <section className="bg-slate-900 pt-32 pb-24 relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('/images/course-A1.jpg')] opacity-5 bg-cover bg-center mix-blend-luminosity"></div>
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-[#C53030]/20 blur-[120px] rounded-full pointer-events-none"></div>
@@ -150,14 +150,14 @@ export default function DashboardPage() {
         </div>
       </section>
 
-      {/* Main Content */}
+      {}
       <div className="container mx-auto px-4 lg:px-8 pb-20 relative z-20 -mt-12 animate-in fade-in duration-700 delay-300">
         <div className="grid gap-8 lg:grid-cols-12 lg:items-start">
 
-          {/* Left Block: Stats & Courses */}
+          {}
           <div className="lg:col-span-8 flex flex-col gap-8">
 
-            {/* Quick Stats */}
+            {}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {stats.map((stat, index) => (
                 <div
@@ -177,7 +177,7 @@ export default function DashboardPage() {
               ))}
             </div>
 
-            {/* In Progress Courses */}
+            {}
             <div>
               <div className="mb-5 flex items-center justify-between">
                 <h2 className="text-2xl font-bold text-slate-900">Khóa học của bạn</h2>
@@ -194,7 +194,7 @@ export default function DashboardPage() {
                     key={course.id}
                     className="group rounded-3xl border border-slate-100 bg-white p-4 lg:p-6 shadow-sm hover:shadow-xl hover:shadow-[#C53030]/10 transition-all duration-300 flex flex-col md:flex-row gap-6 relative overflow-hidden"
                   >
-                    {/* Progress Bar Top Accent */}
+                    {}
                     <div className="absolute top-0 left-0 h-1 bg-slate-100 w-full">
                       <div className="h-full bg-[#C53030]" style={{ width: `${course.progress}%` }}></div>
                     </div>
@@ -247,7 +247,7 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {/* Recently Completed */}
+            {}
             <div>
               <h2 className="mb-5 text-2xl font-bold text-slate-900">Hoạt ng gần ây</h2>
               <div className="rounded-3xl border border-slate-100 bg-white overflow-hidden shadow-sm">
@@ -279,10 +279,10 @@ export default function DashboardPage() {
 
           </div>
 
-          {/* Right Block: Sidebar */}
+          {}
           <div className="lg:col-span-4 space-y-8 lg:-mt-[150px] relative z-20">
 
-            {/* Goal Card */}
+            {}
             <div className="rounded-[2rem] border border-slate-100 bg-white p-6 md:p-8 shadow-xl shadow-slate-200/50">
               <div className="mb-6 flex items-center gap-4">
                 <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#C53030]/10 border border-[#C53030]/20 shrink-0">
@@ -316,7 +316,7 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {/* Upcoming Tests Widget */}
+            {}
             <div className="rounded-[2rem] border border-slate-100 bg-white p-6 md:p-8 shadow-md">
               <div className="mb-6 flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -361,7 +361,7 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {/* Quick Links */}
+            {}
             <div className="rounded-[2rem] border border-slate-100 bg-white p-6 md:p-8 shadow-md">
               <h3 className="mb-5 font-bold text-slate-900">Li tắt công cụ</h3>
               <div className="grid gap-3">

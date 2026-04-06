@@ -29,7 +29,7 @@ export function Dialog({
         <AnimatePresence>
             {isOpen && (
                 <>
-                    {/* Backdrop */}
+                    {}
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -38,7 +38,7 @@ export function Dialog({
                         className="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm"
                     />
 
-                    {/* Content */}
+                    {}
                     <div className="fixed inset-0 z-[101] flex items-center justify-center p-4">
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -49,7 +49,7 @@ export function Dialog({
                                 className
                             )}
                         >
-                            {/* Close Button */}
+                            {}
                             <button
                                 onClick={onClose}
                                 className="absolute right-6 top-6 rounded-full p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-900 transition-colors"

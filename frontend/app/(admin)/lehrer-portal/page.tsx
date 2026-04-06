@@ -394,7 +394,7 @@ export default function AdminPage() {
 
     return (
         <div className="min-h-screen bg-slate-50 flex flex-col font-sans selection:bg-[#C53030]/20 selection:text-[#C53030]">
-            {/* Top Navbar - Vibrantly Colored Design */}
+            {}
             <div className="sticky top-0 z-50 bg-gradient-to-r from-slate-950 via-[#9b1c1c] to-slate-950 border-b border-[#C53030]/30 shadow-2xl transition-all">
                 <div className="absolute inset-0 bg-white/5 backdrop-blur-3xl -z-10"></div>
                 <div className="container mx-auto px-4 lg:px-8 h-24 flex items-center justify-between">
@@ -422,7 +422,7 @@ export default function AdminPage() {
                             </Link>
                         </div>
 
-                        {/* Navigation Menu in Header */}
+                        {}
                         <div className="hidden xl:flex items-center gap-1.5 p-1.5 bg-black/20 backdrop-blur-md border border-white/10 rounded-2xl">
                             {[
                                 { id: "overview", label: "Dashboard" },
@@ -481,7 +481,7 @@ export default function AdminPage() {
 
             <div className="container mx-auto px-4 lg:px-8 py-8 flex-1 flex flex-col">
 
-                {/* Mobile Navigation Tabs (Shown only on mobile since hidden in header) */}
+                {}
                 <div className="xl:hidden mb-8 overflow-x-auto custom-scrollbar pb-4">
                     <div className="flex bg-[#0f172a]/90 backdrop-blur-md rounded-[1.5rem] p-1.5 border border-white/10 shadow-xl w-max gap-1">
                         {[
@@ -507,18 +507,18 @@ export default function AdminPage() {
                     </div>
                 </div>
 
-                {/* Content Area */}
+                {}
                 <div className="flex-1">
                     {activeTab === "overview" && (
                         <div className="space-y-8 animate-in fade-in duration-500">
-                            {/* Stats Grid */}
+                            {}
                             <StatsGrid stats={stats} />
 
                             <div className="grid gap-6 lg:grid-cols-3">
-                                {/* Popular Courses */}
+                                {}
                                 <PopularCourses courses={courses} />
 
-                                {/* Recent Activity */}
+                                {}
                                 <RecentActivity activities={activities} />
                             </div>
                         </div>
@@ -527,7 +527,7 @@ export default function AdminPage() {
                     {activeTab !== "overview" && (
                         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden flex flex-col">
 
-                            {/* Table Toolbar */}
+                            {}
                             <div className="p-6 border-b border-slate-100 bg-white flex flex-col sm:flex-row items-center justify-between gap-4">
                                 <div className="relative w-full sm:max-w-md">
                                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
@@ -566,7 +566,7 @@ export default function AdminPage() {
                                 </div>
                             </div>
 
-                            {/* Lists Based on Tab */}
+                            {}
                             <div className="overflow-x-auto w-full">
                                 <table className="w-full text-left text-sm whitespace-nowrap">
                                     <thead className="bg-slate-50 border-b border-slate-100 text-slate-500 font-bold uppercase tracking-wider text-xs">
@@ -646,7 +646,7 @@ export default function AdminPage() {
                                                 name: u.name || 'Học viên',
                                                 email: u.email,
                                                 courses: u._count?.enrollments || 0,
-                                                progress: 0, // Mock for now
+                                                progress: 0, 
                                                 status: "active"
                                             }))}
                                             getStatusBadge={getStatusBadge}
@@ -782,7 +782,7 @@ export default function AdminPage() {
                     }}
                 />
             )}
-            {/* Confirmation Dialog */}
+            {}
             <ConfirmDialog
                 isOpen={confirmState.isOpen}
                 onClose={() => setConfirmState(prev => ({ ...prev, isOpen: false }))}

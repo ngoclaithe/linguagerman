@@ -60,7 +60,7 @@ export function TeachingMethod() {
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#FF6B9D]/5 rounded-full blur-3xl translate-x-1/3 -translate-y-1/3" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Heading */}
+        {}
         <AnimateOnScroll direction="up">
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#FF2D78]/10 border border-[#FF2D78]/20 mb-5">
@@ -77,7 +77,7 @@ export function TeachingMethod() {
           </div>
         </AnimateOnScroll>
 
-        {/* Bento Grid */}
+        {}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {methods.map((method, index) => (
             <AnimateOnScroll key={index} direction="up" delay={index * 100}>
@@ -86,11 +86,11 @@ export function TeachingMethod() {
                   method.size === "large" ? "lg:col-span-1 lg:row-span-1" : ""
                 }`}
               >
-                {/* Hover gradient overlay */}
+                {}
                 <div className="absolute inset-0 bg-gradient-to-br from-white/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl" />
 
                 <div className="relative z-10">
-                  {/* Large emoji */}
+                  {}
                   <div className="text-5xl mb-5 group-hover:scale-110 group-hover:rotate-12 transition-all duration-500 inline-block">
                     {method.emoji}
                   </div>
@@ -99,7 +99,7 @@ export function TeachingMethod() {
                   <p className="text-slate-600 leading-relaxed">{method.description}</p>
                 </div>
 
-                {/* Decorative background emoji */}
+                {}
                 <div className="absolute -bottom-4 -right-4 text-8xl opacity-[0.06] group-hover:opacity-[0.12] transition-opacity duration-500 select-none">
                   {method.emoji}
                 </div>
@@ -108,7 +108,7 @@ export function TeachingMethod() {
           ))}
         </div>
 
-        {/* Stats row */}
+        {}
         <AnimateOnScroll direction="up" delay={600}>
           <div className="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-6">
             {[

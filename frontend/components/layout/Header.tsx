@@ -44,10 +44,10 @@ export default function Header() {
                 : "bg-transparent py-5 lg:py-6"
                 }`}
         >
-            {/* Animated bottom border when scrolled */}
+            {}
             <div className={`absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#FF2D78] to-transparent transition-opacity duration-700 ${isScrolled ? "opacity-30" : "opacity-0"}`} />
             
-            {/* Ambient glowing orb inside header on scroll */}
+            {}
             <div className={`absolute -top-10 -left-10 w-32 h-32 bg-[#FF2D78]/20 rounded-full blur-2xl transition-opacity duration-700 pointer-events-none ${isScrolled ? "opacity-100 animate-float" : "opacity-0"}`} />
 
             <nav className="container mx-auto px-6 flex items-center justify-between">
@@ -60,7 +60,7 @@ export default function Header() {
                     </span>
                 </Link>
 
-                {/* Desktop Navigation */}
+                {}
                 <div className="hidden lg:flex items-center gap-10">
                     {navLinks.map((item) => (
                         <Link
@@ -120,7 +120,7 @@ export default function Header() {
                                         Bắt đầu ngay
                                         <div className="w-1.5 h-1.5 rounded-full bg-white opacity-0 group-hover:opacity-100 group-hover:animate-ping transition-opacity duration-300" />
                                     </span>
-                                    {/* Shimmer effect */}
+                                    {}
                                     <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:animate-[shimmer_1.5s_infinite]" />
                                 </Button>
                             </Link>
@@ -136,7 +136,7 @@ export default function Header() {
                 </div>
             </nav>
 
-            {/* Mobile Menu */}
+            {}
             {isMobileMenuOpen && (
                 <div className="lg:hidden bg-white border-t border-slate-100 p-6 space-y-4 animate-in slide-in-from-top duration-300">
                     {navLinks.map((item) => (

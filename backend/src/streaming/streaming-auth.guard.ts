@@ -14,15 +14,15 @@ export class StreamingAuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
 
-    // Check Header first
+    
     let token = this.extractTokenFromHeader(request);
 
-    // If no header, check cookies
+    
     if (!token) {
       token = (request as any).cookies?.access_token;
     }
 
-    // If no cookie, check query param 'token'
+    
     if (!token) {
       token = request.query.token as string;
     }
@@ -33,7 +33,7 @@ export class StreamingAuthGuard implements CanActivate {
 
     try {
       const payload = await this.jwtService.verifyAsync(token);
-      // Assign payload to request so we can use it in controllers
+      
       request['user'] = payload;
     } catch {
       throw new UnauthorizedException('Invalid streaming token');

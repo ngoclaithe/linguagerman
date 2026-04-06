@@ -71,16 +71,16 @@ export function LearningRoadmap() {
           </div>
         </AnimateOnScroll>
 
-        {/* Desktop S-Curve Roadmap */}
+        {}
         <div className="hidden lg:block">
           {levels.map((level, index) => {
             const isLeft = index % 2 === 0;
             return (
               <div key={index}>
-                {/* Row: node + card, alternating sides */}
+                {}
                 <AnimateOnScroll direction={isLeft ? "left" : "right"} delay={index * 150}>
                   <div className={`flex items-center gap-6 ${isLeft ? "flex-row" : "flex-row-reverse"}`}>
-                    {/* Card side */}
+                    {}
                     <div className="w-[380px] flex-shrink-0">
                       <div className={`bg-white rounded-2xl p-6 shadow-lg border border-slate-200 hover:border-[#FF2D78]/30 hover:shadow-2xl hover:shadow-[#FF2D78]/10 transition-all duration-500 hover:-translate-y-1 ${level.rotate}`}>
                         <div className="flex items-center gap-3 mb-2">
@@ -109,12 +109,12 @@ export function LearningRoadmap() {
                       </div>
                     </div>
 
-                    {/* Spacer for the other side */}
+                    {}
                     <div className="flex-1" />
                   </div>
                 </AnimateOnScroll>
 
-                {/* S-Curve connector between nodes */}
+                {}
                 {index < levels.length - 1 && (
                   <div className="flex justify-center my-[-8px]">
                     <svg
@@ -133,7 +133,7 @@ export function LearningRoadmap() {
                         strokeDasharray="14 10"
                         opacity="0.5"
                       />
-                      {/* Small dots along path */}
+                      {}
                       <circle cx="140" cy="25" r="4" fill="#FF2D78" opacity="0.3" />
                       <circle cx="200" cy="50" r="5" fill="#FF6B9D" opacity="0.25" />
                       <circle cx="260" cy="75" r="4" fill="#FF2D78" opacity="0.3" />
@@ -150,7 +150,7 @@ export function LearningRoadmap() {
             );
           })}
 
-          {/* Finish */}
+          {}
           <AnimateOnScroll direction="up" delay={1000}>
             <div className="flex justify-center mt-8">
               <div className="flex flex-col items-center">
@@ -163,7 +163,7 @@ export function LearningRoadmap() {
           </AnimateOnScroll>
         </div>
 
-        {/* Mobile Stack */}
+        {}
         <div className="lg:hidden space-y-6">
           {levels.map((level, index) => (
             <AnimateOnScroll key={index} direction="left" delay={index * 100}>

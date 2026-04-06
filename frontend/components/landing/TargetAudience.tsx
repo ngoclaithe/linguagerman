@@ -41,12 +41,12 @@ const audiences = [
 export function TargetAudience() {
   return (
     <section className="relative py-20 lg:py-28 bg-white overflow-hidden">
-      {/* Background */}
+      {}
       <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-[#FF2D78]/5 rounded-full blur-3xl -translate-x-1/2" />
       <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-[#FF6B9D]/5 rounded-full blur-3xl translate-x-1/2" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Heading */}
+        {}
         <AnimateOnScroll direction="up" delay={0}>
           <div className="mb-16">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#0F172A] leading-tight">
@@ -59,14 +59,14 @@ export function TargetAudience() {
           </div>
         </AnimateOnScroll>
 
-        {/* Cards grid */}
+        {}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {audiences.map((item, index) => (
             <AnimateOnScroll key={index} direction="up" delay={index * 150}>
               <div
                 className={`group relative bg-gradient-to-br ${item.color} rounded-2xl border ${item.borderColor} p-6 pt-0 transition-all duration-500 hover:shadow-2xl hover:shadow-[#FF2D78]/10 hover:-translate-y-2 overflow-visible`}
               >
-                {/* Character image - pops above card */}
+                {}
                 <div className="flex justify-center -mt-4 mb-4">
                   <div className="relative">
                     <Image
@@ -80,7 +80,7 @@ export function TargetAudience() {
                   </div>
                 </div>
 
-                {/* Text content */}
+                {}
                 <div className="text-center pb-4">
                   <h3 className="text-lg font-bold text-[#0F172A] mb-2">
                     {item.title}

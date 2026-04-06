@@ -6,14 +6,14 @@ import { AnimateOnScroll } from "./AnimateOnScroll";
 export function CTABanner() {
   return (
     <section className="relative py-24 bg-gradient-to-br from-[#FF2D78] via-[#E0255F] to-[#FF6B9D] overflow-hidden">
-      {/* Animated decorative elements */}
+      {}
       <div className="absolute inset-0">
         <div className="absolute top-10 left-10 w-72 h-72 bg-white/10 rounded-full blur-3xl animate-float" />
         <div className="absolute bottom-10 right-10 w-96 h-96 bg-white/10 rounded-full blur-3xl animate-float-delayed" />
         <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
       </div>
 
-      {/* Floating particles */}
+      {}
       <div className="absolute top-1/4 left-1/5 w-3 h-3 bg-white/20 rounded-full animate-float" />
       <div className="absolute top-1/3 right-1/4 w-2 h-2 bg-white/20 rounded-full animate-float-delayed" />
       <div className="absolute bottom-1/3 left-2/3 w-4 h-4 bg-white/10 rounded-full animate-float" />
@@ -58,7 +58,7 @@ export function CTABanner() {
           </div>
         </AnimateOnScroll>
 
-        {/* Urgency indicator */}
+        {}
         <AnimateOnScroll direction="up" delay={400}>
           <div className="mt-10 inline-flex items-center gap-2.5 px-6 py-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20">
             <div className="w-2.5 h-2.5 rounded-full bg-red-400 animate-pulse" />

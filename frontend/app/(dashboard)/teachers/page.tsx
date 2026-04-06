@@ -28,7 +28,7 @@ export default function TeachersPage() {
     return (
         <div className="min-h-screen bg-[#FFF5F8]/50 pt-32 pb-20">
             <div className="container mx-auto px-4 lg:px-8 max-w-6xl">
-                {/* Content starts directly */}
+                {}
 
                 <div className="mb-16 text-center lg:text-left">
                     <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#FF2D78]/10 border border-[#FF2D78]/20 mb-5">

@@ -30,7 +30,7 @@ export default function AdminTeacherModal({ item, onClose, onSuccess }: Props) {
             setFormData({
                 name: item.name || "",
                 email: item.email || "",
-                password: "", // Never populate password for editing
+                password: "", 
                 role: "TEACHER",
                 avatar: item.avatar || "",
                 slug: item.slug || "",
@@ -44,7 +44,7 @@ export default function AdminTeacherModal({ item, onClose, onSuccess }: Props) {
         setSubmitting(true);
         try {
             if (item) {
-                // Update existing teacher (User)
+                
                 const updateData: any = { 
                     name: formData.name, 
                     email: formData.email,
@@ -56,10 +56,10 @@ export default function AdminTeacherModal({ item, onClose, onSuccess }: Props) {
                 await usersAPI.update(item.id, updateData);
                 toast.success("Cập nhật giáo viên thành công");
             } else {
-                // For new users, we might need a specialized create on backend that supports all fields
-                // But for now let's hope register + update works or simple update works
+                
+                
                 const res = await authAPI.register(formData.email, formData.password, formData.name);
-                // After register, update the rest
+                
                 await usersAPI.update((res as any).id, {
                     avatar: formData.avatar,
                     slug: formData.slug || null,

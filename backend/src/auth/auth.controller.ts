@@ -70,12 +70,12 @@ export class AuthController {
 
     response.cookie('access_token', accessToken, {
       ...cookieOptions,
-      maxAge: 15 * 60 * 1000, // 15 minutes
+      maxAge: 15 * 60 * 1000, 
     });
 
     response.cookie('refresh_token', refreshToken, {
       ...cookieOptions,
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      maxAge: 7 * 24 * 60 * 60 * 1000, 
     });
   }
 

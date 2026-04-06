@@ -77,7 +77,7 @@ export default function AdminExamModal({ item, onClose, onSuccess }: Props) {
         const newQs = [...formData.questions];
         newQs[idx] = { ...newQs[idx], [field]: value };
 
-        // Safety for type changes
+        
         if (field === 'type' && (value === 'FILL' || value === 'LISTENING') && !newQs[idx].options) {
             newQs[idx].options = ["", "", "", ""];
         }
@@ -109,13 +109,13 @@ export default function AdminExamModal({ item, onClose, onSuccess }: Props) {
         e.preventDefault();
         setSubmitting(true);
         try {
-            // Clean up options for non-choice questions if needed, but keeping them for now as array is fine
+            
             const submissionData = {
                 ...formData,
                 questions: formData.questions.map((q, idx) => ({
                     ...q,
                     order: idx + 1,
-                    // Ensure options is array of strings
+                    
                     options: Array.isArray(q.options) ? q.options : []
                 }))
             };
@@ -327,7 +327,7 @@ export default function AdminExamModal({ item, onClose, onSuccess }: Props) {
                                         </button>
                                     </div>
 
-                                    {/* Options Only for CHOICE and LISTENING (if needed) - let's keep them always for Choice/Listening */}
+                                    {}
                                     {(q.type === 'CHOICE' || q.type === 'LISTENING') && (
                                         <div className="grid gap-4 md:grid-cols-2 pl-16">
                                             {Array.isArray(q.options) && q.options.map((opt: string, oIdx: number) => (

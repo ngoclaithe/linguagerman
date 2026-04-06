@@ -41,7 +41,7 @@ export default function CourseDetailPage() {
         const fetchData = async () => {
             try {
                 const [courseData, enrollments] = await Promise.all([
-                    coursesAPI.get(id), // id is the slug from params
+                    coursesAPI.get(id), 
                     progressAPI.getMyCourses()
                 ]);
                 setCourse(courseData);
@@ -99,9 +99,9 @@ export default function CourseDetailPage() {
 
     return (
         <div className="min-h-screen bg-slate-50 flex flex-col font-sans selection:bg-[#C53030]/20 selection:text-[#C53030]">
-            {/* Header Navigation Removed (Now Global) */}
+            {}
 
-            {/* Hero Header */}
+            {}
             <section className="relative bg-slate-900 pt-16 pb-32 lg:pb-40 overflow-hidden text-white">
                 <div className="absolute inset-0 bg-[url('/images/course-A1.jpg')] opacity-5 bg-cover bg-center mix-blend-overlay pointer-events-none"></div>
                 <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-[#C53030]/20 blur-[120px] rounded-full pointer-events-none"></div>
@@ -145,14 +145,14 @@ export default function CourseDetailPage() {
                 </div>
             </section>
 
-            {/* Main Content Layout */}
+            {}
             <section className="container mx-auto px-4 lg:px-8 relative z-20 -mt-16 lg:-mt-24 pb-24">
                 <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start">
 
-                    {/* Left Column (Content) */}
+                    {}
                     <div className="w-full lg:w-2/3 flex flex-col gap-8 animate-in fade-in duration-700 delay-300 fill-mode-both">
 
-                        {/* Instructor Card Floating (Mobile) OR Inline (Desktop) */}
+                        {}
                         <div className="bg-white rounded-2xl p-6 shadow-xl shadow-slate-200/40 border border-slate-100 flex items-center lg:items-start gap-5">
                             <img
                                 src={course.instructor?.avatar ? getImageUrl(course.instructor.avatar) || "/images/default-course.jpg" : "/images/default-course.jpg"}
@@ -168,7 +168,7 @@ export default function CourseDetailPage() {
                             </div>
                         </div>
 
-                        {/* Quick Stats Grid */}
+                        {}
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                             <div className="bg-white rounded-2xl p-4 border border-slate-100 flex items-center gap-3 shadow-sm hover:shadow-md transition-shadow">
                                 <div className="w-12 h-12 bg-blue-50 text-blue-500 rounded-xl flex items-center justify-center shrink-0">
@@ -208,7 +208,7 @@ export default function CourseDetailPage() {
                             </div>
                         </div>
 
-                        {/* Custom Tabs Navigation */}
+                        {}
                         <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-2 overflow-x-auto scrollbar-hide">
                             <div className="flex min-w-max">
                                 {["overview", "curriculum", "reviews"].map((tab) => (
@@ -228,10 +228,10 @@ export default function CourseDetailPage() {
                             </div>
                         </div>
 
-                        {/* Tab Contents */}
+                        {}
                         <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-100 min-h-[400px]">
 
-                            {/* OVERVIEW TAB */}
+                            {}
                             {activeTab === "overview" && (
                                 <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                                     <h2 className="text-2xl font-black text-slate-900 mb-6 flex items-center gap-2">
@@ -276,7 +276,7 @@ export default function CourseDetailPage() {
                                 </div>
                             )}
 
-                            {/* CURRICULUM TAB */}
+                            {}
                             {activeTab === "curriculum" && (
                                 <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                                     <div className="flex items-center justify-between mb-8">
@@ -310,12 +310,12 @@ export default function CourseDetailPage() {
                                 </div>
                             )}
 
-                            {/* REVIEWS TAB */}
+                            {}
                             {activeTab === "reviews" && (
                                 <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                                     <h2 className="text-2xl font-black text-slate-900 mb-8">Phản hi học viên (Tuyn chọn)</h2>
 
-                                    {/* Summary */}
+                                    {}
                                     <div className="flex flex-col md:flex-row gap-8 items-center bg-slate-50 p-8 rounded-3xl mb-12 border border-slate-100">
                                         <div className="text-center w-48 shrink-0">
                                             <div className="text-6xl font-black text-slate-900 mb-2">{course.rating}</div>
@@ -346,7 +346,7 @@ export default function CourseDetailPage() {
                                         </div>
                                     </div>
 
-                                    {/* List of Reviews */}
+                                    {}
                                     <div className="grid gap-6">
                                         {[
                                             {
@@ -393,11 +393,11 @@ export default function CourseDetailPage() {
 
                     </div>
 
-                    {/* Right Column (Sticky Purchase Sidebar) */}
+                    {}
                     <div className="w-full lg:w-1/3">
                         <div className="sticky top-28 bg-white rounded-[2rem] p-6 lg:p-8 shadow-2xl shadow-slate-200/50 border border-slate-100 flex flex-col gap-6 animate-in slide-in-from-right-8 duration-700">
 
-                            {/* Media preview */}
+                            {}
                             <div className="relative aspect-video rounded-xl overflow-hidden shadow-lg group cursor-pointer">
                                 <img
                                     src={getImageUrl(course.thumbnail) || "/images/default-course.jpg"}
@@ -414,7 +414,7 @@ export default function CourseDetailPage() {
                                 </div>
                             </div>
 
-                            {/* Price & CTA */}
+                            {}
                             <div>
                                 <div className="flex items-center justify-between mb-2">
                                     <span className="text-3xl lg:text-4xl font-black text-slate-900">
@@ -453,7 +453,7 @@ export default function CourseDetailPage() {
 
                             <hr className="border-slate-100" />
 
-                            {/* Guarantees List */}
+                            {}
                             <div className="space-y-4">
                                 <h4 className="font-bold text-slate-900">Khóa học này bao gm:</h4>
                                 <div className="flex items-center gap-3 text-sm text-slate-600">
@@ -475,7 +475,7 @@ export default function CourseDetailPage() {
 
                 </div>
             </section>
-            {/* Purchase Confirmation Dialog */}
+            {}
             <ConfirmDialog
                 isOpen={isPurchaseDialogOpen}
                 onClose={() => setIsPurchaseDialogOpen(false)}

@@ -51,7 +51,7 @@ export function RegistrationForm() {
         <AnimateOnScroll direction="up" delay={200}>
           <div className="bg-gradient-to-br from-[#FFF5F8] to-white rounded-3xl shadow-2xl border border-slate-200 p-8 md:p-12 hover:shadow-3xl transition-shadow duration-500">
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Name */}
+              {}
               <div className="group">
                 <label htmlFor="name" className="block text-[#0F172A] font-semibold mb-2">
                   Họ và tên <span className="text-red-500">*</span>
@@ -72,7 +72,7 @@ export function RegistrationForm() {
                 </div>
               </div>
 
-              {/* Phone */}
+              {}
               <div className="group">
                 <label htmlFor="phone" className="block text-[#0F172A] font-semibold mb-2">
                   Số điện thoại <span className="text-red-500">*</span>
@@ -93,7 +93,7 @@ export function RegistrationForm() {
                 </div>
               </div>
 
-              {/* Goal */}
+              {}
               <div className="group">
                 <label htmlFor="goal" className="block text-[#0F172A] font-semibold mb-2">
                   Mục tiêu học tập <span className="text-red-500">*</span>
@@ -119,7 +119,7 @@ export function RegistrationForm() {
                 </div>
               </div>
 
-              {/* Level Interest */}
+              {}
               <div>
                 <label className="block text-[#0F172A] font-semibold mb-3">
                   Bạn quan tâm trình độ nào?
@@ -147,7 +147,7 @@ export function RegistrationForm() {
                 </div>
               </div>
 
-              {/* Submit Button */}
+              {}
               <button
                 type="submit"
                 disabled={status === "loading"}
@@ -174,7 +174,7 @@ export function RegistrationForm() {
               </p>
             </form>
 
-            {/* Trust badges */}
+            {}
             <div className="mt-8 pt-8 border-t border-slate-200">
               <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-slate-500">
                 <div className="flex items-center gap-2">

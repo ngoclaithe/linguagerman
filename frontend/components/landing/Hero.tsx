@@ -7,19 +7,19 @@ import { AnimateOnScroll } from "./AnimateOnScroll";
 export function Hero() {
   return (
     <section className="relative overflow-hidden bg-white pt-28 pb-24 lg:pt-36 lg:pb-32 wave-divider">
-      {/* Background decorations */}
+      {}
       <div className="absolute inset-0 bg-gradient-to-br from-[#FF2D78]/5 via-transparent to-[#FF6B9D]/5" />
       <div className="absolute top-20 left-10 w-72 h-72 bg-[#FF2D78]/10 rounded-full blur-3xl animate-float" />
       <div className="absolute bottom-20 right-10 w-96 h-96 bg-[#FF6B9D]/10 rounded-full blur-3xl animate-float-delayed" />
 
-      {/* Floating particles */}
+      {}
       <div className="absolute top-1/4 left-1/4 w-3 h-3 bg-[#FF2D78]/30 rounded-full animate-float" />
       <div className="absolute top-1/3 right-1/3 w-2 h-2 bg-[#FF6B9D]/30 rounded-full animate-float-delayed" />
       <div className="absolute bottom-1/4 left-1/3 w-4 h-4 bg-[#FF2D78]/20 rounded-full animate-float" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          {/* Left Content */}
+          {}
           <div className="space-y-8">
             <AnimateOnScroll direction="left" delay={0}>
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#FF2D78]/10 border border-[#FF2D78]/20 backdrop-blur-sm">
@@ -63,7 +63,7 @@ export function Hero() {
               </div>
             </AnimateOnScroll>
 
-            {/* Trust indicators */}
+            {}
             <AnimateOnScroll direction="up" delay={600}>
               <div className="flex items-center gap-6 pt-2">
                 <div className="flex -space-x-3">
@@ -92,7 +92,7 @@ export function Hero() {
             </AnimateOnScroll>
           </div>
 
-          {/* Right Image */}
+          {}
           <AnimateOnScroll direction="right" delay={200}>
             <div className="relative transform rotate-2">
               <div className="absolute inset-0 bg-gradient-to-br from-[#FF2D78] to-[#FF6B9D] rounded-3xl blur-3xl opacity-15 transform rotate-1 scale-105" />
@@ -107,7 +107,7 @@ export function Hero() {
                 />
               </div>
 
-              {/* Floating card */}
+              {}
               <div className="absolute -bottom-6 -left-4 bg-white rounded-2xl shadow-2xl p-4 border border-slate-100 animate-float">
                 <div className="flex items-center gap-3">
                   <div className="w-13 h-13 rounded-full bg-gradient-to-br from-[#FF2D78] to-[#FF6B9D] flex items-center justify-center text-white">
@@ -120,7 +120,7 @@ export function Hero() {
                 </div>
               </div>
 
-              {/* Floating card top-left */}
+              {}
               <div className="absolute -top-4 -left-6 bg-white rounded-2xl shadow-2xl p-3 border border-slate-100 animate-float-delayed hidden sm:block z-10">
                 <div className="flex items-center gap-2">
                   <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#FF2D78] to-[#FF6B9D] flex items-center justify-center text-lg">
@@ -133,7 +133,7 @@ export function Hero() {
                 </div>
               </div>
 
-              {/* Floating card right */}
+              {}
               <div className="absolute -top-4 -right-4 bg-white rounded-2xl shadow-2xl p-3 border border-slate-100 animate-float-delayed hidden sm:block">
                 <div className="flex items-center gap-2">
                   <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#FF6B9D] to-[#FF2D78] flex items-center justify-center text-white text-sm font-bold">

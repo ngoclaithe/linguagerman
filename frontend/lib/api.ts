@@ -12,9 +12,9 @@ export const getImageUrl = (path?: string) => {
 
   const baseUrl = (process.env.NEXT_PUBLIC_API_URL?.split('/api/v1')[0] || 'http://localhost:3050').replace(/\/$/, '');
 
-  // If path starts with http, check if it's a local uploads URL that needs rewriting
+  
   if (path.startsWith('http')) {
-    // Rewrite URLs that point to frontend (localhost:3000) for /uploads/ paths
+    
     if (path.includes('/uploads/')) {
       const uploadsPath = path.substring(path.indexOf('/uploads/'));
       return `${baseUrl}${uploadsPath}`;
@@ -59,17 +59,17 @@ class ApiClient {
       withCredentials: true,
     });
 
-    // Interceptor for handling errors and automatic refresh
+    
     this.axiosInstance.interceptors.response.use(
       (response) => response.data,
       async (error: AxiosError) => {
         const originalRequest = error.config as any;
 
-        // If error is 401 and we haven't retried yet
+        
         if (error.response?.status === 401 && !originalRequest._retry) {
           originalRequest._retry = true;
 
-          // Don't try to refresh if it was already the refresh or login/register request
+          
           const isRefreshRoute = originalRequest.url?.includes('/auth/refresh') ||
             originalRequest.url?.includes('/auth/login') ||
             originalRequest.url?.includes('/auth/register');
@@ -80,9 +80,9 @@ class ApiClient {
           }
 
           try {
-            // Attempt to refresh tokens
+            
             await this.post('/auth/refresh');
-            // Retry the original request
+            
             return this.axiosInstance(originalRequest);
           } catch (refreshError) {
             this.handleLogout();
@@ -90,7 +90,7 @@ class ApiClient {
           }
         }
 
-        // Catch-all for regular 401s if refresh fails or wasn't retryable
+        
         if (error.response?.status === 401) {
           this.handleLogout();
         }
@@ -135,7 +135,7 @@ class ApiClient {
 
 export const apiClient = new ApiClient();
 
-// Auth API
+
 export const authAPI = {
   register: (email: string, password: string, name: string) =>
     apiClient.post('/auth/register', { email, password, name }),
@@ -146,7 +146,7 @@ export const authAPI = {
   logout: () => apiClient.post('/auth/logout'),
 };
 
-// Courses API
+
 export const coursesAPI = {
   list: (skip?: number, take?: number) =>
     apiClient.get('/courses', { params: { skip, take } }),
@@ -158,7 +158,7 @@ export const coursesAPI = {
   delete: (id: string) => apiClient.delete(`/courses/${id}`),
 };
 
-// Users API
+
 export const usersAPI = {
   list: (skip?: number, take?: number) =>
     apiClient.get('/users', { params: { skip, take } }),
@@ -167,13 +167,13 @@ export const usersAPI = {
   delete: (id: string) => apiClient.delete(`/users/${id}`),
 };
 
-// Teachers API (Public)
+
 export const teachersAPI = {
   list: () => apiClient.get('/teachers'),
   getBySlug: (slug: string) => apiClient.get(`/teachers/${slug}`),
 };
 
-// Exams API
+
 export const examsAPI = {
   list: (skip?: number, take?: number) => apiClient.get('/exams', { params: { skip, take } }),
   getOne: (id: string) => apiClient.get(`/exams/${id}`),
@@ -184,7 +184,7 @@ export const examsAPI = {
   submit: (id: string, answers: any) => apiClient.post(`/exams/${id}/submit`, { answers }),
 };
 
-// Flashcards API
+
 export const flashcardsAPI = {
   list: (skip?: number, take?: number) =>
     apiClient.get('/flashcards', { params: { skip, take } }),
@@ -197,7 +197,7 @@ export const flashcardsAPI = {
   delete: (id: string) => apiClient.delete(`/flashcards/${id}`),
 };
 
-// Orders API
+
 export const ordersAPI = {
   getMyOrders: () => apiClient.get('/orders/my-orders'),
   create: (courseIds: string[]) => apiClient.post('/orders', { courseIds }),
@@ -205,7 +205,7 @@ export const ordersAPI = {
   delete: (id: string) => apiClient.delete(`/orders/${id}`),
 };
 
-// Lessons API
+
 export const lessonsAPI = {
   getByCourse: (courseId: string) => apiClient.get(`/lessons/course/${courseId}`),
   get: (id: string) => apiClient.get(`/lessons/${id}`),
@@ -214,14 +214,14 @@ export const lessonsAPI = {
   delete: (id: string) => apiClient.delete(`/lessons/${id}`),
 };
 
-// Progress API
+
 export const progressAPI = {
   get: () => apiClient.get('/progress'),
   getMyCourses: () => apiClient.get('/progress/my-courses'),
   markComplete: (lessonId: string) => apiClient.post('/progress/lesson-complete', { lessonId }),
 };
 
-// Admin API
+
 export const adminAPI = {
   getStats: () => apiClient.get('/Lehrer-secret/stats'),
   getUsers: () => apiClient.get('/Lehrer-secret/users'),

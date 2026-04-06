@@ -7,7 +7,7 @@ export class OrdersService {
   constructor(private prisma: PrismaService) {}
 
   async createOrder(userId: string, courseIds: string[]) {
-    // Basic logic to create an order
+    
     const courses = await this.prisma.course.findMany({
       where: { id: { in: courseIds } },
     });
@@ -80,7 +80,7 @@ export class OrdersService {
         include: { items: true },
       });
 
-      // Create enrollments for each item
+      
       await Promise.all(
         order.items.map((item) =>
           tx.enrollment.upsert({
@@ -90,7 +90,7 @@ export class OrdersService {
                 courseId: item.courseId,
               },
             },
-            update: {}, // Already enrolled, do nothing
+            update: {}, 
             create: {
               userId: order.userId,
               courseId: item.courseId,
@@ -107,7 +107,7 @@ export class OrdersService {
   async updateOrderStatus(orderId: string, status: OrderStatus, user: any) {
     const isTeacher = user.role === 'TEACHER';
     if (isTeacher) {
-      // Check if order belongs to teacher's course
+      
       const order = await this.prisma.order.findFirst({
         where: {
           id: orderId,

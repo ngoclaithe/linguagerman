@@ -58,13 +58,13 @@ export class FlashcardsController {
     return this.flashcardsService.getMyProgress(req.user.sub);
   }
 
-  // Publicly accessible detail endpoint
+  
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.flashcardsService.findOne(id);
   }
 
-  // Publicly accessible list endpoint
+  
   @Get()
   findAll() {
     return this.flashcardsService.findAll();

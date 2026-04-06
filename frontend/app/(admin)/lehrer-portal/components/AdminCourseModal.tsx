@@ -275,7 +275,7 @@ export default function AdminCourseModal({ item, onClose, onSuccess, initialTab 
                                 <div className="space-y-4 md:col-span-2">
                                     <label className="text-sm font-bold text-slate-700">Hình ại din (Thumbnail)</label>
                                     <div className="flex flex-col md:flex-row gap-6">
-                                        {/* Preview block */}
+                                        {}
                                         <div className="w-full md:w-48 h-32 rounded-2xl bg-slate-100 border-2 border-dashed border-slate-200 overflow-hidden relative group">
                                             {formData.thumbnail ? (
                                                 <img
@@ -349,7 +349,7 @@ export default function AdminCourseModal({ item, onClose, onSuccess, initialTab 
                                             placeholder="Bài 1: Gii thiu bản thân"
                                         />
                                     </div>
-                                    {/* Multi Video Section */}
+                                    {}
                                     <div className="space-y-3">
                                         <div className="flex items-center justify-between">
                                             <label className="text-xs font-bold text-slate-500 uppercase">Danh sách Video bài giảng</label>
@@ -418,7 +418,7 @@ export default function AdminCourseModal({ item, onClose, onSuccess, initialTab 
                                         )}
                                     </div>
 
-                                    {/* Multi File Section */}
+                                    {}
                                     <div className="space-y-3">
                                         <div className="flex items-center justify-between">
                                             <label className="text-xs font-bold text-slate-500 uppercase">Tài liu ính kèm (PDF, DOCX)</label>

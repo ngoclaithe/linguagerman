@@ -10,7 +10,7 @@ export class FlashcardsService {
   }
 
   async findAll(userId?: string) {
-    // Return all flashcards, but include info if it's in user's list
+    
     return this.prisma.flashcard.findMany({
       include: {
         users: userId

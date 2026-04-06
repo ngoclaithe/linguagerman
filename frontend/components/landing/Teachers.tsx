@@ -72,7 +72,7 @@ export function Teachers() {
         <AnimateOnScroll direction="up" delay={200}>
           <div className="grid lg:grid-cols-12 gap-8 items-stretch">
 
-            {/* LEFT — Featured teacher spotlight */}
+            {}
             <div className="lg:col-span-7 relative" style={{ perspective: "1200px" }}>
               <div
                 key={active}
@@ -92,7 +92,7 @@ export function Teachers() {
                   e.currentTarget.style.boxShadow = "0 30px 60px -15px rgba(255, 45, 120, 0.25), 0 15px 30px -10px rgba(0,0,0,0.15)";
                 }}
               >
-                {/* Full image */}
+                {}
                 <Image
                   src={current.image}
                   alt={current.name}
@@ -101,12 +101,12 @@ export function Teachers() {
                   className="object-cover group-hover:scale-105 transition-transform duration-700"
                 />
 
-                {/* Dark gradient from bottom */}
+                {}
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0F0F0F] via-[#0F0F0F]/40 to-transparent" />
 
-                {/* Content overlay */}
+                {}
                 <div className="absolute bottom-0 left-0 right-0 p-8 sm:p-10">
-                  {/* Origin tag */}
+                  {}
                   <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-white/15 backdrop-blur-md border border-white/20 mb-4">
                     <span className="text-xs font-semibold text-white tracking-wider uppercase">{current.origin}</span>
                   </div>
@@ -118,7 +118,7 @@ export function Teachers() {
                     {current.bio}
                   </p>
 
-                  {/* Mini stats */}
+                  {}
                   <div className="flex flex-wrap gap-4">
                     {[
                       { label: "Kinh nghiệm", value: current.exp },
@@ -133,14 +133,14 @@ export function Teachers() {
                   </div>
                 </div>
 
-                {/* Decorative corner accent */}
+                {}
                 <div className="absolute top-6 right-6 w-16 h-16 rounded-full border-2 border-white/10 flex items-center justify-center">
                   <div className="w-10 h-10 rounded-full border-2 border-[#FF2D78]/50" />
                 </div>
               </div>
             </div>
 
-            {/* RIGHT — Teacher selector stack */}
+            {}
             <div className="lg:col-span-5 flex flex-col gap-5">
               {teachers.map((teacher, index) => {
                 const rotations = ["-2deg", "1.5deg", "-1deg", "2deg"];
@@ -164,7 +164,7 @@ export function Teachers() {
                       : "0 4px 12px -2px rgba(0,0,0,0.06)",
                   }}
                 >
-                  {/* Thumbnail */}
+                  {}
                   <div
                     className={`relative flex-shrink-0 rounded-xl overflow-hidden transition-all duration-500 ${
                       index === active ? "w-20 h-20 ring-2 ring-[#FF2D78] ring-offset-2" : "w-16 h-16"
@@ -179,7 +179,7 @@ export function Teachers() {
                     />
                   </div>
 
-                  {/* Info */}
+                  {}
                   <div className="flex-1 min-w-0">
                     <h4 className={`font-bold transition-colors duration-300 ${
                       index === active ? "text-[#FF2D78]" : "text-[#0F0F0F]"
@@ -192,7 +192,7 @@ export function Teachers() {
                     </div>
                   </div>
 
-                  {/* Active indicator */}
+                  {}
                   {index === active && (
                     <div className="w-2 h-10 rounded-full bg-gradient-to-b from-[#FF2D78] to-[#FF6B9D] flex-shrink-0" />
                   )}
@@ -200,7 +200,7 @@ export function Teachers() {
                 );
               })}
 
-              {/* Bottom stats */}
+              {}
               <div className="grid grid-cols-2 gap-3 mt-2">
                 {[
                   { value: "15+", label: "Giảng viên" },

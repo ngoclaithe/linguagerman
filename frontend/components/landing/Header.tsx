@@ -32,7 +32,7 @@ export function Header() {
       }`}
     >
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-        {/* Logo */}
+        {}
         <a href="#" className="flex items-center gap-3 group">
           <Image
             src="/images/logo_linguagerman.png"
@@ -47,7 +47,7 @@ export function Header() {
           </div>
         </a>
 
-        {/* Desktop Nav */}
+        {}
         <div className="hidden lg:flex items-center gap-8">
           {navLinks.map((link) => (
             <a
@@ -60,7 +60,7 @@ export function Header() {
           ))}
         </div>
 
-        {/* CTA */}
+        {}
         <div className="hidden lg:flex items-center gap-3">
           <a
             href="#contact"
@@ -71,7 +71,7 @@ export function Header() {
           </a>
         </div>
 
-        {/* Mobile toggle */}
+        {}
         <button
           onClick={() => setIsMobileOpen(!isMobileOpen)}
           className="lg:hidden p-2 text-slate-600 hover:text-[#FF2D78] transition-colors"
@@ -81,7 +81,7 @@ export function Header() {
         </button>
       </nav>
 
-      {/* Mobile Menu */}
+      {}
       <div
         className={`lg:hidden overflow-hidden transition-all duration-500 ease-in-out ${
           isMobileOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"

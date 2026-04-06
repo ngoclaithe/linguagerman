@@ -11,7 +11,7 @@ export function MediaSection() {
       <div className="absolute bottom-0 right-0 w-[300px] h-[300px] bg-[#FF6B9D]/5 rounded-full blur-3xl translate-x-1/2" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
+        {}
         <AnimateOnScroll direction="up">
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#FF2D78]/10 border border-[#FF2D78]/20 mb-5">
@@ -30,10 +30,10 @@ export function MediaSection() {
           </div>
         </AnimateOnScroll>
 
-        {/* 3D Card Stack Layout */}
+        {}
         <div className="grid lg:grid-cols-12 gap-8 items-start">
 
-          {/* Left - Video Card with 3D tilt */}
+          {}
           <div className="lg:col-span-7">
             <AnimateOnScroll direction="left">
               <div className="relative group" style={{ perspective: "1000px" }}>
@@ -47,7 +47,7 @@ export function MediaSection() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
 
-                  {/* Play button */}
+                  {}
                   <div className="absolute inset-0 flex items-center justify-center">
                     <button className="w-20 h-20 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center hover:scale-110 transition-transform duration-300 shadow-2xl animate-glow">
                       <Play className="w-8 h-8 text-[#FF2D78] ml-1" />
@@ -62,7 +62,7 @@ export function MediaSection() {
                   </div>
                 </div>
 
-                {/* Floating badges around video */}
+                {}
                 <div className="absolute -top-4 -right-4 z-10 hidden lg:block">
                   <div className="bg-white rounded-2xl p-4 shadow-xl border border-slate-100 rotate-[6deg] hover:rotate-0 transition-transform duration-500">
                     <div className="flex items-center gap-2">
@@ -89,7 +89,7 @@ export function MediaSection() {
               </div>
             </AnimateOnScroll>
 
-            {/* Achievement Image - 3D tilt */}
+            {}
             <AnimateOnScroll direction="up" delay={300}>
               <div className="mt-8 group" style={{ perspective: "800px" }}>
                 <div className="rounded-3xl overflow-hidden shadow-xl border border-slate-200 transition-transform duration-700 group-hover:[transform:rotateY(3deg)_rotateX(-1deg)] group-hover:shadow-2xl">
@@ -105,7 +105,7 @@ export function MediaSection() {
             </AnimateOnScroll>
           </div>
 
-          {/* Right - Stacked Cert Cards */}
+          {}
           <div className="lg:col-span-5 space-y-6">
             {[
               {

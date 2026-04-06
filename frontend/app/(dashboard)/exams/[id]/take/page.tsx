@@ -123,7 +123,7 @@ export default function ExamTakePage() {
 
     return (
         <div className="min-h-screen bg-[#F8FAFC] flex flex-col font-sans">
-            {/* Exam Header */}
+            {}
             <div className="sticky top-0 z-50 bg-white/80 backdrop-blur-2xl border-b border-slate-200/50">
                 <div className="container mx-auto px-6 py-4 flex items-center justify-between">
                     <div className="flex items-center gap-4">
@@ -147,7 +147,7 @@ export default function ExamTakePage() {
                         Np bi
                     </button>
                 </div>
-                {/* Progress Bar */}
+                {}
                 <div className="h-1.5 w-full bg-slate-100">
                     <motion.div 
                         initial={{ width: 0 }}
@@ -173,7 +173,7 @@ export default function ExamTakePage() {
                         exit={{ opacity: 0, x: -20 }}
                         className="bg-white rounded-[2.5rem] p-8 sm:p-12 shadow-[0_20px_50px_rgba(0,0,0,0.04)] border border-slate-100"
                     >
-                        {/* Question Content */}
+                        {}
                         <div className="mb-10">
                             {currentQuestion.type === 'LISTENING' && currentQuestion.audioUrl && (
                                 <div className="mb-8 p-6 bg-slate-50 rounded-3xl border border-slate-100 flex items-center gap-6">
@@ -200,7 +200,7 @@ export default function ExamTakePage() {
                             </div>
                         </div>
 
-                        {/* Answers Area */}
+                        {}
                         <div className="space-y-4">
                             {currentQuestion.type === 'CHOICE' || currentQuestion.type === 'LISTENING' ? (
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -245,7 +245,7 @@ export default function ExamTakePage() {
                     </motion.div>
                 </AnimatePresence>
 
-                {/* Navigation */}
+                {}
                 <div className="mt-12 flex items-center justify-between">
                     <button
                         onClick={() => setCurrentQuestionIndex(prev => Math.max(0, prev - 1))}
@@ -267,7 +267,7 @@ export default function ExamTakePage() {
                 </div>
             </main>
 
-            {/* Questions Grid (Quick Nav) */}
+            {}
             <div className="bg-white border-t border-slate-200/50 p-6">
                 <div className="container mx-auto max-w-4xl">
                     <div className="flex flex-wrap gap-2 justify-center">

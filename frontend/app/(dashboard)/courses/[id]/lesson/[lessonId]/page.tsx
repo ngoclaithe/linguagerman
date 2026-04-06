@@ -59,7 +59,7 @@ export default function LessonPage() {
         fetchData();
     }, [courseId, lessonId]);
 
-    // HLS Player Setup
+    
     useEffect(() => {
         if (!hasStartedVideo || !currentLesson) return;
 
@@ -82,32 +82,32 @@ export default function LessonPage() {
         if (Hls.isSupported()) {
             hls = new Hls({
                 xhrSetup: (xhr, url) => {
-                    // Send credentials (cookies) for all HLS requests (playlist, segments, keys)
+                    
                     xhr.withCredentials = true;
                 },
             });
 
-            // Append signature to segment URLs automatically
+            
             hls.on(Hls.Events.LEVEL_LOADING, (event, data) => {
                 const params = new URLSearchParams({
                     sig: activeVideo.signedUrlParams?.signature || '',
                     expires: String(activeVideo.signedUrlParams?.expires || '')
                 }).toString();
                 
-                // This is a bit tricky in hls.js to append to all fragments automatically 
-                // but usually the segments are requested relative to m3u8.
-                // However, we can use the hls.js property 'xhrSetup' to modify the URL if needed.
+                
+                
+                
             });
 
-            // Re-configuring xhrSetup to handle URL query params for all HLS related files
+            
             hls.config.xhrSetup = (xhr, url) => {
                 xhr.withCredentials = true;
                 if (!url.includes('sig=')) {
                     const separator = url.includes('?') ? '&' : '?';
                     const newUrl = `${url}${separator}sig=${activeVideo.signedUrlParams?.signature}&expires=${activeVideo.signedUrlParams?.expires}`;
-                    // Note: We can't easily change the URL here in xhrSetup after it's passed,
-                    // so we rely on the initial playlist URL having the params and hls.js 
-                    // usually preserves them if it's configured correctly or we use a loader.
+                    
+                    
+                    
                 }
             };
 
@@ -138,7 +138,7 @@ export default function LessonPage() {
                 }
             });
         } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
-            // Native HLS support (Safari)
+            
             videoElement.src = hlsUrl;
             videoElement.addEventListener('loadedmetadata', () => {
                 videoElement.play().catch(e => console.error("Native play error:", e));
@@ -182,7 +182,7 @@ export default function LessonPage() {
 
     return (
         <div className="flex h-screen flex-col bg-[#020617] text-slate-50 font-sans selection:bg-[#C53030]/30 selection:text-white">
-            {/* Top Navigation Bar */}
+            {}
             <div className="flex items-center justify-between border-b border-white/5 bg-slate-900/60 backdrop-blur-xl px-6 py-4 sticky top-0 z-[60]">
                 <div className="flex items-center gap-8">
                     <Link
@@ -234,10 +234,10 @@ export default function LessonPage() {
             </div>
 
             <div className="flex flex-1 overflow-hidden relative">
-                {/* Main Content Area */}
+                {}
                 <div className="flex-1 flex flex-col overflow-y-auto custom-scrollbar bg-[#020617]">
 
-                    {/* Video Section - Always Full Width of Content Area */}
+                    {}
                     <div className="w-full bg-black relative group shrink-0">
                         <div className="w-full aspect-video max-h-[85vh] flex items-center justify-center relative z-0 overflow-hidden bg-black">
                             {!hasStartedVideo ? (
@@ -245,7 +245,7 @@ export default function LessonPage() {
                                     className="absolute inset-0 z-10 cursor-pointer flex flex-col items-center justify-center bg-slate-950/20 hover:bg-black/40 transition-all duration-500 group/play"
                                     onClick={() => setHasStartedVideo(true)}
                                 >
-                                    {/* Thumbnail Placeholder or Background */}
+                                    {}
                                     <div className="absolute inset-0 z-0 opacity-40 blur-sm scale-110">
                                         <img
                                             src={getImageUrl(course?.thumbnail) || "/placeholder-course.jpg"}
@@ -320,10 +320,10 @@ export default function LessonPage() {
 
                     </div>
 
-                    {/* Lesson Details Section */}
+                    {}
                     <div className="max-w-5xl mx-auto w-full px-6 py-16 md:px-12">
                         <div className="space-y-16">
-                            {/* Header */}
+                            {}
                             <header className="space-y-8">
                                 <div className="flex items-center gap-4">
                                     <span className="px-4 py-1.5 rounded-full bg-[#C53030]/10 border border-[#C53030]/20 text-[#C53030] text-[10px] font-black uppercase tracking-[0.2em]">
@@ -342,11 +342,11 @@ export default function LessonPage() {
                                 </p>
                             </header>
 
-                            {/* Main Content Grid */}
+                            {}
                             <div className="grid lg:grid-cols-3 gap-12">
                                 <div className="lg:col-span-2 space-y-12">
 
-                                    {/* Multi-Video Selector */}
+                                    {}
                                     {currentLesson.videos && currentLesson.videos.length > 1 && (
                                         <section className="space-y-6">
                                             <h3 className="text-xs font-black text-slate-500 uppercase tracking-[0.3em] flex items-center gap-3">
@@ -377,7 +377,7 @@ export default function LessonPage() {
                                         </section>
                                     )}
 
-                                    {/* Downloadable Materials */}
+                                    {}
                                     <section className="space-y-6">
                                         <h3 className="text-xs font-black text-slate-500 uppercase tracking-[0.3em] flex items-center gap-3">
                                             <FileText className="w-4 h-4" /> Tài liu ính kèm
@@ -409,7 +409,7 @@ export default function LessonPage() {
                                     </section>
                                 </div>
 
-                                {/* Sidebar Info */}
+                                {}
                                 <aside className="space-y-10">
                                     <div className="rounded-[2.5rem] border border-amber-500/10 bg-gradient-to-br from-amber-500/5 to-transparent p-10 relative overflow-hidden group">
                                         <div className="absolute top-0 right-0 p-6 opacity-20 transform translate-x-2 -translate-y-2 group-hover:translate-x-0 group-hover:translate-y-0 transition-transform duration-500">
@@ -439,7 +439,7 @@ export default function LessonPage() {
                                 </aside>
                             </div>
 
-                            {/* Bottom Footer Nav */}
+                            {}
                             <footer className="flex flex-col sm:flex-row items-center justify-between gap-8 pt-16 border-t border-white/5">
                                 <button
                                     onClick={handlePrevious}
@@ -463,12 +463,12 @@ export default function LessonPage() {
                     </div>
                 </div>
 
-                {/* Sidebar - Playlist - Collapsible */}
+                {}
                 <div
                     className={`transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] flex flex-col border-l border-white/5 bg-slate-950/80 backdrop-blur-3xl flex-shrink-0 z-40 shadow-[0_-20px_50px_rgba(0,0,0,0.5)] overflow-hidden ${isSidebarOpen ? "w-96" : "w-0 border-l-0"}`}
                 >
                     <div className="w-96 flex flex-col h-full">
-                        {/* Sidebar Header */}
+                        {}
                         <div className="p-10 border-b border-white/5 sticky top-0 bg-slate-950/40 backdrop-blur-xl z-20">
                             <div className="flex items-center justify-between mb-8">
                                 <h3 className="font-black text-white text-xl uppercase italic tracking-tighter">Bài học công chiếu</h3>
@@ -493,7 +493,7 @@ export default function LessonPage() {
                             </div>
                         </div>
 
-                        {/* List Area */}
+                        {}
                         <div className="flex-1 overflow-y-auto custom-scrollbar px-6 py-8 space-y-3">
                             {lessons.map((lesson, index) => {
                                 const isActive = currentLessonIndex === index;
@@ -506,7 +506,7 @@ export default function LessonPage() {
                                             : "hover:bg-white/2"
                                             }`}
                                     >
-                                        {/* Status Icon */}
+                                        {}
                                         <div className="mt-1 shrink-0">
                                             {lesson.completed ? (
                                                 <div className={`w-6 h-6 rounded-full flex items-center justify-center transition-colors ${isActive ? 'bg-[#C53030]/20 text-[#C53030]' : 'bg-emerald-500/10 text-emerald-500'}`}>
@@ -519,7 +519,7 @@ export default function LessonPage() {
                                             )}
                                         </div>
 
-                                        {/* Content */}
+                                        {}
                                         <div className="flex-1 text-left overflow-hidden">
                                             <div className={`text-[10px] font-black uppercase tracking-widest mb-1.5 transition-colors ${isActive ? "text-[#C53030]" : "text-slate-600 group-hover:text-slate-500"}`}>BI {index + 1}</div>
                                             <div className={`font-black text-sm leading-tight transition-colors ${isActive ? "text-white" : "text-slate-400 group-hover:text-slate-200"}`}>
@@ -533,7 +533,7 @@ export default function LessonPage() {
                                             </div>
                                         </div>
 
-                                        {/* Active Indicator */}
+                                        {}
                                         {isActive && (
                                             <div className="absolute right-0 top-0 bottom-0 w-1 bg-[#C53030] shadow-[0_0_20px_#C53030]"></div>
                                         )}
@@ -542,7 +542,7 @@ export default function LessonPage() {
                             })}
                         </div>
 
-                        {/* Sidebar Footer */}
+                        {}
                         <div className="p-8 border-t border-white/5 bg-slate-900/20">
                             <div className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/5">
                                 <div className="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center text-slate-500 italic font-serif">?</div>

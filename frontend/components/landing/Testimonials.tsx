@@ -64,7 +64,7 @@ export function Testimonials() {
   const next = useCallback(() => setActive((p) => (p + 1) % total), [total]);
   const prev = useCallback(() => setActive((p) => (p - 1 + total) % total), [total]);
 
-  // Auto-rotate
+  
   useEffect(() => {
     const timer = setInterval(next, 5000);
     return () => clearInterval(timer);
@@ -72,17 +72,17 @@ export function Testimonials() {
 
   useEffect(() => setMounted(true), []);
 
-  // Calculate position for each card in the ellipse
+  
   const getCardStyle = (index: number) => {
     const diff = ((index - active + total) % total);
-    // Map to angle: active=0° (front), then spread evenly
+    
     const angle = (diff / total) * 2 * Math.PI;
 
-    const radiusX = 500; // horizontal radius
-    const radiusZ = 250; // depth radius
+    const radiusX = 500; 
+    const radiusZ = 250; 
     const x = Math.sin(angle) * radiusX;
     const z = Math.cos(angle) * radiusZ;
-    const scale = 0.6 + 0.4 * ((z + radiusZ) / (2 * radiusZ)); // 0.6 → 1.0
+    const scale = 0.6 + 0.4 * ((z + radiusZ) / (2 * radiusZ)); 
     const opacity = z > 0 ? 1 : 0.4 + 0.6 * ((z + radiusZ) / (2 * radiusZ));
     const zIndex = Math.round(z + radiusZ);
 
@@ -114,7 +114,7 @@ export function Testimonials() {
           </div>
         </AnimateOnScroll>
 
-        {/* 3D Elliptical Carousel */}
+        {}
         <AnimateOnScroll direction="up" delay={200}>
           <div
             className="relative mx-auto flex items-center justify-center"
@@ -153,7 +153,7 @@ export function Testimonials() {
             )}
           </div>
 
-          {/* Active testimonial content */}
+          {}
           <div className="max-w-2xl mx-auto mt-8">
             <div
               key={active}
@@ -182,7 +182,7 @@ export function Testimonials() {
             </div>
           </div>
 
-          {/* Navigation */}
+          {}
           <div className="flex items-center justify-center gap-6 mt-8">
             <button
               onClick={prev}

@@ -41,7 +41,7 @@ export default function CommunityPage() {
 
 
                 <div className="grid lg:grid-cols-4 gap-8">
-                    {/* Left Sidebar */}
+                    {}
                     <div className="hidden lg:block space-y-6">
                         <div className="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100">
                             <h3 className="text-lg font-black text-slate-900 mb-6 uppercase tracking-wider text-xs">Phân loại</h3>
@@ -62,9 +62,9 @@ export default function CommunityPage() {
                         </div>
                     </div>
 
-                    {/* Main Feed */}
+                    {}
                     <div className="lg:col-span-2 space-y-8">
-                        {/* Post Box */}
+                        {}
                         <div className="bg-white rounded-[2.5rem] p-6 shadow-sm border border-slate-100">
                             <div className="flex gap-4 mb-6">
                                 <img src="https://i.pravatar.cc/100?img=20" alt="" className="w-12 h-12 rounded-full border-2 border-slate-100" />
@@ -82,7 +82,7 @@ export default function CommunityPage() {
                             </div>
                         </div>
 
-                        {/* Posts */}
+                        {}
                         {posts.map((post, idx) => (
                             <motion.div
                                 key={idx}
@@ -119,7 +119,7 @@ export default function CommunityPage() {
                         ))}
                     </div>
 
-                    {/* Right Sidebar */}
+                    {}
                     <div className="hidden lg:block space-y-8">
                         <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-100">
                             <h3 className="text-lg font-black text-slate-900 mb-6 flex items-center gap-2">

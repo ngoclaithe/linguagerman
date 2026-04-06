@@ -45,9 +45,9 @@ export function AuthForm({ type }: AuthFormProps) {
 
     return (
         <div className="min-h-screen bg-white flex selection:bg-[#C53030]/20 selection:text-[#C53030]">
-            {/* Left Column: Visual/Branding (Hidden on small screens) */}
+            {}
             <div className="hidden lg:flex w-1/2 relative bg-slate-900 justify-center items-center overflow-hidden">
-                {/* Background Image with Overlay */}
+                {}
                 <div className="absolute inset-0 bg-[#C53030]/10 mix-blend-luminosity duration-1000 transition-all hover:scale-105 hover:opacity-50"></div>
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent"></div>
                 <div className="absolute bottom-[-20%] left-[-10%] w-[70%] h-[70%] bg-[#C53030]/30 blur-[120px] rounded-full pointer-events-none"></div>
@@ -81,7 +81,7 @@ export function AuthForm({ type }: AuthFormProps) {
                 </div>
             </div>
 
-            {/* Right Column: Form */}
+            {}
             <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 relative overflow-hidden bg-slate-50">
                 <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-[#C53030]/5 via-transparent to-transparent pointer-events-none"></div>
 

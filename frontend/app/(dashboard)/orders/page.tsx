@@ -34,7 +34,7 @@ export default function OrdersPage() {
 
     const handleComplete = async (orderId: string) => {
         try {
-            // For prototype purposes, this completes the order immediately
+            
             await ordersAPI.complete(orderId);
             toast.success("Thanh ton thnh cng");
             fetchOrders();

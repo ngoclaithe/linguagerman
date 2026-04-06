@@ -80,12 +80,12 @@ export class ExamsService {
       const correctAnswer = question.correctAnswer.trim();
 
       if (question.type === 'FILL') {
-        // Case-insensitive comparison for fill-in-the-blank
+        
         if (userAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
           correctCount++;
         }
       } else {
-        // Exact comparison for choice and listening
+        
         if (userAnswer === correctAnswer) {
           correctCount++;
         }
@@ -100,13 +100,13 @@ export class ExamsService {
         examId,
         score,
         correctCount,
-        timeSpent: 0, // In a real app, you'd track this on the frontend
+        timeSpent: 0, 
       },
     });
   }
 
   async submitResult(userId: string, examId: string, resultData: any) {
-    // ... existing method if needed, but 'submit' is the new standard
+    
     return this.prisma.examResult.create({
       data: {
         userId,
@@ -129,15 +129,15 @@ export class ExamsService {
   async update(id: string, data: any) {
     const { questions, ...examData } = data;
 
-    // Use a transaction to update exam and replace questions
+    
     return this.prisma.$transaction(async (tx) => {
-      // Update exam fields
+      
       const updatedExam = await tx.exam.update({
         where: { id },
         data: examData,
       });
 
-      // If questions are provided, delete old ones and create new ones
+      
       if (questions && Array.isArray(questions)) {
         await tx.question.deleteMany({
           where: { examId: id },
@@ -157,7 +157,7 @@ export class ExamsService {
         });
       }
 
-      // Return the updated exam with questions
+      
       return tx.exam.findUnique({
         where: { id },
         include: { questions: true },
