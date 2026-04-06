@@ -31,6 +31,15 @@ model User {
   lessonProgress    LessonProgress[]
   courses       Course[]     @relation("TeacherCourses")
 
+  // Gamification & AI specific
+  currentLevel  CourseLevel @default(A1)
+  xp            Int         @default(0)
+  grammarScore  Int         @default(0)
+  vocabScore    Int         @default(0)
+  speakingScore Int         @default(0)
+
+  userQuests        UserQuest[]
+  aiConversations   AiConversation[]
 
   @@map("users")
 }
@@ -312,4 +321,78 @@ model OrderItem {
   @@map("order_items")
   @@index([orderId])
   @@index([courseId])
+}
+
+// ----------------------------------------------------------------------
+// LINGUAGERMAN SPECIFIC CORE GAMIFICATION AND AI INTEGRATION
+// ----------------------------------------------------------------------
+
+enum QuestCategory {
+  ARTIKEL      // Trắc nghiệm Mạo từ (Der, Die, Das)
+  KASUS        // Ôn luyện cách (Akkusativ, Dativ, Genitiv)
+  SPRECHEN     // Luyện nói âm khó / Umlaut
+  ALLGEMEIN    // Kỹ năng chung (Đạt 100 XP)
+}
+
+model Quest {
+  id          String        @id @default(cuid())
+  title       String
+  category    QuestCategory @default(ALLGEMEIN)
+  target      Int
+  rewardXp    Int
+  createdAt   DateTime      @default(now())
+  
+  userQuests  UserQuest[]
+
+  @@map("quests")
+}
+
+model UserQuest {
+  id          String   @id @default(cuid())
+  userId      String
+  questId     String
+  current     Int      @default(0)
+  claimed     Boolean  @default(false)
+  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quest       Quest    @relation(fields: [questId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, questId])
+  @@map("user_quests")
+  @@index([userId])
+}
+
+model AiConversation {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String   // Ví dụ: "Giao tiếp cơ bản A1"
+  level     CourseLevel @default(A1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  messages  AiMessage[]
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("ai_conversations")
+  @@index([userId])
+}
+
+model AiMessage {
+  id             String         @id @default(cuid())
+  conversationId String
+  role           String         // "user" | "bot"
+  content        String         @db.Text
+  
+  // Phân tích lỗi ngữ pháp tiếng Đức bằng GPT
+  grammarError   Boolean        @default(false)
+  correctionJson Json?          // Lưu JSON { errorType, correction, explanation } theo đặc thù tiếng Đức
+  
+  createdAt      DateTime       @default(now())
+
+  conversation   AiConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@map("ai_messages")
+  @@index([conversationId])
 }

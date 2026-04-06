@@ -19,6 +19,9 @@ import { UploadModule } from './upload/upload.module';
 import { StreamingModule } from './streaming/streaming.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { QuestsModule } from './quests/quests.module';
+import { LeaderboardModule } from './leaderboard/leaderboard.module';
+import { AiModule } from './ai/ai.module';
 
 @Module({
   imports: [
@@ -54,6 +57,9 @@ import { join } from 'path';
       rootPath: join(process.cwd(), 'public'),
       serveRoot: '/',
     }),
+    QuestsModule,
+    LeaderboardModule,
+    AiModule,
   ],
   controllers: [AppController],
   providers: [AppService],

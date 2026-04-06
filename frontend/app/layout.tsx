@@ -1,25 +1,23 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
+import LayoutWrapper from "@/components/layout/LayoutWrapper";
 
-const geistSans = Geist({
+const fontSans = Inter({
   variable: "--font-geist-sans",
-  subsets: ["latin"],
+  subsets: ["latin", "vietnamese"],
 });
 
-const geistMono = Geist_Mono({
+const fontMono = JetBrains_Mono({
   variable: "--font-geist-mono",
-  subsets: ["latin"],
+  subsets: ["latin", "vietnamese"],
 });
 
 export const metadata: Metadata = {
-  title: "LinguaGerman - Học Tiếng Nhật Online",
-  description: "Nền tảng học tiếng Nhật trực tuyến vi khóa học, bài tập, flashcard và ề thi Goethe",
+  title: "LinguaGerman - Học Tiếng Đức Online",
+  description: "Nền tảng học tiếng Đức trực tuyến với khóa học, bài tập, flashcard và đề thi Goethe",
 };
-
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
 
 export default function RootLayout({
   children,
@@ -29,12 +27,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${fontSans.variable} ${fontMono.variable} antialiased`}
       >
         <Providers>
-          <Header />
-          <main>{children}</main>
-          <Footer />
+          <LayoutWrapper>
+            {children}
+          </LayoutWrapper>
         </Providers>
       </body>
     </html>

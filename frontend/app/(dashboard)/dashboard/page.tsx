@@ -71,7 +71,7 @@ export default function DashboardPage() {
         setStats([
           {
             icon: BookOpen,
-            label: "Bài học ã xong",
+            label: "Bài học đã xong",
             value: (safeProgress.completedCount || 0).toString(),
             color: "text-blue-600",
             bgColor: "bg-blue-100/50",
@@ -85,14 +85,14 @@ export default function DashboardPage() {
           },
           {
             icon: Flame,
-            label: "Chui ngày",
+            label: "Chuỗi ngày",
             value: "1 ngày",
             color: "text-orange-500",
             bgColor: "bg-orange-100/50",
           },
           {
             icon: Award,
-            label: "Đề thi ã làm",
+            label: "Đề thi đã làm",
             value: safeExamResults.length.toString(),
             color: "text-purple-600",
             bgColor: "bg-purple-100/50",
@@ -109,8 +109,8 @@ export default function DashboardPage() {
 
   const upcomingTests = [
     {
-      title: "Kim tra A1",
-      date: "Sắp ti",
+      title: "Kiểm tra A1",
+      date: "Sắp tới",
       course: "Tiếng Nhật A1",
       questions: 50,
       time: "60 phút"
@@ -130,13 +130,13 @@ export default function DashboardPage() {
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-md rounded-full border border-white/20 text-xs font-medium mb-4">
                 <Flame className="w-4 h-4 text-orange-400" />
-                Chui học tập: 7 ngày liên tiếp
+                Chuỗi học tập: 7 ngày liên tiếp
               </div>
               <h1 className="text-3xl lg:text-5xl font-extrabold mb-2 tracking-tight">
-                Chào bui sáng, <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#C53030] to-rose-400">{user?.name || 'Bạn'}!</span> 
+                Chào buổi sáng, <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#C53030] to-rose-400">{user?.name || 'Bạn'}!</span> 
               </h1>
               <p className="text-slate-300 text-lg">
-                Hôm nay bạn mun tiếp tục bài học nào?
+                Hôm nay bạn muốn tiếp tục bài học nào?
               </p>
             </div>
             <Link
@@ -220,7 +220,7 @@ export default function DashboardPage() {
 
                       <div className="mb-5">
                         <div className="mb-2 flex items-center justify-between text-xs font-semibold">
-                          <span className="text-slate-400 uppercase tracking-wider">Tiến  khóa học</span>
+                          <span className="text-slate-400 uppercase tracking-wider">Tiến độ khóa học</span>
                           <span className="text-[#C53030]">{course.progress}%</span>
                         </div>
                         <div className="h-2.5 rounded-full bg-slate-100 overflow-hidden">
@@ -249,7 +249,7 @@ export default function DashboardPage() {
 
             {}
             <div>
-              <h2 className="mb-5 text-2xl font-bold text-slate-900">Hoạt ng gần ây</h2>
+              <h2 className="mb-5 text-2xl font-bold text-slate-900">Hoạt động gần đây</h2>
               <div className="rounded-3xl border border-slate-100 bg-white overflow-hidden shadow-sm">
                 <div className="divide-y divide-slate-50">
                   {recentLessons.map((lesson) => (
@@ -290,7 +290,7 @@ export default function DashboardPage() {
                 </div>
                 <div>
                   <h3 className="font-bold text-slate-900 text-lg">Mục tiêu học tập</h3>
-                  <p className="text-xs font-medium text-slate-500">Giữ nhp iu hàng ngày</p>
+                  <p className="text-xs font-medium text-slate-500">Giữ nhịp điệu hàng ngày</p>
                 </div>
               </div>
 
@@ -307,7 +307,7 @@ export default function DashboardPage() {
                     />
                   </div>
                   <p className="text-xs text-slate-500 font-medium mt-3 text-center">
-                    C lên! Bạn sắp hoàn thành mục tiêu tuần này ri.
+                    Cố lên! Bạn sắp hoàn thành mục tiêu tuần này rồi.
                   </p>
                 </div>
                 <button className="w-full rounded-xl border border-slate-200 bg-slate-50 py-3.5 text-sm font-bold text-slate-700 hover:bg-slate-100 transition-colors shadow-sm">
@@ -323,7 +323,7 @@ export default function DashboardPage() {
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-500">
                     <Calendar className="h-5 w-5" />
                   </div>
-                  <h3 className="font-bold text-slate-900">Kim tra sắp ti</h3>
+                  <h3 className="font-bold text-slate-900">Kiểm tra sắp tới</h3>
                 </div>
               </div>
 
@@ -363,7 +363,7 @@ export default function DashboardPage() {
 
             {}
             <div className="rounded-[2rem] border border-slate-100 bg-white p-6 md:p-8 shadow-md">
-              <h3 className="mb-5 font-bold text-slate-900">Li tắt công cụ</h3>
+              <h3 className="mb-5 font-bold text-slate-900">Lối tắt công cụ</h3>
               <div className="grid gap-3">
                 <Link
                   href="/flashcards"
@@ -372,7 +372,7 @@ export default function DashboardPage() {
                   <div className="w-10 h-10 rounded-xl bg-rose-50 flex justify-center items-center text-rose-500 group-hover:scale-110 transition-transform">
                     <BookOpen className="h-5 w-5" />
                   </div>
-                  <span className="font-medium text-slate-700">n tập Flashcard</span>
+                  <span className="font-medium text-slate-700">Ôn tập Flashcard</span>
                 </Link>
                 <Link
                   href="/tests"
@@ -381,7 +381,7 @@ export default function DashboardPage() {
                   <div className="w-10 h-10 rounded-xl bg-blue-50 flex justify-center items-center text-blue-500 group-hover:scale-110 transition-transform">
                     <FileText className="h-5 w-5" />
                   </div>
-                  <span className="font-medium text-slate-700">Làm ề thi mẫu</span>
+                  <span className="font-medium text-slate-700">Làm đề thi mẫu</span>
                 </Link>
                 <Link
                   href="/courses"
@@ -390,7 +390,7 @@ export default function DashboardPage() {
                   <div className="w-10 h-10 rounded-xl bg-emerald-50 flex justify-center items-center text-emerald-500 group-hover:scale-110 transition-transform">
                     <TrendingUp className="h-5 w-5" />
                   </div>
-                  <span className="font-medium text-slate-700">Đng ký thêm lp</span>
+                  <span className="font-medium text-slate-700">Đăng ký thêm lớp</span>
                 </Link>
               </div>
             </div>
