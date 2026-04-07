@@ -15,17 +15,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AiService = void 0;
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
+const personas_1 = require("./personas");
 const openai_1 = __importDefault(require("openai"));
 const google_translate_api_x_1 = __importDefault(require("google-translate-api-x"));
-const CHAT_SYSTEM_PROMPT = `Du bist Anna Keller, Deutschlehrerin aus Berlin, 28 Jahre alt.
-Du antwortest dem Schüler mit GENAU 1-2 kurzen Sätzen auf Deutsch.
-
-WICHTIG:
-- NUR 1-2 Sätze. Nicht mehr.
-- NUR Deutsch. Kein Englisch.
-- Keine Klammern. Keine Erklärungen.
-- Schreibe NUR als Anna. Schreibe NICHT was der Schüler sagt.
-- Beantworte Fragen direkt.`;
 const GRAMMAR_SYSTEM_PROMPT = `Du bist ein Deutsch-Grammatikprüfer. Prüfe den folgenden deutschen Satz eines Schülers.
 
 REGELN:
@@ -44,10 +36,22 @@ let AiService = class AiService {
             baseURL: this.configService.get('OPENAI_BASE_URL') || 'https://api.openai.com/v1',
         });
     }
+    getPersonas() {
+        return Object.values(personas_1.PERSONAS).map(p => ({
+            id: p.id,
+            name: p.name,
+            role: p.role,
+            avatar: p.avatar,
+            color: p.color,
+            greeting: p.greeting,
+            topics: p.topics,
+        }));
+    }
     async processGermanChat(dto) {
-        const { userInput, history, topic, level } = dto;
+        const { userInput, history, persona: personaId, topic, level } = dto;
+        const persona = (0, personas_1.getPersona)(personaId || 'anna');
         const chatMessages = [
-            { role: 'system', content: CHAT_SYSTEM_PROMPT + `\nThema: ${topic}\nNiveau: ${level}` },
+            { role: 'system', content: persona.systemPrompt + `\nThema: ${topic}\nNiveau: ${level}` },
         ];
         if (history && history.length > 0) {
             for (const msg of history) {
@@ -84,7 +88,8 @@ let AiService = class AiService {
             if (lines.length > 0) {
                 nextPhrase = lines[0];
             }
-            nextPhrase = nextPhrase.replace(/^(Anna|Lehrerin|Assistant|Bot)\s*[:;]\s*/i, '').trim();
+            const namePattern = new RegExp(`^(${persona.name}|Anna|Hanna|Lisa|Max|Thomas|Lehrerin|Assistant|Bot)\\s*[:;]\\s*`, 'i');
+            nextPhrase = nextPhrase.replace(namePattern, '').trim();
         }
         catch (error) {
             console.error('Chat Error:', error);
@@ -111,8 +116,7 @@ let AiService = class AiService {
                     suggestion = parsed.suggestion || "";
                     explanation = parsed.explanation || "";
                 }
-                catch {
-                }
+                catch { }
             }
         }
         catch (error) {
@@ -145,23 +149,18 @@ let AiService = class AiService {
         }
     }
     async suggestReplies(dto) {
-        const { history, conversationLog, topic, level } = dto;
+        const { history, topic, level, persona: personaId } = dto;
+        const persona = (0, personas_1.getPersona)(personaId || 'anna');
         let conversationText = '(Cuộc trò chuyện mới)';
         if (history && history.length > 0) {
-            conversationText = history.map((m) => m.role === 'user' ? `Schüler: ${m.content}` : `Anna: ${m.content}`).join('\n');
-        }
-        else if (conversationLog && conversationLog.length > 0) {
-            conversationText = conversationLog.join('\n');
+            conversationText = history.map((m) => m.role === 'user' ? `Schüler: ${m.content}` : `${persona.name}: ${m.content}`).join('\n');
         }
         const systemPrompt = `Gợi ý 3 câu tiếng Đức mà học viên có thể nói tiếp. Kèm nghĩa tiếng Việt.
 CHỈ trả về JSON array. KHÔNG tiếng Anh.
 
 Ví dụ:
-Hội thoại: "Anna: Hallo! Wie heißt du?"
+Hội thoại: "${persona.name}: Hallo! Wie heißt du?"
 [{"german":"Ich heiße Ngoc.","vietnamese":"Tôi tên là Ngọc."},{"german":"Guten Tag! Mein Name ist Mai.","vietnamese":"Xin chào! Tên tôi là Mai."},{"german":"Hallo! Ich bin Linh.","vietnamese":"Chào! Tôi là Linh."}]
-
-Hội thoại: "Schüler: Ich heiße Ngoc.\nAnna: Freut mich! Woher kommst du?"
-[{"german":"Ich komme aus Vietnam.","vietnamese":"Tôi đến từ Việt Nam."},{"german":"Aus Hanoi.","vietnamese":"Từ Hà Nội."},{"german":"Aus Vietnam. Und du?","vietnamese":"Từ Việt Nam. Còn bạn?"}]
 
 Hội thoại hiện tại (${level}):
 ${conversationText}`;
@@ -176,7 +175,6 @@ ${conversationText}`;
                 max_tokens: 400,
             });
             let responseText = completion.choices[0].message.content || '[]';
-            console.log("[DEBUG] suggestReplies RAW:", responseText);
             let cleanJson = responseText;
             const firstBracket = cleanJson.indexOf('[');
             const lastBracket = cleanJson.lastIndexOf(']');

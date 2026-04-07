@@ -1,21 +1,10 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ChatGermanDto } from './dto/chat-german.dto';
+import { getPersona, PERSONAS } from './personas';
 import OpenAI from 'openai';
 import translate from 'google-translate-api-x';
 
-// CALL 1: Pure conversation — Anna responds naturally in German
-const CHAT_SYSTEM_PROMPT = `Du bist Anna Keller, Deutschlehrerin aus Berlin, 28 Jahre alt.
-Du antwortest dem Schüler mit GENAU 1-2 kurzen Sätzen auf Deutsch.
-
-WICHTIG:
-- NUR 1-2 Sätze. Nicht mehr.
-- NUR Deutsch. Kein Englisch.
-- Keine Klammern. Keine Erklärungen.
-- Schreibe NUR als Anna. Schreibe NICHT was der Schüler sagt.
-- Beantworte Fragen direkt.`;
-
-// CALL 2: Grammar correction — separate analysis
 const GRAMMAR_SYSTEM_PROMPT = `Du bist ein Deutsch-Grammatikprüfer. Prüfe den folgenden deutschen Satz eines Schülers.
 
 REGELN:
@@ -36,15 +25,27 @@ export class AiService {
     });
   }
 
-  async processGermanChat(dto: ChatGermanDto) {
-    const { userInput, history, topic, level } = dto;
+  getPersonas() {
+    return Object.values(PERSONAS).map(p => ({
+      id: p.id,
+      name: p.name,
+      role: p.role,
+      avatar: p.avatar,
+      color: p.color,
+      greeting: p.greeting,
+      topics: p.topics,
+    }));
+  }
 
-    // ===== CALL 1: Get Anna's response (pure conversation) =====
+  async processGermanChat(dto: ChatGermanDto) {
+    const { userInput, history, persona: personaId, topic, level } = dto;
+    const persona = getPersona(personaId || 'anna');
+
+    // ===== CALL 1: Get persona's response (pure conversation) =====
     const chatMessages: { role: 'system' | 'user' | 'assistant'; content: string }[] = [
-      { role: 'system', content: CHAT_SYSTEM_PROMPT + `\nThema: ${topic}\nNiveau: ${level}` },
+      { role: 'system', content: persona.systemPrompt + `\nThema: ${topic}\nNiveau: ${level}` },
     ];
 
-    // Add conversation history as natural alternating turns
     if (history && history.length > 0) {
       for (const msg of history) {
         chatMessages.push({
@@ -54,7 +55,6 @@ export class AiService {
       }
     }
 
-    // Add current user message
     chatMessages.push({ role: 'user', content: userInput });
 
     let nextPhrase = "Entschuldigung, kannst du das wiederholen?";
@@ -69,8 +69,8 @@ export class AiService {
       });
 
       nextPhrase = chatCompletion.choices[0].message.content?.trim() || nextPhrase;
-      
-      // Clean up any JSON the model might have slipped in
+
+      // Clean up JSON if model outputs it
       if (nextPhrase.startsWith('{')) {
         try {
           const parsed = JSON.parse(nextPhrase.replace(/```json?|```/g, '').trim());
@@ -79,30 +79,27 @@ export class AiService {
           nextPhrase = nextPhrase.replace(/[{}"]/g, '').replace(/nextPhrase:/i, '').trim();
         }
       }
-      
-      // Strip markdown
+
       nextPhrase = nextPhrase.replace(/```[\s\S]*```/g, '').trim();
-      
-      // Remove parenthetical content entirely (stage directions, translations)
       nextPhrase = nextPhrase.replace(/\s*\([^)]*\)/g, '').trim();
-      
-      // If model generated multiple lines, take only the first non-empty one
+
       const lines = nextPhrase.split('\n').map(l => l.trim()).filter(l => l.length > 0);
       if (lines.length > 0) {
         nextPhrase = lines[0];
       }
-      
-      // Strip any remaining role prefixes
-      nextPhrase = nextPhrase.replace(/^(Anna|Lehrerin|Assistant|Bot)\s*[:;]\s*/i, '').trim();
-      
+
+      // Strip role prefixes
+      const namePattern = new RegExp(`^(${persona.name}|Anna|Hanna|Lisa|Max|Thomas|Lehrerin|Assistant|Bot)\\s*[:;]\\s*`, 'i');
+      nextPhrase = nextPhrase.replace(namePattern, '').trim();
+
     } catch (error) {
       console.error('Chat Error:', error);
     }
 
-    // ===== CALL 2: Grammar check (separate, parallel-safe) =====
+    // ===== CALL 2: Grammar check (separate) =====
     let suggestion = "";
     let explanation = "";
-    
+
     try {
       const grammarCompletion = await this.openai.chat.completions.create({
         model: 'mistralai/Mistral-7B-Instruct-v0.3',
@@ -115,7 +112,7 @@ export class AiService {
       });
 
       const grammarResult = grammarCompletion.choices[0].message.content?.trim() || 'OK';
-      
+
       if (grammarResult !== 'OK' && grammarResult.includes('{')) {
         try {
           const firstBrace = grammarResult.indexOf('{');
@@ -124,9 +121,7 @@ export class AiService {
           const parsed = JSON.parse(jsonStr);
           suggestion = parsed.suggestion || "";
           explanation = parsed.explanation || "";
-        } catch {
-          // Grammar check failed to parse, skip correction
-        }
+        } catch {}
       }
     } catch (error) {
       console.error('Grammar Check Error:', error);
@@ -135,14 +130,12 @@ export class AiService {
     return { nextPhrase, suggestion, explanation };
   }
 
-  // Use Google Translate instead of LLM — fast, accurate, free
   async translateText(text: string) {
     try {
       const result = await translate(text, { from: 'de', to: 'vi' });
       return { translation: result.text };
     } catch (err) {
       console.error('Google Translate Error:', err);
-      // Fallback to LLM if Google Translate fails
       try {
         const completion = await this.openai.chat.completions.create({
           model: 'mistralai/Mistral-7B-Instruct-v0.3',
@@ -161,27 +154,22 @@ export class AiService {
   }
 
   async suggestReplies(dto: any) {
-    const { history, conversationLog, topic, level } = dto;
+    const { history, topic, level, persona: personaId } = dto;
+    const persona = getPersona(personaId || 'anna');
 
-    // Build conversation text from structured history
     let conversationText = '(Cuộc trò chuyện mới)';
     if (history && history.length > 0) {
       conversationText = history.map((m: any) =>
-        m.role === 'user' ? `Schüler: ${m.content}` : `Anna: ${m.content}`
+        m.role === 'user' ? `Schüler: ${m.content}` : `${persona.name}: ${m.content}`
       ).join('\n');
-    } else if (conversationLog && conversationLog.length > 0) {
-      conversationText = conversationLog.join('\n');
     }
 
     const systemPrompt = `Gợi ý 3 câu tiếng Đức mà học viên có thể nói tiếp. Kèm nghĩa tiếng Việt.
 CHỈ trả về JSON array. KHÔNG tiếng Anh.
 
 Ví dụ:
-Hội thoại: "Anna: Hallo! Wie heißt du?"
+Hội thoại: "${persona.name}: Hallo! Wie heißt du?"
 [{"german":"Ich heiße Ngoc.","vietnamese":"Tôi tên là Ngọc."},{"german":"Guten Tag! Mein Name ist Mai.","vietnamese":"Xin chào! Tên tôi là Mai."},{"german":"Hallo! Ich bin Linh.","vietnamese":"Chào! Tôi là Linh."}]
-
-Hội thoại: "Schüler: Ich heiße Ngoc.\nAnna: Freut mich! Woher kommst du?"
-[{"german":"Ich komme aus Vietnam.","vietnamese":"Tôi đến từ Việt Nam."},{"german":"Aus Hanoi.","vietnamese":"Từ Hà Nội."},{"german":"Aus Vietnam. Und du?","vietnamese":"Từ Việt Nam. Còn bạn?"}]
 
 Hội thoại hiện tại (${level}):
 ${conversationText}`;
@@ -198,8 +186,6 @@ ${conversationText}`;
       });
 
       let responseText = completion.choices[0].message.content || '[]';
-      console.log("[DEBUG] suggestReplies RAW:", responseText);
-
       let cleanJson = responseText;
       const firstBracket = cleanJson.indexOf('[');
       const lastBracket = cleanJson.lastIndexOf(']');

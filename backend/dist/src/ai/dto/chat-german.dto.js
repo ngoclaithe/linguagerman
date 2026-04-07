@@ -28,8 +28,8 @@ __decorate([
 class ChatGermanDto {
     userInput;
     history;
-    conversationLog;
-    topic = 'Beruf';
+    persona = 'anna';
+    topic = 'Alltag';
     level = 'A1';
 }
 exports.ChatGermanDto = ChatGermanDto;
@@ -46,11 +46,10 @@ __decorate([
     __metadata("design:type", Array)
 ], ChatGermanDto.prototype, "history", void 0);
 __decorate([
-    (0, class_validator_1.IsArray)(),
-    (0, class_validator_1.IsString)({ each: true }),
+    (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", Array)
-], ChatGermanDto.prototype, "conversationLog", void 0);
+    __metadata("design:type", String)
+], ChatGermanDto.prototype, "persona", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),

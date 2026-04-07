@@ -259,9 +259,10 @@ export const adminAPI = {
 };
 
 export const aiAPI = {
-  chatGerman: (data: { userInput: string; history?: { role: 'user' | 'assistant'; content: string }[]; conversationLog?: string[]; topic: string; level: string }) =>
+  getPersonas: () => apiClient.get('/ai/personas'),
+  chatGerman: (data: { userInput: string; history?: { role: 'user' | 'assistant'; content: string }[]; persona?: string; topic: string; level: string }) =>
     apiClient.post('/ai/chat/german', data),
   translate: (text: string) => apiClient.post('/ai/translate', { text }),
-  suggestReplies: (data: { history?: { role: 'user' | 'assistant'; content: string }[]; conversationLog?: string[]; topic: string; level: string }) =>
+  suggestReplies: (data: { history?: { role: 'user' | 'assistant'; content: string }[]; persona?: string; topic: string; level: string }) =>
     apiClient.post('/ai/chat/suggest-replies', data),
 };

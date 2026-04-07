@@ -21,6 +21,9 @@ let AiController = class AiController {
     constructor(aiService) {
         this.aiService = aiService;
     }
+    getPersonas() {
+        return this.aiService.getPersonas();
+    }
     async chatGerman(chatDto) {
         return await this.aiService.processGermanChat(chatDto);
     }
@@ -32,6 +35,12 @@ let AiController = class AiController {
     }
 };
 exports.AiController = AiController;
+__decorate([
+    (0, common_1.Get)('personas'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], AiController.prototype, "getPersonas", null);
 __decorate([
     (0, common_1.Post)('chat/german'),
     __param(0, (0, common_1.Body)()),

@@ -20,14 +20,13 @@ export class ChatGermanDto {
   @IsOptional()
   history?: ChatMessageDto[];
 
-  @IsArray()
-  @IsString({ each: true })
+  @IsString()
   @IsOptional()
-  conversationLog?: string[];
+  persona?: string = 'anna';
 
   @IsString()
   @IsOptional()
-  topic?: string = 'Beruf';
+  topic?: string = 'Alltag';
 
   @IsString()
   @IsOptional()

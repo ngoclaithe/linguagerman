@@ -1,10 +1,15 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Get, Body } from '@nestjs/common';
 import { AiService } from './ai.service';
 import { ChatGermanDto } from './dto/chat-german.dto';
 
 @Controller('ai')
 export class AiController {
   constructor(private readonly aiService: AiService) {}
+
+  @Get('personas')
+  getPersonas() {
+    return this.aiService.getPersonas();
+  }
 
   @Post('chat/german')
   async chatGerman(@Body() chatDto: ChatGermanDto) {

@@ -5,7 +5,7 @@ export declare class ChatMessageDto {
 export declare class ChatGermanDto {
     userInput: string;
     history?: ChatMessageDto[];
-    conversationLog?: string[];
+    persona?: string;
     topic?: string;
     level?: string;
 }
