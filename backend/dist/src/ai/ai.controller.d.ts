@@ -3,7 +3,11 @@ import { ChatGermanDto } from './dto/chat-german.dto';
 export declare class AiController {
     private readonly aiService;
     constructor(aiService: AiService);
-    chatGerman(chatDto: ChatGermanDto): Promise<any>;
+    chatGerman(chatDto: ChatGermanDto): Promise<{
+        nextPhrase: string;
+        suggestion: string;
+        explanation: string;
+    }>;
     translate(body: {
         text: string;
     }): Promise<{

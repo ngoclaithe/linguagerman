@@ -4,7 +4,11 @@ export declare class AiService {
     private configService;
     private openai;
     constructor(configService: ConfigService);
-    processGermanChat(dto: ChatGermanDto): Promise<any>;
+    processGermanChat(dto: ChatGermanDto): Promise<{
+        nextPhrase: string;
+        suggestion: string;
+        explanation: string;
+    }>;
     translateText(text: string): Promise<{
         translation: string;
     }>;
