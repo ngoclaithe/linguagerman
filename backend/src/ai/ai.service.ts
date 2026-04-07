@@ -38,7 +38,7 @@ export class AiService {
 
     try {
       const completion = await this.openai.chat.completions.create({
-        model: 'Qwen/Qwen3-0.6B',
+        model: 'Qwen/Qwen2.5-7B-Instruct',
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userInput },
@@ -77,7 +77,7 @@ export class AiService {
   async translateText(text: string) {
     try {
       const completion = await this.openai.chat.completions.create({
-        model: 'Qwen/Qwen3-0.6B',
+        model: 'Qwen/Qwen2.5-7B-Instruct',
         messages: [
           { role: 'system', content: 'You are a translator. Translate the given German text to Vietnamese. DO NOT include any other words or explanations, ONLY the direct translation.' },
           { role: 'user', content: text },
