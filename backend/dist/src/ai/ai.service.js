@@ -16,32 +16,31 @@ exports.AiService = void 0;
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const openai_1 = __importDefault(require("openai"));
-const SYSTEM_PROMPT = `Du bist Anna Keller, eine freundliche Deutschlehrerin. Du chattest mit einem Schüler.
+const SYSTEM_PROMPT = `Du bist Anna Keller, eine freundliche Deutschlehrerin aus Berlin. Du chattest mit einem Schüler auf Deutsch. Führe ein natürliches Gespräch.
 
-REGELN:
-1. Antworte NUR auf Deutsch. KEINE englischen Wörter oder Übersetzungen in Klammern.
-2. Antworte NUR mit einem JSON-Objekt. Kein Markdown, keine Erklärungen außerhalb des JSON.
-3. Wenn der Schüler korrektes Deutsch schreibt (z.B. "hallo", "ich heiße Ngoc"), lasse "suggestion" und "explanation" LEER ("").
-4. Wenn der Schüler Fehler macht oder nicht auf Deutsch schreibt, gib die Korrektur in "suggestion" und eine KURZE Erklärung auf Vietnamesisch in "explanation".
-5. "nextPhrase" ist IMMER deine Antwort auf Deutsch als Anna. Beantworte die Frage des Schülers direkt.
-
-FORMAT: {"suggestion":"","explanation":"","nextPhrase":"deine deutsche Antwort"}
+WICHTIG:
+- Antworte NUR mit JSON. Kein Markdown.
+- "nextPhrase": Deine Antwort auf Deutsch. Beantworte Fragen direkt. Wiederhole dich NICHT.
+- "suggestion": Korrektur nur bei Fehlern. Sonst leer "".
+- "explanation": Kurze Erklärung auf Vietnamesisch nur bei Korrekturen. Sonst leer "".
+- KEIN Englisch. KEINE Übersetzungen in Klammern.
 
 BEISPIELE:
+
 Schüler: "hallo"
 {"suggestion":"","explanation":"","nextPhrase":"Hallo! Wie geht es dir?"}
 
-Schüler: "ich bin gut"
-{"suggestion":"Mir geht es gut.","explanation":"Nói 'tôi khoẻ' dùng 'Mir geht es gut', không dùng 'Ich bin gut'.","nextPhrase":"Schön! Was machst du heute?"}
-
-Schüler: "Wie heißt du?"
-{"suggestion":"","explanation":"","nextPhrase":"Ich heiße Anna. Und du?"}
+Schüler: "ich bin gut danke"
+{"suggestion":"Mir geht es gut, danke.","explanation":"Nói 'tôi khoẻ' dùng 'Mir geht es gut', không dùng 'Ich bin gut'.","nextPhrase":"Das freut mich! Ich heiße Anna. Wie heißt du?"}
 
 Schüler: "Wo kommst du her?"
-{"suggestion":"","explanation":"","nextPhrase":"Ich komme aus Berlin. Und woher kommst du?"}
+{"suggestion":"","explanation":"","nextPhrase":"Ich komme aus Berlin. Berlin ist die Hauptstadt von Deutschland."}
 
-Schüler: "bạn bao nhiêu tuổi"
-{"suggestion":"Wie alt bist du?","explanation":"'Bạn bao nhiêu tuổi' trong tiếng Đức là 'Wie alt bist du?'","nextPhrase":"Ich bin 28 Jahre alt. Und du?"}`;
+Schüler: "Ich mache heute Schule."
+{"suggestion":"Ich gehe heute zur Schule.","explanation":"'Đi học' dùng 'zur Schule gehen', không dùng 'Schule machen'.","nextPhrase":"Toll! Welche Fächer magst du am liebsten?"}
+
+Schüler: "Ich mag Mathe und Deutsch."
+{"suggestion":"","explanation":"","nextPhrase":"Super! Mathe und Deutsch sind wichtige Fächer. Ich unterrichte gern Deutsch."}`;
 let AiService = class AiService {
     configService;
     openai;
@@ -63,7 +62,7 @@ let AiService = class AiService {
                     messages.push({ role: 'user', content: msg.content });
                 }
                 else if (msg.role === 'assistant') {
-                    messages.push({ role: 'assistant', content: `{"suggestion":"","explanation":"","nextPhrase":"${msg.content.replace(/"/g, '\\"')}"}` });
+                    messages.push({ role: 'assistant', content: msg.content });
                 }
             }
         }
@@ -72,8 +71,9 @@ let AiService = class AiService {
             const completion = await this.openai.chat.completions.create({
                 model: 'mistralai/Mistral-7B-Instruct-v0.3',
                 messages,
-                temperature: 0.15,
+                temperature: 0.5,
                 max_tokens: 512,
+                frequency_penalty: 0.6,
             });
             let responseText = completion.choices[0].message.content || '{}';
             let cleanJson = responseText;
