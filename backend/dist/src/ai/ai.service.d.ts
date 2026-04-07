@@ -22,6 +22,9 @@ export declare class AiService {
         translation: string;
     }>;
     suggestReplies(dto: any): Promise<{
-        suggestions: any;
+        suggestions: {
+            german: string;
+            vietnamese: string;
+        }[];
     }>;
 }

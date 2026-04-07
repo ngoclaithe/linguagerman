@@ -171,89 +171,133 @@ export class AiService {
   }
 
   async suggestReplies(dto: any) {
-    const { history, topic, level, persona: personaId } = dto;
-    const persona = getPersona(personaId || 'anna');
+    const { history } = dto;
 
-    // Build the conversation as multi-turn messages so model understands context
-    const messages: { role: 'system' | 'user' | 'assistant'; content: string }[] = [
-      {
-        role: 'system',
-        content: `Du hilfst einem Deutschlerner. Basierend auf dem bisherigen Gespräch, schlage 3 passende deutsche Sätze vor, die der Schüler als Nächstes sagen könnte. Gib auch die vietnamesische Übersetzung an.
-
-Antworte NUR mit einem JSON-Array. KEIN Englisch. Format:
-[{"german":"...","vietnamese":"..."},{"german":"...","vietnamese":"..."},{"german":"...","vietnamese":"..."}]`
+    // Get the last bot message to understand what was asked
+    let lastBotMessage = '';
+    if (history && history.length > 0) {
+      for (let i = history.length - 1; i >= 0; i--) {
+        if (history[i].role === 'assistant') {
+          lastBotMessage = history[i].content.toLowerCase();
+          break;
+        }
       }
+    }
+
+    // Pattern-match the last bot message and return contextual suggestions
+    const patterns: { test: (msg: string) => boolean; suggestions: {german: string, vietnamese: string}[] }[] = [
+      {
+        test: (m) => /wie hei(ß|ss)t?\s*(du|sie)/i.test(m) || /dein(en?)?\s*name/i.test(m),
+        suggestions: [
+          { german: "Ich heiße Ngoc. Und du?", vietnamese: "Tôi tên là Ngọc. Còn bạn?" },
+          { german: "Mein Name ist Ngoc. Freut mich!", vietnamese: "Tên tôi là Ngọc. Rất vui được gặp!" },
+          { german: "Ich bin Ngoc aus Vietnam.", vietnamese: "Tôi là Ngọc, đến từ Việt Nam." },
+        ]
+      },
+      {
+        test: (m) => /wie geht('?s| es)\s*(dir|ihnen)/i.test(m) || /wie geht/i.test(m),
+        suggestions: [
+          { german: "Mir geht es gut, danke! Und dir?", vietnamese: "Tôi khoẻ, cảm ơn! Còn bạn?" },
+          { german: "Sehr gut, danke der Nachfrage!", vietnamese: "Rất tốt, cảm ơn bạn đã hỏi!" },
+          { german: "Nicht so gut, ich bin müde.", vietnamese: "Không tốt lắm, tôi mệt." },
+        ]
+      },
+      {
+        test: (m) => /woher\s*komm(st|en)/i.test(m) || /wo kommst du her/i.test(m),
+        suggestions: [
+          { german: "Ich komme aus Vietnam.", vietnamese: "Tôi đến từ Việt Nam." },
+          { german: "Aus Hanoi, Vietnam. Und du?", vietnamese: "Từ Hà Nội, Việt Nam. Còn bạn?" },
+          { german: "Ich bin aus Ho-Chi-Minh-Stadt.", vietnamese: "Tôi đến từ Thành phố Hồ Chí Minh." },
+        ]
+      },
+      {
+        test: (m) => /wie alt\s*(bist|sind)/i.test(m) || /alter/i.test(m),
+        suggestions: [
+          { german: "Ich bin 25 Jahre alt.", vietnamese: "Tôi 25 tuổi." },
+          { german: "Ich bin zwanzig. Und du?", vietnamese: "Tôi 20 tuổi. Còn bạn?" },
+          { german: "Das sage ich nicht! 😄", vietnamese: "Tôi không nói đâu! 😄" },
+        ]
+      },
+      {
+        test: (m) => /was (machst|machen|tust)\s*(du|sie)/i.test(m) || /beruf/i.test(m) || /was arbeitest/i.test(m),
+        suggestions: [
+          { german: "Ich bin Student. Ich studiere Informatik.", vietnamese: "Tôi là sinh viên. Tôi học Tin học." },
+          { german: "Ich arbeite als Programmierer.", vietnamese: "Tôi làm lập trình viên." },
+          { german: "Ich lerne gerade Deutsch!", vietnamese: "Tôi đang học tiếng Đức!" },
+        ]
+      },
+      {
+        test: (m) => /hobby/i.test(m) || /freizeit/i.test(m) || /was magst du/i.test(m) || /gern/i.test(m),
+        suggestions: [
+          { german: "Ich lese gern Bücher.", vietnamese: "Tôi thích đọc sách." },
+          { german: "Ich spiele gern Fußball.", vietnamese: "Tôi thích chơi bóng đá." },
+          { german: "Ich höre gern Musik und koche.", vietnamese: "Tôi thích nghe nhạc và nấu ăn." },
+        ]
+      },
+      {
+        test: (m) => /warum.*deutsch/i.test(m) || /deutsch.*lern/i.test(m),
+        suggestions: [
+          { german: "Ich möchte in Deutschland studieren.", vietnamese: "Tôi muốn du học ở Đức." },
+          { german: "Deutsche Kultur interessiert mich.", vietnamese: "Văn hoá Đức khiến tôi quan tâm." },
+          { german: "Ich brauche Deutsch für die Arbeit.", vietnamese: "Tôi cần tiếng Đức cho công việc." },
+        ]
+      },
+      {
+        test: (m) => /fächer|schule|universität|studier/i.test(m) || /was lernst/i.test(m),
+        suggestions: [
+          { german: "Ich mag Mathe und Physik.", vietnamese: "Tôi thích Toán và Vật lý." },
+          { german: "Ich studiere Informatik.", vietnamese: "Tôi học ngành Tin học." },
+          { german: "Sprachen sind mein Lieblingsfach.", vietnamese: "Ngoại ngữ là môn yêu thích của tôi." },
+        ]
+      },
+      {
+        test: (m) => /wetter|kalt|warm|regen|sonne/i.test(m),
+        suggestions: [
+          { german: "In Vietnam ist es sehr warm.", vietnamese: "Ở Việt Nam trời rất nóng." },
+          { german: "Ich mag Sonnenschein.", vietnamese: "Tôi thích trời nắng." },
+          { german: "Ist es in Deutschland kalt?", vietnamese: "Ở Đức có lạnh không?" },
+        ]
+      },
+      {
+        test: (m) => /essen|trinken|hunger|durst|lieblingsessen/i.test(m),
+        suggestions: [
+          { german: "Ich esse gern Pho.", vietnamese: "Tôi thích ăn Phở." },
+          { german: "Ich trinke gern Kaffee.", vietnamese: "Tôi thích uống cà phê." },
+          { german: "Was ist typisch deutsches Essen?", vietnamese: "Món ăn tiêu biểu của Đức là gì?" },
+        ]
+      },
+      {
+        test: (m) => /reisen|urlaub|besuch/i.test(m) || /wohin.*reis/i.test(m),
+        suggestions: [
+          { german: "Ich möchte Berlin besuchen.", vietnamese: "Tôi muốn thăm Berlin." },
+          { german: "München klingt interessant!", vietnamese: "München nghe thú vị lắm!" },
+          { german: "Welche Stadt empfiehlst du?", vietnamese: "Bạn giới thiệu thành phố nào?" },
+        ]
+      },
+      {
+        test: (m) => /familie/i.test(m) || /geschwister|bruder|schwester|eltern/i.test(m),
+        suggestions: [
+          { german: "Ich habe eine Schwester.", vietnamese: "Tôi có một chị/em gái." },
+          { german: "Meine Familie wohnt in Vietnam.", vietnamese: "Gia đình tôi sống ở Việt Nam." },
+          { german: "Ich habe zwei Brüder.", vietnamese: "Tôi có hai anh/em trai." },
+        ]
+      },
     ];
 
-    // Add conversation history as proper turns
-    if (history && history.length > 0) {
-      // Ensure first message after system is user
-      if (history[0].role === 'assistant') {
-        messages.push({ role: 'user', content: 'Hallo' });
-      }
-      
-      for (const msg of history) {
-        const role = msg.role === 'user' ? 'user' as const : 'assistant' as const;
-        const lastRole = messages[messages.length - 1]?.role;
-        if (role === lastRole) continue;
-        messages.push({ role, content: msg.content });
+    // Try to match a pattern
+    for (const pattern of patterns) {
+      if (pattern.test(lastBotMessage)) {
+        return { suggestions: pattern.suggestions };
       }
     }
 
-    // Final user message asking for suggestions
-    const lastRole = messages[messages.length - 1]?.role;
-    const askMsg = 'Was könnte ich als Nächstes sagen? Gib mir 3 Vorschläge als JSON array mit german und vietnamese.';
-    if (lastRole === 'user') {
-      messages.push({ role: 'assistant', content: 'Hier sind 3 Vorschläge:' });
-      messages.push({ role: 'user', content: askMsg });
-    } else {
-      messages.push({ role: 'user', content: askMsg });
-    }
-
-    try {
-      const completion = await this.openai.chat.completions.create({
-        model: 'mistralai/Mistral-7B-Instruct-v0.3',
-        messages,
-        temperature: 0.4,
-        max_tokens: 400,
-      });
-
-      let responseText = completion.choices[0].message.content || '[]';
-      console.log("[DEBUG] suggestReplies RAW:", responseText);
-      
-      let cleanJson = responseText;
-      const firstBracket = cleanJson.indexOf('[');
-      const lastBracket = cleanJson.lastIndexOf(']');
-      if (firstBracket !== -1 && lastBracket !== -1 && lastBracket >= firstBracket) {
-        cleanJson = cleanJson.slice(firstBracket, lastBracket + 1);
-      }
-
-      let parsedResponse;
-      try {
-        parsedResponse = JSON.parse(cleanJson);
-        if (!Array.isArray(parsedResponse) || parsedResponse.length === 0 || !parsedResponse[0]?.german) {
-          throw new Error('Invalid format');
-        }
-        // Ensure exactly 3
-        parsedResponse = parsedResponse.slice(0, 3);
-      } catch {
-        parsedResponse = [
-          { german: "Können Sie das wiederholen?", vietnamese: "Bạn có thể nhắc lại không?" },
-          { german: "Ich verstehe.", vietnamese: "Tôi hiểu rồi." },
-          { german: "Wie bitte?", vietnamese: "Xin lỗi, sao cơ?" }
-        ];
-      }
-
-      return { suggestions: parsedResponse };
-    } catch (error) {
-      console.error('Suggest Error:', error);
-      return {
-        suggestions: [
-          { german: "Können Sie das wiederholen?", vietnamese: "Bạn có thể nhắc lại không?" },
-          { german: "Ich verstehe.", vietnamese: "Tôi hiểu rồi." },
-          { german: "Wie bitte?", vietnamese: "Xin lỗi, sao cơ?" }
-        ]
-      };
-    }
+    // Default fallback — generic conversation continuers
+    return {
+      suggestions: [
+        { german: "Das ist interessant! Erzähl mir mehr.", vietnamese: "Thú vị quá! Kể thêm đi." },
+        { german: "Können Sie das wiederholen?", vietnamese: "Bạn có thể nhắc lại không?" },
+        { german: "Was bedeutet das?", vietnamese: "Điều đó nghĩa là gì?" },
+      ]
+    };
   }
 }

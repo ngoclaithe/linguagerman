@@ -23,6 +23,9 @@ export declare class AiController {
         translation: string;
     }>;
     suggestReplies(body: any): Promise<{
-        suggestions: any;
+        suggestions: {
+            german: string;
+            vietnamese: string;
+        }[];
     }>;
 }
