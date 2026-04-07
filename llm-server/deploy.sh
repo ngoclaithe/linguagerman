@@ -4,47 +4,39 @@ set -e
 echo "================================================"
 echo "  LinguaGerman LLM Server - GPU Deploy Script"
 echo "  Model: Qwen2.5-7B-Instruct (Q4_K_M)"
+echo "  Engine: llama.cpp (native CUDA build)"
 echo "  Target: RTX 4060 Ti 15GB VRAM"
 echo "================================================"
 
 # 1. Install system dependencies
 echo ""
-echo "[1/6] Installing system dependencies..."
+echo "[1/5] Installing system dependencies..."
 apt-get update -qq
-apt-get install -y -qq python3-pip python3-venv cmake build-essential curl ninja-build
+apt-get install -y -qq cmake build-essential curl git ninja-build
 
-# 2. Install Cloudflare Tunnel
+# 2. Build llama.cpp with CUDA
 echo ""
-echo "[2/6] Installing cloudflared..."
-if ! command -v cloudflared &> /dev/null; then
-    curl -L --output cloudflared.deb https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
-    dpkg -i cloudflared.deb
-    rm cloudflared.deb
-    echo "[*] cloudflared installed successfully"
-else
-    echo "[*] cloudflared already installed"
+echo "[2/5] Building llama.cpp with CUDA support..."
+cd /home/linguagerman
+if [ ! -d "llama.cpp" ]; then
+    git clone https://github.com/ggerganov/llama.cpp
 fi
+cd llama.cpp
+git pull
 
-# 3. Setup Python environment
-echo ""
-echo "[3/6] Setting up Python virtual environment..."
-cd "$(dirname "$0")"
-python3 -m venv .venv
-source .venv/bin/activate
+export PATH="/usr/local/cuda/bin:$PATH"
+cmake -B build -DGGML_CUDA=ON -DCMAKE_CUDA_COMPILER=/usr/local/cuda/bin/nvcc
+cmake --build build --config Release -j$(nproc)
+echo "[*] llama.cpp built successfully with CUDA!"
 
-# 4. Install Python dependencies with CUDA support (pre-built wheel)
+# 3. Download model if needed
 echo ""
-echo "[4/6] Installing Python dependencies (CUDA 12.4 pre-built)..."
-pip install --upgrade pip
-pip install llama-cpp-python --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cu124
-pip install fastapi uvicorn huggingface-hub pydantic
-
-# 5. Download model if needed
-echo ""
-echo "[5/6] Checking model file..."
+echo "[3/5] Checking model file..."
+cd /home/linguagerman/llm-server
 MODEL_FILE="Qwen2.5-7B-Instruct-Q4_K_M.gguf"
 if [ ! -f "$MODEL_FILE" ]; then
     echo "[*] Downloading $MODEL_FILE from HuggingFace..."
+    pip install huggingface-hub
     python3 -c "
 from huggingface_hub import hf_hub_download
 import shutil
@@ -56,20 +48,30 @@ else
     echo "[*] Model file already exists: $MODEL_FILE"
 fi
 
-# 6. Instructions
+# 4. Install cloudflared (optional)
+echo ""
+echo "[4/5] Installing cloudflared..."
+if ! command -v cloudflared &> /dev/null; then
+    curl -L --output cloudflared.deb https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
+    dpkg -i cloudflared.deb
+    rm cloudflared.deb
+    echo "[*] cloudflared installed"
+else
+    echo "[*] cloudflared already installed"
+fi
+
+# 5. Done
 echo ""
 echo "================================================"
 echo "  Setup complete!"
 echo "================================================"
 echo ""
 echo "To start the LLM server:"
-echo "  source .venv/bin/activate"
-echo "  python main.py"
+echo "  cd /home/linguagerman/llm-server"
+echo "  bash start.sh"
 echo ""
-echo "To create Cloudflare Tunnel (run in a separate terminal):"
-echo "  cloudflared tunnel --url http://localhost:8000"
-echo ""
-echo "Copy the tunnel URL (e.g. https://xxx.trycloudflare.com)"
-echo "and set it in your backend .env file:"
-echo "  OPENAI_BASE_URL=\"https://xxx.trycloudflare.com/v1\""
+echo "Or manually:"
+echo "  /home/linguagerman/llama.cpp/build/bin/llama-server \\"
+echo "    -m /home/linguagerman/llm-server/Qwen2.5-7B-Instruct-Q4_K_M.gguf \\"
+echo "    -ngl 99 -c 4096 --host 0.0.0.0 --port 8000"
 echo ""

@@ -38,10 +38,25 @@ llm = Llama(
     n_threads=8,
     n_ctx=4096,
     n_gpu_layers=-1,
-    verbose=False,
+    verbose=True,
 )
 load_time = time.time() - load_start
 print(f"[*] Model loaded in {load_time:.2f}s | RTX 4060 Ti GPU ready")
+
+import subprocess
+try:
+    gpu_info = subprocess.run(["nvidia-smi", "--query-gpu=memory.used,memory.total", "--format=csv,noheader,nounits"], capture_output=True, text=True)
+    if gpu_info.returncode == 0:
+        used, total = gpu_info.stdout.strip().split(", ")
+        print(f"[*] GPU VRAM: {used}MB / {total}MB used")
+        if int(used) < 500:
+            print("[!] WARNING: GPU VRAM usage too low! Model likely running on CPU only!")
+            print("[!] Reinstall llama-cpp-python with CUDA: CMAKE_ARGS='-DGGML_CUDA=on' pip install llama-cpp-python --no-cache-dir")
+    else:
+        print("[!] nvidia-smi failed")
+except Exception as e:
+    print(f"[!] GPU check error: {e}")
+
 print("=" * 60)
 
 request_count = 0

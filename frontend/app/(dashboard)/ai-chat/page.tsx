@@ -1,7 +1,7 @@
 'use client';
 
 import { Bot, Send, Mic, Volume2, Languages, Lightbulb, AlertCircle, User } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { aiAPI } from '@/lib/api';
 
 export interface AiSuggestion {
@@ -23,6 +23,11 @@ export interface AiMessage {
 export default function AiChatPage() {
     const [messages, setMessages] = useState<AiMessage[]>([]);
     const [playingProps, setPlayingProps] = useState<{ id: string | number, charIndex: number, length: number } | null>(null);
+    const chatEndRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [messages]);
 
     const playText = (id: string | number, text: string) => {
         if (typeof window !== 'undefined' && window.speechSynthesis) {
@@ -263,6 +268,7 @@ export default function AiChatPage() {
                         )}
                     </div>
                 )})}
+                <div ref={chatEndRef} />
             </div>
 
             {/* Input Bar */}
