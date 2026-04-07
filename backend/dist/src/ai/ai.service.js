@@ -172,6 +172,86 @@ let AiService = class AiService {
         }
         const patterns = [
             {
+                test: (m) => /wie geht.*(studium|uni|lernen|schule|kurs)/i.test(m),
+                suggestions: [
+                    { german: "Es läuft gut! Ich lerne viel.", vietnamese: "Diễn ra tốt! Tôi học được nhiều." },
+                    { german: "Das Studium ist anspruchsvoll, aber interessant.", vietnamese: "Việc học rất khó nhưng thú vị." },
+                    { german: "Ich habe gerade Prüfungen. Es ist stressig!", vietnamese: "Tôi đang thi. Căng thẳng lắm!" },
+                ]
+            },
+            {
+                test: (m) => /wie geht.*(arbeit|job|beruf)/i.test(m),
+                suggestions: [
+                    { german: "Die Arbeit macht mir Spaß!", vietnamese: "Công việc rất vui!" },
+                    { german: "Es ist manchmal stressig, aber okay.", vietnamese: "Đôi khi căng thẳng, nhưng ổn." },
+                    { german: "Ich suche gerade einen neuen Job.", vietnamese: "Tôi đang tìm việc mới." },
+                ]
+            },
+            {
+                test: (m) => /wie geht.*(deutsch|sprache)/i.test(m),
+                suggestions: [
+                    { german: "Deutsch ist schwer, aber ich übe jeden Tag!", vietnamese: "Tiếng Đức khó, nhưng tôi luyện mỗi ngày!" },
+                    { german: "Ich mache Fortschritte! Danke für die Hilfe.", vietnamese: "Tôi tiến bộ rồi! Cảm ơn đã giúp." },
+                    { german: "Die Grammatik ist schwierig für mich.", vietnamese: "Ngữ pháp khó với tôi." },
+                ]
+            },
+            {
+                test: (m) => /wie geht.*(leben|familie|gesundheit)/i.test(m),
+                suggestions: [
+                    { german: "Alles gut, danke! Und bei dir?", vietnamese: "Mọi thứ tốt, cảm ơn! Còn bạn?" },
+                    { german: "Meiner Familie geht es gut.", vietnamese: "Gia đình tôi khoẻ." },
+                    { german: "Es könnte besser sein, aber ich bin zufrieden.", vietnamese: "Có thể tốt hơn, nhưng tôi hài lòng." },
+                ]
+            },
+            {
+                test: (m) => /was (studierst|lernst)|welch.*(fach|fächer)|studiengang/i.test(m),
+                suggestions: [
+                    { german: "Ich studiere Informatik.", vietnamese: "Tôi học ngành Tin học." },
+                    { german: "Ich lerne Wirtschaft und Marketing.", vietnamese: "Tôi học Kinh tế và Marketing." },
+                    { german: "Mein Lieblingsfach ist Mathematik.", vietnamese: "Môn yêu thích của tôi là Toán." },
+                ]
+            },
+            {
+                test: (m) => /(gefällt|magst|liebst).*(studium|arbeit|stadt|land|deutschland)/i.test(m),
+                suggestions: [
+                    { german: "Mir gefällt die Kultur hier sehr.", vietnamese: "Tôi rất thích văn hoá ở đây." },
+                    { german: "Alles! Besonders die Menschen.", vietnamese: "Mọi thứ! Đặc biệt là con người." },
+                    { german: "Die Sprache finde ich schön.", vietnamese: "Tôi thấy ngôn ngữ rất đẹp." },
+                ]
+            },
+            {
+                test: (m) => /hast du.*?(geschwister|bruder|schwester|kind|haustier|freund|partner)/i.test(m),
+                suggestions: [
+                    { german: "Ja, ich habe eine ältere Schwester.", vietnamese: "Có, tôi có một chị gái." },
+                    { german: "Nein, ich bin Einzelkind.", vietnamese: "Không, tôi là con một." },
+                    { german: "Ja, ich habe zwei Brüder.", vietnamese: "Có, tôi có hai anh/em trai." },
+                ]
+            },
+            {
+                test: (m) => /warst du.*schon|schon.*besucht|schon.*gewesen/i.test(m),
+                suggestions: [
+                    { german: "Nein, noch nicht. Aber ich möchte gern!", vietnamese: "Chưa. Nhưng tôi rất muốn!" },
+                    { german: "Ja, einmal. Es war wunderschön!", vietnamese: "Rồi, một lần. Đẹp lắm!" },
+                    { german: "Nein, das ist mein erster Besuch.", vietnamese: "Không, đây là lần đầu tiên." },
+                ]
+            },
+            {
+                test: (m) => /wie findest du|was denkst du|was (hältst|meinst) du/i.test(m),
+                suggestions: [
+                    { german: "Ich finde das sehr interessant!", vietnamese: "Tôi thấy rất thú vị!" },
+                    { german: "Das gefällt mir gut.", vietnamese: "Tôi thích lắm." },
+                    { german: "Ich bin nicht sicher. Was denkst du?", vietnamese: "Tôi không chắc. Bạn nghĩ sao?" },
+                ]
+            },
+            {
+                test: (m) => /kannst du|möchtest du|willst du|würdest du/i.test(m),
+                suggestions: [
+                    { german: "Ja, gerne! Das klingt toll.", vietnamese: "Có, rất sẵn lòng! Nghe tuyệt!" },
+                    { german: "Ja, ich kann das.", vietnamese: "Vâng, tôi có thể." },
+                    { german: "Leider nicht, aber ich möchte es lernen.", vietnamese: "Tiếc là không, nhưng tôi muốn học." },
+                ]
+            },
+            {
                 test: (m) => /wie hei(ß|ss)t?\s*(du|sie)/i.test(m) || /dein(en?)?\s*name/i.test(m),
                 suggestions: [
                     { german: "Ich heiße Ngoc. Und du?", vietnamese: "Tôi tên là Ngọc. Còn bạn?" },
@@ -180,7 +260,7 @@ let AiService = class AiService {
                 ]
             },
             {
-                test: (m) => /wie geht('?s| es)\s*(dir|ihnen)/i.test(m) || /wie geht/i.test(m),
+                test: (m) => /wie geht/i.test(m),
                 suggestions: [
                     { german: "Mir geht es gut, danke! Und dir?", vietnamese: "Tôi khoẻ, cảm ơn! Còn bạn?" },
                     { german: "Sehr gut, danke der Nachfrage!", vietnamese: "Rất tốt, cảm ơn bạn đã hỏi!" },
@@ -196,7 +276,7 @@ let AiService = class AiService {
                 ]
             },
             {
-                test: (m) => /wie alt\s*(bist|sind)/i.test(m) || /alter/i.test(m),
+                test: (m) => /wie alt\s*(bist|sind)/i.test(m),
                 suggestions: [
                     { german: "Ich bin 25 Jahre alt.", vietnamese: "Tôi 25 tuổi." },
                     { german: "Ich bin zwanzig. Und du?", vietnamese: "Tôi 20 tuổi. Còn bạn?" },
@@ -228,7 +308,7 @@ let AiService = class AiService {
                 ]
             },
             {
-                test: (m) => /fächer|schule|universität|studier/i.test(m) || /was lernst/i.test(m),
+                test: (m) => /fächer|schule|universität|studium/i.test(m) || /was lernst/i.test(m),
                 suggestions: [
                     { german: "Ich mag Mathe und Physik.", vietnamese: "Tôi thích Toán và Vật lý." },
                     { german: "Ich studiere Informatik.", vietnamese: "Tôi học ngành Tin học." },
