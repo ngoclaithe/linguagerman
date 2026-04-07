@@ -121,9 +121,12 @@ export default function AiChatPage() {
         if (isLoading || isSuggesting) return;
         setIsSuggesting(true);
         try {
-            const conversationLog = messages.map(m => (m.role === 'user' ? 'Lernende/r: ' : 'Lehrerin: ') + m.content);
+            const history = messages.map(m => ({
+                role: m.role === 'user' ? 'user' as const : 'assistant' as const,
+                content: m.content
+            }));
             const data = await aiAPI.suggestReplies({
-                conversationLog,
+                history,
                 topic: 'Chào hỏi cơ bản hằng ngày',
                 level: 'A1'
             });
@@ -173,11 +176,15 @@ export default function AiChatPage() {
         setIsLoading(true);
 
         try {
-            const conversationLog = messages.map(m => (m.role === 'user' ? 'Lernende/r: ' : 'Lehrerin: ') + m.content);
+            // Build structured history as user/assistant pairs for multi-turn context
+            const history = messages.map(m => ({
+                role: m.role === 'user' ? 'user' as const : 'assistant' as const,
+                content: m.content
+            }));
 
             const data = await aiAPI.chatGerman({
                 userInput: userText,
-                conversationLog,
+                history,
                 topic: 'Chào hỏi cơ bản hằng ngày',
                 level: 'A1'
             });

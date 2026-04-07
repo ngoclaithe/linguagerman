@@ -9,10 +9,25 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ChatGermanDto = void 0;
+exports.ChatGermanDto = exports.ChatMessageDto = void 0;
 const class_validator_1 = require("class-validator");
+const class_transformer_1 = require("class-transformer");
+class ChatMessageDto {
+    role;
+    content;
+}
+exports.ChatMessageDto = ChatMessageDto;
+__decorate([
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], ChatMessageDto.prototype, "role", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], ChatMessageDto.prototype, "content", void 0);
 class ChatGermanDto {
     userInput;
+    history;
     conversationLog;
     topic = 'Beruf';
     level = 'A1';
@@ -25,7 +40,15 @@ __decorate([
 ], ChatGermanDto.prototype, "userInput", void 0);
 __decorate([
     (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.ValidateNested)({ each: true }),
+    (0, class_transformer_1.Type)(() => ChatMessageDto),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Array)
+], ChatGermanDto.prototype, "history", void 0);
+__decorate([
+    (0, class_validator_1.IsArray)(),
     (0, class_validator_1.IsString)({ each: true }),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Array)
 ], ChatGermanDto.prototype, "conversationLog", void 0);
 __decorate([

@@ -259,9 +259,9 @@ export const adminAPI = {
 };
 
 export const aiAPI = {
-  chatGerman: (data: { userInput: string; conversationLog: string[]; topic: string; level: string }) =>
+  chatGerman: (data: { userInput: string; history?: { role: 'user' | 'assistant'; content: string }[]; conversationLog?: string[]; topic: string; level: string }) =>
     apiClient.post('/ai/chat/german', data),
   translate: (text: string) => apiClient.post('/ai/translate', { text }),
-  suggestReplies: (data: { conversationLog: string[]; topic: string; level: string }) =>
+  suggestReplies: (data: { history?: { role: 'user' | 'assistant'; content: string }[]; conversationLog?: string[]; topic: string; level: string }) =>
     apiClient.post('/ai/chat/suggest-replies', data),
 };

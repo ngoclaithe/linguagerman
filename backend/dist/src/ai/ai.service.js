@@ -16,6 +16,32 @@ exports.AiService = void 0;
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const openai_1 = __importDefault(require("openai"));
+const SYSTEM_PROMPT = `Du bist Anna Keller, eine freundliche Deutschlehrerin. Du chattest mit einem Schüler.
+
+REGELN:
+1. Antworte NUR auf Deutsch. KEINE englischen Wörter oder Übersetzungen in Klammern.
+2. Antworte NUR mit einem JSON-Objekt. Kein Markdown, keine Erklärungen außerhalb des JSON.
+3. Wenn der Schüler korrektes Deutsch schreibt (z.B. "hallo", "ich heiße Ngoc"), lasse "suggestion" und "explanation" LEER ("").
+4. Wenn der Schüler Fehler macht oder nicht auf Deutsch schreibt, gib die Korrektur in "suggestion" und eine KURZE Erklärung auf Vietnamesisch in "explanation".
+5. "nextPhrase" ist IMMER deine Antwort auf Deutsch als Anna. Beantworte die Frage des Schülers direkt.
+
+FORMAT: {"suggestion":"","explanation":"","nextPhrase":"deine deutsche Antwort"}
+
+BEISPIELE:
+Schüler: "hallo"
+{"suggestion":"","explanation":"","nextPhrase":"Hallo! Wie geht es dir?"}
+
+Schüler: "ich bin gut"
+{"suggestion":"Mir geht es gut.","explanation":"Nói 'tôi khoẻ' dùng 'Mir geht es gut', không dùng 'Ich bin gut'.","nextPhrase":"Schön! Was machst du heute?"}
+
+Schüler: "Wie heißt du?"
+{"suggestion":"","explanation":"","nextPhrase":"Ich heiße Anna. Und du?"}
+
+Schüler: "Wo kommst du her?"
+{"suggestion":"","explanation":"","nextPhrase":"Ich komme aus Berlin. Und woher kommst du?"}
+
+Schüler: "bạn bao nhiêu tuổi"
+{"suggestion":"Wie alt bist du?","explanation":"'Bạn bao nhiêu tuổi' trong tiếng Đức là 'Wie alt bist du?'","nextPhrase":"Ich bin 28 Jahre alt. Und du?"}`;
 let AiService = class AiService {
     configService;
     openai;
@@ -27,44 +53,26 @@ let AiService = class AiService {
         });
     }
     async processGermanChat(dto) {
-        const { userInput, conversationLog, topic, level } = dto;
-        const systemPrompt = `You are Anna Keller, a friendly German teacher. 
-You MUST output ONLY a pure, valid JSON object. No explanation, no markdown.
-
-STUDENT'S MESSAGE: "${userInput}"
-CEFR LEVEL: ${level}
-TOPIC: ${topic}
-
-CONVERSATION LOG:
-${conversationLog.length > 0 ? conversationLog.join('\n') : '(New conversation)'}
-
-# TASK
-Respond to the student in German as Anna Keller ("nextPhrase").
-If the student makes a grammar mistake, provide the correction ("suggestion") and a short Vietnamese explanation ("explanation"). If their German is correct, leave "suggestion" and "explanation" empty ("").
-
-# EXAMPLES
-User: "hallo"
-Output: {"suggestion":"", "explanation":"", "nextPhrase":"Hallo! Wie geht es dir heute?"}
-
-User: "ich bin gut"
-Output: {"suggestion":"Mir geht es gut.", "explanation":"Trong tiếng Đức, để nói 'tôi khoẻ', ta dùng 'Mir geht es gut' chứ không dùng 'Ich bin gut'.", "nextPhrase":"Das freut mich zu hören! Was machst du gerade?"}
-
-User: "bạn tên gì"
-Output: {"suggestion":"Wie heißt du?", "explanation":"Câu hỏi 'bạn tên gì' trong tiếng Đức là 'Wie heißt du?'.", "nextPhrase":"Ich heiße Anna. Und wie heißt du?"}
-
-User: "Wo kommst du her?"
-Output: {"suggestion":"", "explanation":"", "nextPhrase":"Ich komme aus München. Und woher kommst du?"}
-
-# YOUR TURN
-Output ONLY the JSON object.`;
+        const { userInput, history, topic, level } = dto;
+        const messages = [
+            { role: 'system', content: SYSTEM_PROMPT + `\n\nSchüler-Niveau: ${level}\nThema: ${topic}` },
+        ];
+        if (history && history.length > 0) {
+            for (const msg of history) {
+                if (msg.role === 'user') {
+                    messages.push({ role: 'user', content: msg.content });
+                }
+                else if (msg.role === 'assistant') {
+                    messages.push({ role: 'assistant', content: `{"suggestion":"","explanation":"","nextPhrase":"${msg.content.replace(/"/g, '\\"')}"}` });
+                }
+            }
+        }
+        messages.push({ role: 'user', content: userInput });
         try {
             const completion = await this.openai.chat.completions.create({
                 model: 'mistralai/Mistral-7B-Instruct-v0.3',
-                messages: [
-                    { role: 'system', content: systemPrompt },
-                    { role: 'user', content: userInput },
-                ],
-                temperature: 0.1,
+                messages,
+                temperature: 0.15,
                 max_tokens: 512,
             });
             let responseText = completion.choices[0].message.content || '{}';
@@ -83,7 +91,7 @@ Output ONLY the JSON object.`;
                 parsedResponse = {
                     suggestion: "",
                     explanation: "",
-                    nextPhrase: responseText.replace(/[\{\}]/g, '').trim() || "Entschuldigung, ich habe dich nicht verstanden."
+                    nextPhrase: responseText.replace(/[\{\}"]/g, '').trim() || "Entschuldigung, kannst du das wiederholen?"
                 };
             }
             return parsedResponse;
@@ -98,7 +106,10 @@ Output ONLY the JSON object.`;
             const completion = await this.openai.chat.completions.create({
                 model: 'mistralai/Mistral-7B-Instruct-v0.3',
                 messages: [
-                    { role: 'system', content: 'You are a translator. Translate the given German text to natural Vietnamese. OUTPUT ONLY THE VIETNAMESE TRANSLATION. NEVER explain. NEVER write the original text. NEVER write English.\n\nExample 1:\nGerman: Wie heißen Sie?\nOutput: Tên của bạn là gì?\n\nExample 2:\nGerman: Guten Tag! Wie geht es dir?\nOutput: Chào buổi sáng! Bạn có khoẻ không?' },
+                    {
+                        role: 'system',
+                        content: 'Dịch tiếng Đức sang tiếng Việt. CHỈ viết bản dịch tiếng Việt. KHÔNG giải thích. KHÔNG viết tiếng Anh. KHÔNG viết lại câu gốc.\n\nVí dụ:\nInput: Wie heißen Sie?\nOutput: Tên của bạn là gì?\n\nInput: Ich komme aus Berlin.\nOutput: Tôi đến từ Berlin.'
+                    },
                     { role: 'user', content: text },
                 ],
                 temperature: 0.1,
@@ -117,37 +128,42 @@ Output ONLY the JSON object.`;
         }
     }
     async suggestReplies(dto) {
-        const { conversationLog, topic, level } = dto;
-        const systemPrompt = `You suggest German phrases a student could say next in a conversation. Output ONLY a JSON array of 3 objects. No markdown, no explanation.
+        const { history, conversationLog, topic, level } = dto;
+        let conversationText = '(New conversation)';
+        if (history && history.length > 0) {
+            conversationText = history.map((m) => m.role === 'user' ? `Schüler: ${m.content}` : `Anna: ${m.content}`).join('\n');
+        }
+        else if (conversationLog && conversationLog.length > 0) {
+            conversationText = conversationLog.join('\n');
+        }
+        const systemPrompt = `Gợi ý 3 câu tiếng Đức mà học viên có thể nói tiếp trong cuộc hội thoại. Kèm nghĩa tiếng Việt.
 
-Each object has "german" (the German phrase) and "vietnamese" (Vietnamese translation). NEVER use English.
+CHỈ trả về JSON array. KHÔNG viết tiếng Anh. KHÔNG giải thích.
 
-# EXAMPLES
+Ví dụ 1:
+Hội thoại: "Anna: Hallo! Wie heißt du?"
+Output: [{"german":"Ich heiße Ngoc. Und Sie?","vietnamese":"Tôi tên là Ngọc. Còn bạn?"},{"german":"Guten Tag! Mein Name ist Mai.","vietnamese":"Xin chào! Tên tôi là Mai."},{"german":"Hi! Ich bin Linh.","vietnamese":"Xin chào! Tôi là Linh."}]
 
-Conversation: "Lehrerin: Hallo! Wie heißt du?"
-Output: [{"german":"Ich heiße Ngoc. Und Sie?","vietnamese":"Tôi tên là Ngọc. Còn bạn?"},{"german":"Guten Tag! Mein Name ist Ngoc.","vietnamese":"Chào buổi chiều! Tên tôi là Ngọc."},{"german":"Hallo! Ich bin Ngoc.","vietnamese":"Xin chào! Tôi là Ngọc."}]
+Ví dụ 2:
+Hội thoại: "Schüler: Ich heiße Ngoc.\nAnna: Freut mich! Woher kommst du?"
+Output: [{"german":"Ich komme aus Vietnam.","vietnamese":"Tôi đến từ Việt Nam."},{"german":"Ich komme aus Hanoi, Vietnam.","vietnamese":"Tôi đến từ Hà Nội, Việt Nam."},{"german":"Aus Vietnam. Und Sie?","vietnamese":"Từ Việt Nam. Còn bạn?"}]
 
-Conversation: "Lehrerin: Wie alt bist du?"
-Output: [{"german":"Ich bin 25 Jahre alt.","vietnamese":"Tôi 25 tuổi."},{"german":"Ich bin zwanzig Jahre alt. Und Sie?","vietnamese":"Tôi 20 tuổi. Còn bạn?"},{"german":"Darf ich fragen, wie alt Sie sind?","vietnamese":"Cho tôi hỏi, bạn bao nhiêu tuổi?"}]
+Hội thoại hiện tại (${level}, ${topic}):
+${conversationText}
 
-# YOUR TURN
-CEFR Level: ${level}
-Topic: ${topic}
-Conversation:
-${conversationLog && conversationLog.length > 0 ? conversationLog.join('\n') : '(New conversation)'}
-
-Output ONLY the JSON array:`;
+Output:`;
         try {
             const completion = await this.openai.chat.completions.create({
                 model: 'mistralai/Mistral-7B-Instruct-v0.3',
                 messages: [
                     { role: 'system', content: systemPrompt },
-                    { role: 'user', content: 'Suggest 3 German replies with Vietnamese translations. JSON array ONLY.' },
+                    { role: 'user', content: 'Gợi ý 3 câu tiếng Đức kèm nghĩa tiếng Việt. JSON array.' },
                 ],
                 temperature: 0.3,
                 max_tokens: 400,
             });
             let responseText = completion.choices[0].message.content || '[]';
+            console.log("[DEBUG] suggestReplies RAW:", responseText);
             let cleanJson = responseText;
             const firstBracket = cleanJson.indexOf('[');
             const lastBracket = cleanJson.lastIndexOf(']');
@@ -156,19 +172,13 @@ Output ONLY the JSON array:`;
             }
             let parsedResponse;
             try {
-                console.log("[DEBUG] suggestReplies RAW output:", responseText);
                 parsedResponse = JSON.parse(cleanJson);
                 if (!Array.isArray(parsedResponse) || !parsedResponse[0]?.german) {
-                    console.warn("AI returned JSON but not array of objects:", parsedResponse);
-                    parsedResponse = [
-                        { german: "Können Sie das wiederholen?", vietnamese: "Bạn có thể nhắc lại được không?" },
-                        { german: "Ich verstehe nicht.", vietnamese: "Tôi không hiểu." },
-                        { german: "Wie bitte?", vietnamese: "Dạ xin lỗi, sao cơ?" }
-                    ];
+                    throw new Error('Invalid format');
                 }
             }
             catch (parseError) {
-                console.warn("AI didn't return valid JSON array. Raw output:", responseText);
+                console.warn("suggestReplies parse failed. Raw:", responseText);
                 parsedResponse = [
                     { german: "Können Sie das wiederholen?", vietnamese: "Bạn có thể nhắc lại được không?" },
                     { german: "Ich verstehe nicht.", vietnamese: "Tôi không hiểu." },
@@ -179,11 +189,13 @@ Output ONLY the JSON array:`;
         }
         catch (error) {
             console.error('OpenAI Error:', error);
-            return { suggestions: [
+            return {
+                suggestions: [
                     { german: "Ein Moment bitte...", vietnamese: "Xin chờ một lát..." },
                     { german: "Gute Frage!", vietnamese: "Câu hỏi hay đấy!" },
                     { german: "Lass mich überlegen.", vietnamese: "Để tôi suy nghĩ đã." }
-                ] };
+                ]
+            };
         }
     }
 };
