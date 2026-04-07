@@ -29,7 +29,7 @@ let AiService = class AiService {
     async processGermanChat(dto) {
         const { userInput, conversationLog, topic, level } = dto;
         const systemPrompt = `You are Anna Keller, a friendly German teacher. 
-You MUST output ONLY a pure, valid JSON object. No explanation, no markdown tags like \`\`\`json. 
+You MUST output ONLY a pure, valid JSON object. No explanation, no markdown.
 
 STUDENT'S MESSAGE: "${userInput}"
 CEFR LEVEL: ${level}
@@ -38,14 +38,25 @@ TOPIC: ${topic}
 CONVERSATION LOG:
 ${conversationLog.length > 0 ? conversationLog.join('\n') : '(New conversation)'}
 
-INSTRUCTIONS:
-1. 'nextPhrase': You MUST reply to the student in GERMAN ONLY to continue the conversation. NEVER include English or Vietnamese translations in parentheses. ONLY 100% GERMAN.
-2. 'suggestion': If the student made a grammar/spelling mistake, or spoke in a non-German language, provide the corrected/translated German sentence here. IF THE STUDENT'S MESSAGE IS VALID AND CORRECT GERMAN (e.g. "hallo", "danke"), YOU MUST LEAVE THIS EMPTY "".
-3. 'explanation': If you provided a 'suggestion', write a brief explanation in Vietnamese here. Otherwise, leave it EMPTY "".
+# TASK
+Respond to the student in German as Anna Keller ("nextPhrase").
+If the student makes a grammar mistake, provide the correction ("suggestion") and a short Vietnamese explanation ("explanation"). If their German is correct, leave "suggestion" and "explanation" empty ("").
 
-STRICT JSON FORMAT REQUIRED:
-{"suggestion":"","explanation":"","nextPhrase":"<German response only>"}
-`;
+# EXAMPLES
+User: "hallo"
+Output: {"suggestion":"", "explanation":"", "nextPhrase":"Hallo! Wie geht es dir heute?"}
+
+User: "ich bin gut"
+Output: {"suggestion":"Mir geht es gut.", "explanation":"Trong tiếng Đức, để nói 'tôi khoẻ', ta dùng 'Mir geht es gut' chứ không dùng 'Ich bin gut'.", "nextPhrase":"Das freut mich zu hören! Was machst du gerade?"}
+
+User: "bạn tên gì"
+Output: {"suggestion":"Wie heißt du?", "explanation":"Câu hỏi 'bạn tên gì' trong tiếng Đức là 'Wie heißt du?'.", "nextPhrase":"Ich heiße Anna. Und wie heißt du?"}
+
+User: "Wo kommst du her?"
+Output: {"suggestion":"", "explanation":"", "nextPhrase":"Ich komme aus München. Und woher kommst du?"}
+
+# YOUR TURN
+Output ONLY the JSON object.`;
         try {
             const completion = await this.openai.chat.completions.create({
                 model: 'mistralai/Mistral-7B-Instruct-v0.3',
@@ -53,7 +64,7 @@ STRICT JSON FORMAT REQUIRED:
                     { role: 'system', content: systemPrompt },
                     { role: 'user', content: userInput },
                 ],
-                temperature: 0.2,
+                temperature: 0.1,
                 max_tokens: 512,
             });
             let responseText = completion.choices[0].message.content || '{}';
@@ -87,10 +98,10 @@ STRICT JSON FORMAT REQUIRED:
             const completion = await this.openai.chat.completions.create({
                 model: 'mistralai/Mistral-7B-Instruct-v0.3',
                 messages: [
-                    { role: 'system', content: 'You are a translator. Translate the given German text to Vietnamese. OUTPUT ONLY THE DIRECT VIETNAMESE TRANSLATION. NEVER explain. NEVER write the original text. NEVER write English.' },
+                    { role: 'system', content: 'You are a translator. Translate the given German text to natural Vietnamese. OUTPUT ONLY THE VIETNAMESE TRANSLATION. NEVER explain. NEVER write the original text. NEVER write English.\n\nExample 1:\nGerman: Wie heißen Sie?\nOutput: Tên của bạn là gì?\n\nExample 2:\nGerman: Guten Tag! Wie geht es dir?\nOutput: Chào buổi sáng! Bạn có khoẻ không?' },
                     { role: 'user', content: text },
                 ],
-                temperature: 0.3,
+                temperature: 0.1,
                 max_tokens: 256
             });
             let translation = completion.choices[0].message.content || '...';

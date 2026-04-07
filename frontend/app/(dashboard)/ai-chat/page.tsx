@@ -44,12 +44,23 @@ export default function AiChatPage() {
             
             utterance.onboundary = (event) => {
                 if (event.name === 'word') {
-                    const charIndex = event.charIndex;
-                    const sub = text.substring(charIndex);
-                    // Lấy từ để bôi sáng, bỏ qua dấu câu
-                    const match = sub.match(/^[^\s.,!?;:]+/);
-                    const length = event.charLength || (match ? match[0].length : 1);
-                    setPlayingProps({ id, charIndex, length });
+                    let charIndex = event.charIndex;
+                    let sub = text.substring(charIndex);
+                    
+                    // Chrome TTS frequently emits charIndex pointing to space or punctuation before the word.
+                    // We scan forward to find the actual start of the word.
+                    const wordStartMatch = sub.match(/[^\s.,!?;:()]/);
+                    if (wordStartMatch) {
+                        charIndex += wordStartMatch.index!;
+                        sub = text.substring(charIndex);
+                        // Measure the length of the word (excluding trailing punctuation)
+                        const match = sub.match(/^[^\s.,!?;:()]+/);
+                        let length = match ? match[0].length : 1;
+                        if (event.charLength && event.charLength > length && !match) {
+                            length = event.charLength;
+                        }
+                        setPlayingProps({ id, charIndex, length });
+                    }
                 }
             };
 
