@@ -17,8 +17,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-MODEL_FILE = "qwen2.5-7b-instruct-q4_k_m.gguf"
-REPO_ID = "Qwen/Qwen2.5-7B-Instruct-GGUF"
+MODEL_FILE = "Qwen2.5-7B-Instruct-Q4_K_M.gguf"
+REPO_ID = "bartowski/Qwen2.5-7B-Instruct-GGUF"
 
 if not os.path.exists(MODEL_FILE):
     print(f"[*] Downloading {MODEL_FILE} from {REPO_ID}...")

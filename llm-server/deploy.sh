@@ -11,7 +11,7 @@ echo "================================================"
 echo ""
 echo "[1/6] Installing system dependencies..."
 apt-get update -qq
-apt-get install -y -qq python3-pip python3-venv cmake build-essential curl
+apt-get install -y -qq python3-pip python3-venv cmake build-essential curl ninja-build
 
 # 2. Install Cloudflare Tunnel
 echo ""
@@ -32,23 +32,23 @@ cd "$(dirname "$0")"
 python3 -m venv .venv
 source .venv/bin/activate
 
-# 4. Install Python dependencies with CUDA support
+# 4. Install Python dependencies with CUDA support (pre-built wheel)
 echo ""
-echo "[4/6] Installing Python dependencies (with CUDA)..."
+echo "[4/6] Installing Python dependencies (CUDA 12.4 pre-built)..."
 pip install --upgrade pip
-CMAKE_ARGS="-DGGML_CUDA=on" pip install llama-cpp-python --force-reinstall --no-cache-dir
+pip install llama-cpp-python --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cu124
 pip install fastapi uvicorn huggingface-hub pydantic
 
 # 5. Download model if needed
 echo ""
 echo "[5/6] Checking model file..."
-MODEL_FILE="qwen2.5-7b-instruct-q4_k_m.gguf"
+MODEL_FILE="Qwen2.5-7B-Instruct-Q4_K_M.gguf"
 if [ ! -f "$MODEL_FILE" ]; then
     echo "[*] Downloading $MODEL_FILE from HuggingFace..."
     python3 -c "
 from huggingface_hub import hf_hub_download
 import shutil
-path = hf_hub_download(repo_id='Qwen/Qwen2.5-7B-Instruct-GGUF', filename='$MODEL_FILE')
+path = hf_hub_download(repo_id='bartowski/Qwen2.5-7B-Instruct-GGUF', filename='$MODEL_FILE')
 shutil.copy(path, '$MODEL_FILE')
 print(f'[*] Model saved: $MODEL_FILE')
 "
