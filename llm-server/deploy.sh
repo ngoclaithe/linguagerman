@@ -10,15 +10,15 @@ echo "================================================"
 # 1. Install system dependencies
 echo ""
 echo "[1/6] Installing system dependencies..."
-sudo apt-get update -qq
-sudo apt-get install -y -qq python3-pip python3-venv cmake build-essential curl
+apt-get update -qq
+apt-get install -y -qq python3-pip python3-venv cmake build-essential curl
 
 # 2. Install Cloudflare Tunnel
 echo ""
 echo "[2/6] Installing cloudflared..."
 if ! command -v cloudflared &> /dev/null; then
     curl -L --output cloudflared.deb https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
-    sudo dpkg -i cloudflared.deb
+    dpkg -i cloudflared.deb
     rm cloudflared.deb
     echo "[*] cloudflared installed successfully"
 else
