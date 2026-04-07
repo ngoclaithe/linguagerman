@@ -1,12 +1,12 @@
 # LinguaGerman LLM Server
 
-Local LLM server using **Qwen2.5-7B-Instruct** (Q4_K_M GGUF) with native llama.cpp CUDA build.
+Local LLM server using **Mistral-7B-Instruct-v0.3** (Q4_K_M GGUF) with native llama.cpp CUDA build.
 
 ## Specs
 
 | Component | Value |
 |---|---|
-| Model | Qwen2.5-7B-Instruct-Q4_K_M (~4.7GB) |
+| Model | Mistral-7B-Instruct-v0.3-Q4_K_M (~4.4GB) |
 | Engine | llama.cpp (native C++ with CUDA) |
 | GPU | RTX 4060 Ti 15GB VRAM |
 | API | OpenAI-compatible (`/v1/chat/completions`) |
@@ -39,14 +39,6 @@ Backend `.env`:
 OPENAI_BASE_URL="http://127.0.0.1:8000/v1"
 ```
 
-## API Endpoints (provided by llama-server)
-
-| Method | Path | Description |
-|---|---|---|
-| GET | `/health` | Health check |
-| GET | `/v1/models` | List models |
-| POST | `/v1/chat/completions` | Chat (OpenAI-compatible) |
-
 ## Test
 
 ```bash
@@ -55,7 +47,7 @@ curl http://localhost:8000/health
 curl -X POST http://localhost:8000/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "Qwen2.5-7B-Instruct",
+    "model": "Mistral-7B-Instruct-v0.3",
     "messages": [
       {"role": "system", "content": "You are a German teacher."},
       {"role": "user", "content": "Hallo, wie geht es dir?"}

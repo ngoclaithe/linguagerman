@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MODEL="/home/linguagerman/llm-server/Qwen2.5-7B-Instruct-Q4_K_M.gguf"
+MODEL="/home/linguagerman/llm-server/Mistral-7B-Instruct-v0.3-Q4_K_M.gguf"
 SERVER="/home/linguagerman/llama.cpp/build/bin/llama-server"
 
 echo "================================================"

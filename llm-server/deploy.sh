@@ -3,7 +3,7 @@ set -e
 
 echo "================================================"
 echo "  LinguaGerman LLM Server - GPU Deploy Script"
-echo "  Model: Qwen2.5-7B-Instruct (Q4_K_M)"
+echo "  Model: Mistral-7B-Instruct-v0.3 (Q4_K_M)"
 echo "  Engine: llama.cpp (native CUDA build)"
 echo "  Target: RTX 4060 Ti 15GB VRAM"
 echo "================================================"
@@ -33,14 +33,14 @@ echo "[*] llama.cpp built successfully with CUDA!"
 echo ""
 echo "[3/5] Checking model file..."
 cd /home/linguagerman/llm-server
-MODEL_FILE="Qwen2.5-7B-Instruct-Q4_K_M.gguf"
+MODEL_FILE="Mistral-7B-Instruct-v0.3-Q4_K_M.gguf"
 if [ ! -f "$MODEL_FILE" ]; then
     echo "[*] Downloading $MODEL_FILE from HuggingFace..."
     pip install huggingface-hub
     python3 -c "
 from huggingface_hub import hf_hub_download
 import shutil
-path = hf_hub_download(repo_id='bartowski/Qwen2.5-7B-Instruct-GGUF', filename='$MODEL_FILE')
+path = hf_hub_download(repo_id='bartowski/Mistral-7B-Instruct-v0.3-GGUF', filename='$MODEL_FILE')
 shutil.copy(path, '$MODEL_FILE')
 print(f'[*] Model saved: $MODEL_FILE')
 "

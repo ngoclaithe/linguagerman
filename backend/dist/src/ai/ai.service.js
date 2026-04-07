@@ -49,7 +49,7 @@ RESPOND WITH ONLY THIS JSON (no other text):
 {"suggestion":"corrected German or empty","explanation":"Vietnamese explanation or empty","nextPhrase":"your German response as Anna"}`;
         try {
             const completion = await this.openai.chat.completions.create({
-                model: 'Qwen/Qwen2.5-7B-Instruct',
+                model: 'mistralai/Mistral-7B-Instruct-v0.3',
                 messages: [
                     { role: 'system', content: systemPrompt },
                     { role: 'user', content: userInput },
@@ -86,7 +86,7 @@ RESPOND WITH ONLY THIS JSON (no other text):
     async translateText(text) {
         try {
             const completion = await this.openai.chat.completions.create({
-                model: 'Qwen/Qwen2.5-7B-Instruct',
+                model: 'mistralai/Mistral-7B-Instruct-v0.3',
                 messages: [
                     { role: 'system', content: 'You are a translator. Translate the given German text to Vietnamese. DO NOT include any other words or explanations, ONLY the direct translation.' },
                     { role: 'user', content: text },

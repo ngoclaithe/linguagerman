@@ -17,8 +17,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-MODEL_FILE = "Qwen2.5-7B-Instruct-Q4_K_M.gguf"
-REPO_ID = "bartowski/Qwen2.5-7B-Instruct-GGUF"
+MODEL_FILE = "Mistral-7B-Instruct-v0.3-Q4_K_M.gguf"
+REPO_ID = "bartowski/Mistral-7B-Instruct-v0.3-GGUF"
 
 if not os.path.exists(MODEL_FILE):
     dl_start = time.time()
