@@ -5,16 +5,15 @@ import OpenAI from 'openai';
 import translate from 'google-translate-api-x';
 
 // CALL 1: Pure conversation — Anna responds naturally in German
-const CHAT_SYSTEM_PROMPT = `Du bist Anna Keller, eine freundliche Deutschlehrerin aus Berlin, 28 Jahre alt.
-Du führst ein natürliches Gespräch mit einem Schüler auf Deutsch (Niveau A1-A2).
+const CHAT_SYSTEM_PROMPT = `Du bist Anna Keller, Deutschlehrerin aus Berlin, 28 Jahre alt.
+Du antwortest dem Schüler mit GENAU 1-2 kurzen Sätzen auf Deutsch.
 
-REGELN:
-- Antworte IMMER auf Deutsch. Nur Deutsch.
-- KEIN Englisch. KEINE Übersetzungen in Klammern.
-- Beantworte Fragen des Schülers DIREKT und ehrlich.
-- Wiederhole NICHT die gleiche Frage. Führe das Gespräch weiter.
-- Merke dir was der Schüler gesagt hat (Name, Herkunft, etc.).
-- Halte deine Antworten kurz (1-2 Sätze).`;
+WICHTIG:
+- NUR 1-2 Sätze. Nicht mehr.
+- NUR Deutsch. Kein Englisch.
+- Keine Klammern. Keine Erklärungen.
+- Schreibe NUR als Anna. Schreibe NICHT was der Schüler sagt.
+- Beantworte Fragen direkt.`;
 
 // CALL 2: Grammar correction — separate analysis
 const GRAMMAR_SYSTEM_PROMPT = `Du bist ein Deutsch-Grammatikprüfer. Prüfe den folgenden deutschen Satz eines Schülers.
@@ -64,25 +63,37 @@ export class AiService {
         model: 'mistralai/Mistral-7B-Instruct-v0.3',
         messages: chatMessages,
         temperature: 0.6,
-        max_tokens: 256,
-        frequency_penalty: 0.5,
+        max_tokens: 80,
+        frequency_penalty: 0.7,
+        stop: ['\n\n', 'Schüler:', 'Student:', '(', 'User:'],
       });
 
       nextPhrase = chatCompletion.choices[0].message.content?.trim() || nextPhrase;
       
-      // Clean up any JSON or markdown the model might have slipped in
-      if (nextPhrase.startsWith('{') || nextPhrase.startsWith('```')) {
+      // Clean up any JSON the model might have slipped in
+      if (nextPhrase.startsWith('{')) {
         try {
           const parsed = JSON.parse(nextPhrase.replace(/```json?|```/g, '').trim());
-          nextPhrase = parsed.nextPhrase || parsed.response || nextPhrase;
+          nextPhrase = parsed.nextPhrase || parsed.response || parsed.content || nextPhrase;
         } catch {
-          // If it's not valid JSON, strip braces
           nextPhrase = nextPhrase.replace(/[{}"]/g, '').replace(/nextPhrase:/i, '').trim();
         }
       }
       
-      // Remove any English translations in parentheses
-      nextPhrase = nextPhrase.replace(/\s*\([^)]*(?:translation|meaning|English|Vietnamese)[^)]*\)/gi, '');
+      // Strip markdown
+      nextPhrase = nextPhrase.replace(/```[\s\S]*```/g, '').trim();
+      
+      // Remove parenthetical content entirely (stage directions, translations)
+      nextPhrase = nextPhrase.replace(/\s*\([^)]*\)/g, '').trim();
+      
+      // If model generated multiple lines, take only the first non-empty one
+      const lines = nextPhrase.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+      if (lines.length > 0) {
+        nextPhrase = lines[0];
+      }
+      
+      // Strip any remaining role prefixes
+      nextPhrase = nextPhrase.replace(/^(Anna|Lehrerin|Assistant|Bot)\s*[:;]\s*/i, '').trim();
       
     } catch (error) {
       console.error('Chat Error:', error);

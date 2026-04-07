@@ -17,16 +17,15 @@ const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const openai_1 = __importDefault(require("openai"));
 const google_translate_api_x_1 = __importDefault(require("google-translate-api-x"));
-const CHAT_SYSTEM_PROMPT = `Du bist Anna Keller, eine freundliche Deutschlehrerin aus Berlin, 28 Jahre alt.
-Du führst ein natürliches Gespräch mit einem Schüler auf Deutsch (Niveau A1-A2).
+const CHAT_SYSTEM_PROMPT = `Du bist Anna Keller, Deutschlehrerin aus Berlin, 28 Jahre alt.
+Du antwortest dem Schüler mit GENAU 1-2 kurzen Sätzen auf Deutsch.
 
-REGELN:
-- Antworte IMMER auf Deutsch. Nur Deutsch.
-- KEIN Englisch. KEINE Übersetzungen in Klammern.
-- Beantworte Fragen des Schülers DIREKT und ehrlich.
-- Wiederhole NICHT die gleiche Frage. Führe das Gespräch weiter.
-- Merke dir was der Schüler gesagt hat (Name, Herkunft, etc.).
-- Halte deine Antworten kurz (1-2 Sätze).`;
+WICHTIG:
+- NUR 1-2 Sätze. Nicht mehr.
+- NUR Deutsch. Kein Englisch.
+- Keine Klammern. Keine Erklärungen.
+- Schreibe NUR als Anna. Schreibe NICHT was der Schüler sagt.
+- Beantworte Fragen direkt.`;
 const GRAMMAR_SYSTEM_PROMPT = `Du bist ein Deutsch-Grammatikprüfer. Prüfe den folgenden deutschen Satz eines Schülers.
 
 REGELN:
@@ -65,20 +64,27 @@ let AiService = class AiService {
                 model: 'mistralai/Mistral-7B-Instruct-v0.3',
                 messages: chatMessages,
                 temperature: 0.6,
-                max_tokens: 256,
-                frequency_penalty: 0.5,
+                max_tokens: 80,
+                frequency_penalty: 0.7,
+                stop: ['\n\n', 'Schüler:', 'Student:', '(', 'User:'],
             });
             nextPhrase = chatCompletion.choices[0].message.content?.trim() || nextPhrase;
-            if (nextPhrase.startsWith('{') || nextPhrase.startsWith('```')) {
+            if (nextPhrase.startsWith('{')) {
                 try {
                     const parsed = JSON.parse(nextPhrase.replace(/```json?|```/g, '').trim());
-                    nextPhrase = parsed.nextPhrase || parsed.response || nextPhrase;
+                    nextPhrase = parsed.nextPhrase || parsed.response || parsed.content || nextPhrase;
                 }
                 catch {
                     nextPhrase = nextPhrase.replace(/[{}"]/g, '').replace(/nextPhrase:/i, '').trim();
                 }
             }
-            nextPhrase = nextPhrase.replace(/\s*\([^)]*(?:translation|meaning|English|Vietnamese)[^)]*\)/gi, '');
+            nextPhrase = nextPhrase.replace(/```[\s\S]*```/g, '').trim();
+            nextPhrase = nextPhrase.replace(/\s*\([^)]*\)/g, '').trim();
+            const lines = nextPhrase.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+            if (lines.length > 0) {
+                nextPhrase = lines[0];
+            }
+            nextPhrase = nextPhrase.replace(/^(Anna|Lehrerin|Assistant|Bot)\s*[:;]\s*/i, '').trim();
         }
         catch (error) {
             console.error('Chat Error:', error);
