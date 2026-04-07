@@ -27,6 +27,9 @@ let AiController = class AiController {
     async translate(body) {
         return await this.aiService.translateText(body.text);
     }
+    async suggestReplies(body) {
+        return await this.aiService.suggestReplies(body);
+    }
 };
 exports.AiController = AiController;
 __decorate([
@@ -43,6 +46,13 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], AiController.prototype, "translate", null);
+__decorate([
+    (0, common_1.Post)('chat/suggest-replies'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AiController.prototype, "suggestReplies", null);
 exports.AiController = AiController = __decorate([
     (0, common_1.Controller)('ai'),
     __metadata("design:paramtypes", [ai_service_1.AiService])

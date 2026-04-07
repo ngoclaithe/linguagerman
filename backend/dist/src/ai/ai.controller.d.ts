@@ -9,4 +9,7 @@ export declare class AiController {
     }): Promise<{
         translation: string;
     }>;
+    suggestReplies(body: any): Promise<{
+        suggestions: any;
+    }>;
 }

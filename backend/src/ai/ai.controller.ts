@@ -15,4 +15,9 @@ export class AiController {
   async translate(@Body() body: { text: string }) {
     return await this.aiService.translateText(body.text);
   }
+
+  @Post('chat/suggest-replies')
+  async suggestReplies(@Body() body: any) {
+    return await this.aiService.suggestReplies(body);
+  }
 }

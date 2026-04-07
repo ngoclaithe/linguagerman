@@ -8,4 +8,7 @@ export declare class AiService {
     translateText(text: string): Promise<{
         translation: string;
     }>;
+    suggestReplies(dto: any): Promise<{
+        suggestions: any;
+    }>;
 }

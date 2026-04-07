@@ -24,6 +24,9 @@ export default function AiChatPage() {
     const [messages, setMessages] = useState<AiMessage[]>([]);
     const [playingProps, setPlayingProps] = useState<{ id: string | number, charIndex: number, length: number } | null>(null);
     const chatEndRef = useRef<HTMLDivElement>(null);
+    const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+    const [isSuggesting, setIsSuggesting] = useState(false);
+    const [suggestions, setSuggestions] = useState<{german: string, vietnamese: string}[]>([]);
 
     useEffect(() => {
         chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -42,21 +45,50 @@ export default function AiChatPage() {
             utterance.onboundary = (event) => {
                 if (event.name === 'word') {
                     const charIndex = event.charIndex;
-                    const match = text.substring(charIndex).match(/^\S+/);
-                    const length = match ? match[0].length : 0;
+                    const sub = text.substring(charIndex);
+                    // Lấy từ để bôi sáng, bỏ qua dấu câu
+                    const match = sub.match(/^[^\s.,!?;:]+/);
+                    const length = event.charLength || (match ? match[0].length : 1);
                     setPlayingProps({ id, charIndex, length });
                 }
             };
 
             utterance.onend = () => {
                 setPlayingProps(null);
+                utteranceRef.current = null;
+                (window as any)._tts = null;
             };
 
             utterance.onerror = () => {
                 setPlayingProps(null);
+                utteranceRef.current = null;
+                (window as any)._tts = null;
             };
 
+            // Lưu reference đẻ tránh Chrome Garbage Collection lỗi làm mất event boundary
+            utteranceRef.current = utterance;
+            (window as any)._tts = utterance; 
             window.speechSynthesis.speak(utterance);
+        }
+    };
+
+    const handleSuggest = async () => {
+        if (isLoading || isSuggesting) return;
+        setIsSuggesting(true);
+        try {
+            const conversationLog = messages.map(m => (m.role === 'user' ? 'Lernende/r: ' : 'Lehrerin: ') + m.content);
+            const data = await aiAPI.suggestReplies({
+                conversationLog,
+                topic: 'Chào hỏi cơ bản hằng ngày',
+                level: 'A1'
+            });
+            if (data && data.suggestions) {
+                setSuggestions(data.suggestions);
+            }
+        } catch (error) {
+            console.error("Lỗi lấy đề xuất:", error);
+        } finally {
+            setIsSuggesting(false);
         }
     };
 
@@ -195,17 +227,17 @@ export default function AiChatPage() {
                         <div className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'} max-w-[80%]`}>
                             {msg.role === 'user' && msg.suggestion && (
                                 <div className="bg-violet-600 rounded-[1.5rem] rounded-tr-sm p-1 w-full mb-2 shadow-sm">
-                                    <div className="px-4 pt-2 text-white/90 text-sm font-medium line-through decoration-rose-400 decoration-2 mb-2">
+                                    <div className="px-4 pt-2 text-white/90 text-[15px] font-medium line-through decoration-rose-400 decoration-2 mb-2">
                                         {msg.suggestion.original}
                                     </div>
-                                    <div className="bg-white rounded-[1.2rem] p-5">
-                                        <div className="flex items-center gap-2 text-violet-600 font-black text-xs uppercase mb-3">
+                                    <div className="bg-white rounded-[1.2rem] p-4 text-[15px]">
+                                        <div className="flex items-center gap-2 text-violet-600 font-bold text-xs uppercase mb-2">
                                             <Lightbulb className="w-4 h-4" /> Gợi ý tự nhiên hơn
                                         </div>
-                                        <div className="text-slate-800 font-bold text-lg mb-3">
+                                        <div className="text-slate-800 font-bold mb-2">
                                             {msg.suggestion.better}
                                         </div>
-                                        <ul className="list-disc pl-5 text-sm font-medium text-slate-600">
+                                        <ul className="list-disc pl-5 text-[14px] font-medium text-slate-600">
                                             <li>{msg.suggestion.reason}</li>
                                         </ul>
                                     </div>
@@ -271,9 +303,44 @@ export default function AiChatPage() {
                 <div ref={chatEndRef} />
             </div>
 
+            {/* Suggestion List Overlay if active */}
+            {suggestions.length > 0 && (
+                <div className="absolute bottom-[80px] left-0 right-0 px-4 z-20 flex justify-center pb-2 pointer-events-none">
+                    <div className="bg-white/95 backdrop-blur-md rounded-[1.5rem] shadow-2xl border border-violet-100 p-4 w-full max-w-2xl animate-fade-in-up pointer-events-auto ring-1 ring-black/5">
+                        <div className="flex justify-between items-center mb-3 px-2">
+                            <h4 className="text-[13px] font-black text-violet-600 flex items-center gap-2 uppercase tracking-wide">
+                                <Lightbulb className="w-4 h-4 text-amber-500" /> AI Đề Xuất Trả Lời
+                            </h4>
+                            <button onClick={() => setSuggestions([])} className="text-slate-400 hover:text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-full p-1 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                            </button>
+                        </div>
+                        <div className="space-y-2">
+                            {suggestions.map((sug, i) => (
+                                <button
+                                    key={i}
+                                    onClick={() => {
+                                        setInput(sug.german);
+                                        setSuggestions([]);
+                                    }}
+                                    className="w-full text-left p-3 rounded-xl hover:bg-violet-50 transition-colors group border border-transparent hover:border-violet-100 block"
+                                >
+                                    <div className="font-bold text-slate-800 text-[15px] group-hover:text-violet-700 transition-colors">
+                                        {sug.german}
+                                    </div>
+                                    <div className="text-sm font-medium text-slate-500 mt-0.5">
+                                        {sug.vietnamese}
+                                    </div>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Input Bar */}
             <div className="bg-white border-t border-slate-200 p-4 shrink-0">
-                <form onSubmit={handleSend} className="max-w-4xl mx-auto flex items-center gap-3 bg-slate-50 border border-slate-200 rounded-[2rem] p-2 pr-3">
+                <form onSubmit={handleSend} className="max-w-4xl mx-auto flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-[2rem] p-2 pr-3 relative">
                     <button type="button" className="w-12 h-12 flex items-center justify-center rounded-full text-slate-400 hover:text-violet-600 hover:bg-violet-50 transition-colors">
                         <Mic className="w-6 h-6" />
                     </button>
@@ -284,6 +351,22 @@ export default function AiChatPage() {
                         placeholder="Nhập tin nhắn bằng tiếng Đức..." 
                         className="flex-1 bg-transparent border-none outline-none text-slate-800 font-medium placeholder:text-slate-400"
                     />
+                    
+                    {/* Add Suggestion Button */}
+                    <button 
+                        type="button"
+                        onClick={handleSuggest}
+                        disabled={isSuggesting || isLoading}
+                        title="Đề xuất câu trả lời"
+                        className="w-10 h-10 flex items-center justify-center rounded-full text-amber-500 hover:bg-amber-50 transition-colors disabled:opacity-50"
+                    >
+                        {isSuggesting ? (
+                            <span className="w-4 h-4 border-2 border-slate-200 border-t-amber-500 rounded-full animate-spin"></span>
+                        ) : (
+                            <Lightbulb className="w-5 h-5" />
+                        )}
+                    </button>
+
                     <button 
                         type="submit"
                         disabled={!input.trim()}
@@ -295,4 +378,20 @@ export default function AiChatPage() {
             </div>
         </div>
     );
+}
+
+// Add simple CSS animation to the file
+const styles = `
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+  animation: fadeInUp 0.3s ease-out forwards;
+}
+`;
+if (typeof document !== 'undefined') {
+  const styleSheet = document.createElement("style");
+  styleSheet.innerText = styles;
+  document.head.appendChild(styleSheet);
 }

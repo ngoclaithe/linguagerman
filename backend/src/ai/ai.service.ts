@@ -17,26 +17,24 @@ export class AiService {
   async processGermanChat(dto: ChatGermanDto) {
     const { userInput, conversationLog, topic, level } = dto;
 
+    const systemPrompt = `You are Anna Keller, a friendly German teacher. 
+You MUST output ONLY a pure, valid JSON object. No explanation, no markdown tags like \`\`\`json. 
 
-    const systemPrompt = `You are Anna Keller, a friendly and intelligent German teacher. You ALWAYS reply in valid JSON only, no markdown, no explanation outside JSON.
+STUDENT'S MESSAGE: "${userInput}"
+CEFR LEVEL: ${level}
+TOPIC: ${topic}
 
-STUDENT INFO:
-- CEFR Level: ${level}
-- Topic: ${topic}
-
-CONVERSATION SO FAR:
+CONVERSATION LOG:
 ${conversationLog.length > 0 ? conversationLog.join('\n') : '(New conversation)'}
 
-RULES:
-1. The student just said: "${userInput}"
-2. Analyze their input:
-   - If they wrote in a NON-German language (Vietnamese, English, etc.), set "suggestion" to the correct German translation of what they meant, and "explanation" to a Vietnamese explanation of the German sentence.
-   - If they wrote German with grammar/spelling mistakes, set "suggestion" to the corrected German sentence, and "explanation" to a Vietnamese explanation of what was wrong.
-   - If their German is perfect, set "suggestion" to "" and "explanation" to "".
-3. Always set "nextPhrase" to your conversational response AS Anna Keller in German, appropriate for ${level} level.
+INSTRUCTIONS:
+1. 'nextPhrase': You MUST reply to the student in GERMAN ONLY to continue the conversation. NEVER include English or Vietnamese translations in parentheses. ONLY 100% GERMAN.
+2. 'suggestion': If the student made a grammar/spelling mistake, or spoke in a non-German language, provide the corrected/translated German sentence here. IF THE STUDENT'S MESSAGE IS VALID AND CORRECT GERMAN (e.g. "hallo", "danke"), YOU MUST LEAVE THIS EMPTY "".
+3. 'explanation': If you provided a 'suggestion', write a brief explanation in Vietnamese here. Otherwise, leave it EMPTY "".
 
-RESPOND WITH ONLY THIS JSON (no other text):
-{"suggestion":"corrected German or empty","explanation":"Vietnamese explanation or empty","nextPhrase":"your German response as Anna"}`;
+STRICT JSON FORMAT REQUIRED:
+{"suggestion":"","explanation":"","nextPhrase":"<German response only>"}
+`;
 
     try {
       const completion = await this.openai.chat.completions.create({
@@ -45,13 +43,12 @@ RESPOND WITH ONLY THIS JSON (no other text):
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userInput },
         ],
-        temperature: 0.7,
-        max_tokens: 1024,
+        temperature: 0.2, // Lower temperature for more stable JSON
+        max_tokens: 512,
       });
 
-      const responseText = completion.choices[0].message.content || '{}';
+      let responseText = completion.choices[0].message.content || '{}';
       
-      // Extract ONLY the JSON part to ignore <think> tags or markdown backticks
       let cleanJson = responseText;
       const firstBrace = cleanJson.indexOf('{');
       const lastBrace = cleanJson.lastIndexOf('}');
@@ -67,7 +64,7 @@ RESPOND WITH ONLY THIS JSON (no other text):
           parsedResponse = {
               suggestion: "",
               explanation: "",
-              nextPhrase: responseText || "..."
+              nextPhrase: responseText.replace(/[\{\}]/g, '').trim() || "Entschuldigung, ich habe dich nicht verstanden."
           };
       }
       
@@ -83,7 +80,7 @@ RESPOND WITH ONLY THIS JSON (no other text):
       const completion = await this.openai.chat.completions.create({
         model: 'mistralai/Mistral-7B-Instruct-v0.3',
         messages: [
-          { role: 'system', content: 'You are a translator. Translate the given German text to Vietnamese. DO NOT include any other words or explanations, ONLY the direct translation.' },
+          { role: 'system', content: 'You are a translator. Translate the given German text to Vietnamese. OUTPUT ONLY THE DIRECT VIETNAMESE TRANSLATION. NEVER explain. NEVER write the original text. NEVER write English.' },
           { role: 'user', content: text },
         ],
         temperature: 0.3,
@@ -91,7 +88,6 @@ RESPOND WITH ONLY THIS JSON (no other text):
       });
       let translation = completion.choices[0].message.content || '...';
       
-      // Clean up <think> tags if reasoning model is used
       const thinkEnd = translation.lastIndexOf('</think>');
       if (thinkEnd !== -1) {
           translation = translation.substring(thinkEnd + 8).trim();
@@ -101,6 +97,79 @@ RESPOND WITH ONLY THIS JSON (no other text):
     } catch (err) {
       console.error('Translate Error:', err);
       return { translation: "Lỗi dịch thuật." };
+    }
+  }
+
+  async suggestReplies(dto: any) {
+    const { conversationLog, topic, level } = dto;
+    const systemPrompt = `You are a helpful German language assistant. 
+You MUST output ONLY a valid JSON ARRAY of exactly 3 objects. No markdown, no explanations.
+
+CEFR LEVEL: ${level}
+TOPIC: ${topic}
+
+CONVERSATION LOG:
+${conversationLog && conversationLog.length > 0 ? conversationLog.join('\n') : '(New conversation)'}
+
+TASK:
+Provide exactly 3 short, natural German phrases the student could say NEXT to continue the conversation. Also provide the Vietnamese meaning for each phrase.
+
+STRICT JSON ARRAY FORMAT REQUIRED:
+[
+  { "german": "Phrase 1 in German", "vietnamese": "Meaning in Vietnamese" },
+  { "german": "Phrase 2 in German", "vietnamese": "Meaning in Vietnamese" },
+  { "german": "Phrase 3 in German", "vietnamese": "Meaning in Vietnamese" }
+]`;
+
+    try {
+      const completion = await this.openai.chat.completions.create({
+        model: 'mistralai/Mistral-7B-Instruct-v0.3',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: 'Please give me 3 German suggestions for what to say next. Reply in JSON array format ONLY.' },
+        ],
+        temperature: 0.5,
+        max_tokens: 350,
+      });
+
+      let responseText = completion.choices[0].message.content || '[]';
+      
+      let cleanJson = responseText;
+      const firstBracket = cleanJson.indexOf('[');
+      const lastBracket = cleanJson.lastIndexOf(']');
+      if (firstBracket !== -1 && lastBracket !== -1 && lastBracket >= firstBracket) {
+          cleanJson = cleanJson.slice(firstBracket, lastBracket + 1);
+      }
+      
+      let parsedResponse;
+      try {
+          console.log("[DEBUG] suggestReplies RAW output:", responseText);
+          parsedResponse = JSON.parse(cleanJson);
+          if (!Array.isArray(parsedResponse) || !parsedResponse[0]?.german) {
+              console.warn("AI returned JSON but not array of objects:", parsedResponse);
+              parsedResponse = [
+                  { german: "Können Sie das wiederholen?", vietnamese: "Bạn có thể nhắc lại được không?" },
+                  { german: "Ich verstehe nicht.", vietnamese: "Tôi không hiểu." },
+                  { german: "Wie bitte?", vietnamese: "Dạ xin lỗi, sao cơ?" }
+              ];
+          }
+      } catch (parseError) {
+          console.warn("AI didn't return valid JSON array. Raw output:", responseText);
+          parsedResponse = [
+              { german: "Können Sie das wiederholen?", vietnamese: "Bạn có thể nhắc lại được không?" },
+              { german: "Ich verstehe nicht.", vietnamese: "Tôi không hiểu." },
+              { german: "Wie bitte?", vietnamese: "Dạ xin lỗi, sao cơ?" }
+          ];
+      }
+      
+      return { suggestions: parsedResponse };
+    } catch (error) {
+      console.error('OpenAI Error:', error);
+      return { suggestions: [
+          { german: "Ein Moment bitte...", vietnamese: "Xin chờ một lát..." },
+          { german: "Gute Frage!", vietnamese: "Câu hỏi hay đấy!" },
+          { german: "Lass mich überlegen.", vietnamese: "Để tôi suy nghĩ đã." }
+      ] };
     }
   }
 }
