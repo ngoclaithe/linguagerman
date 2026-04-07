@@ -162,30 +162,45 @@ let AiService = class AiService {
     async suggestReplies(dto) {
         const { history, topic, level, persona: personaId } = dto;
         const persona = (0, personas_1.getPersona)(personaId || 'anna');
-        let conversationText = '(Cuộc trò chuyện mới)';
+        const messages = [
+            {
+                role: 'system',
+                content: `Du hilfst einem Deutschlerner. Basierend auf dem bisherigen Gespräch, schlage 3 passende deutsche Sätze vor, die der Schüler als Nächstes sagen könnte. Gib auch die vietnamesische Übersetzung an.
+
+Antworte NUR mit einem JSON-Array. KEIN Englisch. Format:
+[{"german":"...","vietnamese":"..."},{"german":"...","vietnamese":"..."},{"german":"...","vietnamese":"..."}]`
+            }
+        ];
         if (history && history.length > 0) {
-            conversationText = history.map((m) => m.role === 'user' ? `Schüler: ${m.content}` : `${persona.name}: ${m.content}`).join('\n');
+            if (history[0].role === 'assistant') {
+                messages.push({ role: 'user', content: 'Hallo' });
+            }
+            for (const msg of history) {
+                const role = msg.role === 'user' ? 'user' : 'assistant';
+                const lastRole = messages[messages.length - 1]?.role;
+                if (role === lastRole)
+                    continue;
+                messages.push({ role, content: msg.content });
+            }
         }
-        const systemPrompt = `Gợi ý 3 câu tiếng Đức mà học viên có thể nói tiếp. Kèm nghĩa tiếng Việt.
-CHỈ trả về JSON array. KHÔNG tiếng Anh.
-
-Ví dụ:
-Hội thoại: "${persona.name}: Hallo! Wie heißt du?"
-[{"german":"Ich heiße Ngoc.","vietnamese":"Tôi tên là Ngọc."},{"german":"Guten Tag! Mein Name ist Mai.","vietnamese":"Xin chào! Tên tôi là Mai."},{"german":"Hallo! Ich bin Linh.","vietnamese":"Chào! Tôi là Linh."}]
-
-Hội thoại hiện tại (${level}):
-${conversationText}`;
+        const lastRole = messages[messages.length - 1]?.role;
+        const askMsg = 'Was könnte ich als Nächstes sagen? Gib mir 3 Vorschläge als JSON array mit german und vietnamese.';
+        if (lastRole === 'user') {
+            messages.push({ role: 'assistant', content: 'Hier sind 3 Vorschläge:' });
+            messages.push({ role: 'user', content: askMsg });
+        }
+        else {
+            messages.push({ role: 'user', content: askMsg });
+        }
         try {
             const completion = await this.openai.chat.completions.create({
                 model: 'mistralai/Mistral-7B-Instruct-v0.3',
-                messages: [
-                    { role: 'system', content: systemPrompt },
-                    { role: 'user', content: 'JSON array:' },
-                ],
+                messages,
                 temperature: 0.4,
                 max_tokens: 400,
             });
             let responseText = completion.choices[0].message.content || '[]';
+            console.log("[DEBUG] suggestReplies RAW:", responseText);
             let cleanJson = responseText;
             const firstBracket = cleanJson.indexOf('[');
             const lastBracket = cleanJson.lastIndexOf(']');
@@ -195,9 +210,10 @@ ${conversationText}`;
             let parsedResponse;
             try {
                 parsedResponse = JSON.parse(cleanJson);
-                if (!Array.isArray(parsedResponse) || !parsedResponse[0]?.german) {
+                if (!Array.isArray(parsedResponse) || parsedResponse.length === 0 || !parsedResponse[0]?.german) {
                     throw new Error('Invalid format');
                 }
+                parsedResponse = parsedResponse.slice(0, 3);
             }
             catch {
                 parsedResponse = [
