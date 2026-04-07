@@ -1,58 +1,46 @@
 # LinguaGerman LLM Server
 
-Local LLM server using **Mistral-7B-Instruct-v0.3** (Q4_K_M GGUF) with native llama.cpp CUDA build.
+Local LLM inference server for the LinguaGerman language learning platform.
 
-## Specs
+## Model
 
-| Component | Value |
-|---|---|
-| Model | Mistral-7B-Instruct-v0.3-Q4_K_M (~4.4GB) |
-| Engine | llama.cpp (native C++ with CUDA) |
-| GPU | RTX 4060 Ti 15GB VRAM |
-| API | OpenAI-compatible (`/v1/chat/completions`) |
-| Context | 4096 tokens |
+- **Qwen2.5-7B-Instruct** (Q4_K_M quantization, ~4.7GB)
+- Engine: llama.cpp with full CUDA GPU offload
+- Context: 8192 tokens
+- Target: RTX 4060 Ti 15GB VRAM
 
-## Deploy
+## Setup (GPU Server)
 
 ```bash
-# 1. SSH into GPU server
-ssh -p 1928 root@n2.ckey.vn
-
-# 2. Run deploy script (builds llama.cpp with CUDA)
-cd /home/linguagerman/llm-server
-chmod +x deploy.sh start.sh
+# 1. Run deploy script (installs everything)
 bash deploy.sh
 
-# 3. Start the server
+# 2. Start the server
 bash start.sh
 ```
 
-## Connect from Local Backend
+## API
 
-SSH tunnel from local machine:
-```bash
-ssh -L 8000:localhost:8000 -p 1928 root@n2.ckey.vn
-```
-
-Backend `.env`:
-```env
-OPENAI_BASE_URL="http://127.0.0.1:8000/v1"
-```
-
-## Test
+OpenAI-compatible API on port 8000:
 
 ```bash
+# Health check
 curl http://localhost:8000/health
 
-curl -X POST http://localhost:8000/v1/chat/completions \
+# Chat completion
+curl http://localhost:8000/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "Mistral-7B-Instruct-v0.3",
-    "messages": [
-      {"role": "system", "content": "You are a German teacher."},
-      {"role": "user", "content": "Hallo, wie geht es dir?"}
-    ],
-    "temperature": 0.7,
-    "max_tokens": 256
+    "model": "Qwen/Qwen2.5-7B-Instruct",
+    "messages": [{"role": "user", "content": "Hallo!"}],
+    "temperature": 0.6,
+    "max_tokens": 80
   }'
+```
+
+## Architecture
+
+```
+NestJS Backend → SSH Tunnel → LLM Server (GPU) → Qwen2.5-7B
+                               port 8000
 ```

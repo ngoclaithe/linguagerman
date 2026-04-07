@@ -17,8 +17,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-MODEL_FILE = "Mistral-7B-Instruct-v0.3-Q4_K_M.gguf"
-REPO_ID = "bartowski/Mistral-7B-Instruct-v0.3-GGUF"
+MODEL_FILE = "Qwen2.5-7B-Instruct-Q4_K_M.gguf"
+REPO_ID = "Qwen/Qwen2.5-7B-Instruct-GGUF"
 
 if not os.path.exists(MODEL_FILE):
     dl_start = time.time()
@@ -36,7 +36,7 @@ print(f"[*] Loading {MODEL_FILE} with llama.cpp (full GPU offload)...")
 llm = Llama(
     model_path=MODEL_FILE,
     n_threads=8,
-    n_ctx=4096,
+    n_ctx=8192,
     n_gpu_layers=-1,
     verbose=True,
 )

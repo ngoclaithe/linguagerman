@@ -76,7 +76,7 @@ let AiService = class AiService {
         let nextPhrase = "Entschuldigung, kannst du das wiederholen?";
         try {
             const chatCompletion = await this.openai.chat.completions.create({
-                model: 'mistralai/Mistral-7B-Instruct-v0.3',
+                model: 'Qwen/Qwen2.5-7B-Instruct',
                 messages: chatMessages,
                 temperature: 0.6,
                 max_tokens: 80,
@@ -109,7 +109,7 @@ let AiService = class AiService {
         let explanation = "";
         try {
             const grammarCompletion = await this.openai.chat.completions.create({
-                model: 'mistralai/Mistral-7B-Instruct-v0.3',
+                model: 'Qwen/Qwen2.5-7B-Instruct',
                 messages: [
                     { role: 'system', content: GRAMMAR_SYSTEM_PROMPT },
                     { role: 'user', content: userInput },
@@ -144,7 +144,7 @@ let AiService = class AiService {
             console.error('Google Translate Error:', err);
             try {
                 const completion = await this.openai.chat.completions.create({
-                    model: 'mistralai/Mistral-7B-Instruct-v0.3',
+                    model: 'Qwen/Qwen2.5-7B-Instruct',
                     messages: [
                         { role: 'system', content: 'Dịch sang tiếng Việt. CHỈ viết bản dịch.' },
                         { role: 'user', content: text },
