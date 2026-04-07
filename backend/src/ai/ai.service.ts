@@ -47,15 +47,32 @@ export class AiService {
     ];
 
     if (history && history.length > 0) {
-      for (const msg of history) {
-        chatMessages.push({
-          role: msg.role === 'user' ? 'user' : 'assistant',
-          content: msg.content
-        });
+      // Mistral requires strict user/assistant alternation after system.
+      // If history starts with assistant (greeting), prepend implicit user "Hallo"
+      if (history[0].role === 'assistant') {
+        chatMessages.push({ role: 'user', content: 'Hallo' });
+      }
+      
+      for (let i = 0; i < history.length; i++) {
+        const msg = history[i];
+        const role = msg.role === 'user' ? 'user' : 'assistant';
+        
+        // Skip if same role as previous (would break alternation)
+        const lastRole = chatMessages[chatMessages.length - 1]?.role;
+        if (role === lastRole) continue;
+        
+        chatMessages.push({ role, content: msg.content });
       }
     }
 
-    chatMessages.push({ role: 'user', content: userInput });
+    // Ensure current user message doesn't duplicate role
+    const lastRole = chatMessages[chatMessages.length - 1]?.role;
+    if (lastRole === 'user') {
+      // Replace last user message with current input
+      chatMessages[chatMessages.length - 1].content = userInput;
+    } else {
+      chatMessages.push({ role: 'user', content: userInput });
+    }
 
     let nextPhrase = "Entschuldigung, kannst du das wiederholen?";
     try {

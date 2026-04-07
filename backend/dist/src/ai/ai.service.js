@@ -54,14 +54,25 @@ let AiService = class AiService {
             { role: 'system', content: persona.systemPrompt + `\nThema: ${topic}\nNiveau: ${level}` },
         ];
         if (history && history.length > 0) {
-            for (const msg of history) {
-                chatMessages.push({
-                    role: msg.role === 'user' ? 'user' : 'assistant',
-                    content: msg.content
-                });
+            if (history[0].role === 'assistant') {
+                chatMessages.push({ role: 'user', content: 'Hallo' });
+            }
+            for (let i = 0; i < history.length; i++) {
+                const msg = history[i];
+                const role = msg.role === 'user' ? 'user' : 'assistant';
+                const lastRole = chatMessages[chatMessages.length - 1]?.role;
+                if (role === lastRole)
+                    continue;
+                chatMessages.push({ role, content: msg.content });
             }
         }
-        chatMessages.push({ role: 'user', content: userInput });
+        const lastRole = chatMessages[chatMessages.length - 1]?.role;
+        if (lastRole === 'user') {
+            chatMessages[chatMessages.length - 1].content = userInput;
+        }
+        else {
+            chatMessages.push({ role: 'user', content: userInput });
+        }
         let nextPhrase = "Entschuldigung, kannst du das wiederholen?";
         try {
             const chatCompletion = await this.openai.chat.completions.create({
