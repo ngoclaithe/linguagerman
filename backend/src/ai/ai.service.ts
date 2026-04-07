@@ -113,34 +113,35 @@ Output ONLY the JSON object.`;
 
   async suggestReplies(dto: any) {
     const { conversationLog, topic, level } = dto;
-    const systemPrompt = `You are a helpful German language assistant. 
-You MUST output ONLY a valid JSON ARRAY of exactly 3 objects. No markdown, no explanations.
+    const systemPrompt = `You suggest German phrases a student could say next in a conversation. Output ONLY a JSON array of 3 objects. No markdown, no explanation.
 
-CEFR LEVEL: ${level}
-TOPIC: ${topic}
+Each object has "german" (the German phrase) and "vietnamese" (Vietnamese translation). NEVER use English.
 
-CONVERSATION LOG:
+# EXAMPLES
+
+Conversation: "Lehrerin: Hallo! Wie heißt du?"
+Output: [{"german":"Ich heiße Ngoc. Und Sie?","vietnamese":"Tôi tên là Ngọc. Còn bạn?"},{"german":"Guten Tag! Mein Name ist Ngoc.","vietnamese":"Chào buổi chiều! Tên tôi là Ngọc."},{"german":"Hallo! Ich bin Ngoc.","vietnamese":"Xin chào! Tôi là Ngọc."}]
+
+Conversation: "Lehrerin: Wie alt bist du?"
+Output: [{"german":"Ich bin 25 Jahre alt.","vietnamese":"Tôi 25 tuổi."},{"german":"Ich bin zwanzig Jahre alt. Und Sie?","vietnamese":"Tôi 20 tuổi. Còn bạn?"},{"german":"Darf ich fragen, wie alt Sie sind?","vietnamese":"Cho tôi hỏi, bạn bao nhiêu tuổi?"}]
+
+# YOUR TURN
+CEFR Level: ${level}
+Topic: ${topic}
+Conversation:
 ${conversationLog && conversationLog.length > 0 ? conversationLog.join('\n') : '(New conversation)'}
 
-TASK:
-Provide exactly 3 short, natural German phrases the student could say NEXT to continue the conversation. Also provide the Vietnamese meaning for each phrase.
-
-STRICT JSON ARRAY FORMAT REQUIRED:
-[
-  { "german": "Phrase 1 in German", "vietnamese": "Meaning in Vietnamese" },
-  { "german": "Phrase 2 in German", "vietnamese": "Meaning in Vietnamese" },
-  { "german": "Phrase 3 in German", "vietnamese": "Meaning in Vietnamese" }
-]`;
+Output ONLY the JSON array:`;
 
     try {
       const completion = await this.openai.chat.completions.create({
         model: 'mistralai/Mistral-7B-Instruct-v0.3',
         messages: [
           { role: 'system', content: systemPrompt },
-          { role: 'user', content: 'Please give me 3 German suggestions for what to say next. Reply in JSON array format ONLY.' },
+          { role: 'user', content: 'Suggest 3 German replies with Vietnamese translations. JSON array ONLY.' },
         ],
-        temperature: 0.5,
-        max_tokens: 350,
+        temperature: 0.3,
+        max_tokens: 400,
       });
 
       let responseText = completion.choices[0].message.content || '[]';

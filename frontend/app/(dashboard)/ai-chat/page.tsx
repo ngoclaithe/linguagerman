@@ -25,6 +25,7 @@ export default function AiChatPage() {
     const [playingProps, setPlayingProps] = useState<{ id: string | number, charIndex: number, length: number } | null>(null);
     const chatEndRef = useRef<HTMLDivElement>(null);
     const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+    const highlightTimerRef = useRef<NodeJS.Timeout | null>(null);
     const [isSuggesting, setIsSuggesting] = useState(false);
     const [suggestions, setSuggestions] = useState<{german: string, vietnamese: string}[]>([]);
 
@@ -32,53 +33,86 @@ export default function AiChatPage() {
         chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
 
+    // Cleanup highlight timer on unmount
+    useEffect(() => {
+        return () => {
+            if (highlightTimerRef.current) clearInterval(highlightTimerRef.current);
+        };
+    }, []);
+
     const playText = (id: string | number, text: string) => {
         if (typeof window !== 'undefined' && window.speechSynthesis) {
-            window.speechSynthesis.cancel(); 
+            // Stop any current playback
+            window.speechSynthesis.cancel();
+            if (highlightTimerRef.current) {
+                clearInterval(highlightTimerRef.current);
+                highlightTimerRef.current = null;
+            }
+            setPlayingProps(null);
+
+            // Pre-compute word positions: [{start, length}, ...]
+            const wordPositions: {start: number, length: number}[] = [];
+            const regex = /[^\s]+/g;
+            let match;
+            while ((match = regex.exec(text)) !== null) {
+                wordPositions.push({ start: match.index, length: match[0].length });
+            }
+
+            if (wordPositions.length === 0) return;
+
             const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'de-DE'; 
-            
+            utterance.lang = 'de-DE';
+            utterance.rate = 0.9;
+
+            // Estimate ~250ms per word at rate 0.9 for German
+            const msPerWord = 280;
+            let wordIndex = 0;
+
             utterance.onstart = () => {
-                setPlayingProps({ id, charIndex: 0, length: 0 });
-            };
-            
-            utterance.onboundary = (event) => {
-                if (event.name === 'word') {
-                    let charIndex = event.charIndex;
-                    let sub = text.substring(charIndex);
-                    
-                    // Chrome TTS frequently emits charIndex pointing to space or punctuation before the word.
-                    // We scan forward to find the actual start of the word.
-                    const wordStartMatch = sub.match(/[^\s.,!?;:()]/);
-                    if (wordStartMatch) {
-                        charIndex += wordStartMatch.index!;
-                        sub = text.substring(charIndex);
-                        // Measure the length of the word (excluding trailing punctuation)
-                        const match = sub.match(/^[^\s.,!?;:()]+/);
-                        let length = match ? match[0].length : 1;
-                        if (event.charLength && event.charLength > length && !match) {
-                            length = event.charLength;
-                        }
-                        setPlayingProps({ id, charIndex, length });
-                    }
+                wordIndex = 0;
+                if (wordPositions[0]) {
+                    setPlayingProps({ id, charIndex: wordPositions[0].start, length: wordPositions[0].length });
                 }
+
+                // Timer-based word advancement
+                highlightTimerRef.current = setInterval(() => {
+                    wordIndex++;
+                    if (wordIndex < wordPositions.length) {
+                        const wp = wordPositions[wordIndex];
+                        setPlayingProps({ id, charIndex: wp.start, length: wp.length });
+                    } else {
+                        // Reached end of words, clear timer
+                        if (highlightTimerRef.current) {
+                            clearInterval(highlightTimerRef.current);
+                            highlightTimerRef.current = null;
+                        }
+                    }
+                }, msPerWord);
             };
 
             utterance.onend = () => {
+                if (highlightTimerRef.current) {
+                    clearInterval(highlightTimerRef.current);
+                    highlightTimerRef.current = null;
+                }
                 setPlayingProps(null);
                 utteranceRef.current = null;
                 (window as any)._tts = null;
             };
 
             utterance.onerror = () => {
+                if (highlightTimerRef.current) {
+                    clearInterval(highlightTimerRef.current);
+                    highlightTimerRef.current = null;
+                }
                 setPlayingProps(null);
                 utteranceRef.current = null;
                 (window as any)._tts = null;
             };
 
-            // Lưu reference đẻ tránh Chrome Garbage Collection lỗi làm mất event boundary
+            // Prevent Chrome GC from killing the utterance
             utteranceRef.current = utterance;
-            (window as any)._tts = utterance; 
+            (window as any)._tts = utterance;
             window.speechSynthesis.speak(utterance);
         }
     };
@@ -190,7 +224,7 @@ export default function AiChatPage() {
     };
 
     return (
-        <div className="flex flex-col h-screen bg-slate-50">
+        <div className="flex flex-col h-screen bg-slate-50 relative">
             {/* Header */}
             <div className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between shrink-0">
                 <div>
