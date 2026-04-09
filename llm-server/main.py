@@ -117,8 +117,10 @@ async def chat_stream(req: StreamRequest):
             response_generator = llm_main.create_chat_completion(
                 messages=formatted_messages,
                 stream=True,
-                max_tokens=256,
+                max_tokens=512,
                 temperature=0.7,
+                repeat_penalty=1.1,
+                stop=["<|im_end|>", "<|im_start|>", "<|endoftext|>"]
             )
             
             for chunk in response_generator:
@@ -143,7 +145,9 @@ async def suggest(req: SuggestRequest):
             messages=[{"role": "user", "content": prompt}],
             max_tokens=150,
             temperature=0.7,
-            response_format={"type": "json_object"}
+            repeat_penalty=1.1,
+            response_format={"type": "json_object"},
+            stop=["<|im_end|>", "<|im_start|>", "<|endoftext|>"]
         )
     
     try:
@@ -165,7 +169,9 @@ async def grammar(req: GrammarRequest):
             messages=[{"role": "user", "content": prompt}],
             max_tokens=250,
             temperature=0.1,
-            response_format={"type": "json_object"}
+            repeat_penalty=1.1,
+            response_format={"type": "json_object"},
+            stop=["<|im_end|>", "<|im_start|>", "<|endoftext|>"]
         )
         
     try:
