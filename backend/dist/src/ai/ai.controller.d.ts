@@ -17,7 +17,7 @@ export declare class AiController {
     }>;
     getHistory(sessionId: string, userId: string): Promise<import("./services/context.service").ChatMessage[]>;
     translateText(text: string): Promise<{
-        translation: string;
+        translation: any;
         error?: undefined;
     } | {
         translation: null;

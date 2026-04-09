@@ -11,9 +11,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AiController = void 0;
 const common_1 = require("@nestjs/common");
@@ -21,7 +18,6 @@ const persona_service_1 = require("./services/persona.service");
 const context_service_1 = require("./services/context.service");
 const suggestion_service_1 = require("./services/suggestion.service");
 const crypto_1 = require("crypto");
-const google_translate_api_x_1 = __importDefault(require("google-translate-api-x"));
 let AiController = class AiController {
     personaService;
     contextService;
@@ -56,7 +52,9 @@ let AiController = class AiController {
     }
     async translateText(text) {
         try {
-            const res = await (0, google_translate_api_x_1.default)(text, { to: 'vi' });
+            const translateModule = (await import('google-translate-api-x'));
+            const translateFn = translateModule.default || translateModule.translate || translateModule;
+            const res = await translateFn(text, { to: 'vi' });
             return { translation: res.text };
         }
         catch (error) {

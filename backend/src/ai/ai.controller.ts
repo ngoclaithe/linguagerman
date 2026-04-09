@@ -52,8 +52,8 @@ export class AiController {
   @Post('translate')
   async translateText(@Body('text') text: string) {
     try {
-      const translateModule = await import('google-translate-api-x');
-      const translateFn = translateModule.default || translateModule.translate;
+      const translateModule = (await import('google-translate-api-x')) as any;
+      const translateFn = translateModule.default || translateModule.translate || translateModule;
       const res = await translateFn(text, { to: 'vi' });
       return { translation: res.text };
     } catch (error) {

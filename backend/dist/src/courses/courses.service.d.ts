@@ -9,10 +9,10 @@ export declare class CoursesService {
             createdAt: Date;
             updatedAt: Date;
             title: string;
-            courseId: string;
             videoUrl: string | null;
-            content: string | null;
             order: number;
+            courseId: string;
+            content: string | null;
             fileUrl: string | null;
             type: string;
         }[];
@@ -46,10 +46,10 @@ export declare class CoursesService {
             createdAt: Date;
             updatedAt: Date;
             title: string;
-            courseId: string;
             videoUrl: string | null;
-            content: string | null;
             order: number;
+            courseId: string;
+            content: string | null;
             fileUrl: string | null;
             type: string;
         }[];
@@ -71,10 +71,10 @@ export declare class CoursesService {
             createdAt: Date;
             updatedAt: Date;
             title: string;
-            courseId: string;
             videoUrl: string | null;
-            content: string | null;
             order: number;
+            courseId: string;
+            content: string | null;
             fileUrl: string | null;
             type: string;
         }[];

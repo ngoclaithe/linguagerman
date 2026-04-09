@@ -22,10 +22,10 @@ export declare class ProgressController {
                 createdAt: Date;
                 updatedAt: Date;
                 title: string;
-                courseId: string;
                 videoUrl: string | null;
-                content: string | null;
                 order: number;
+                courseId: string;
+                content: string | null;
                 fileUrl: string | null;
                 type: string;
             };
@@ -33,8 +33,8 @@ export declare class ProgressController {
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            userId: string;
             lessonId: string;
+            userId: string;
             completed: boolean;
             completedAt: Date | null;
         })[];
@@ -64,8 +64,8 @@ export declare class ProgressController {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        userId: string;
         lessonId: string;
+        userId: string;
         completed: boolean;
         completedAt: Date | null;
     }>;
@@ -76,10 +76,10 @@ export declare class ProgressController {
                 createdAt: Date;
                 updatedAt: Date;
                 title: string;
-                courseId: string;
                 videoUrl: string | null;
-                content: string | null;
                 order: number;
+                courseId: string;
+                content: string | null;
                 fileUrl: string | null;
                 type: string;
             }[];
@@ -98,8 +98,8 @@ export declare class ProgressController {
     } & {
         id: string;
         updatedAt: Date;
-        courseId: string;
         userId: string;
+        courseId: string;
         progress: number;
         enrolledAt: Date;
     })[]>;

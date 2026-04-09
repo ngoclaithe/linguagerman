@@ -43,15 +43,15 @@ export declare class UsersController {
         })[] | ({
             id: string;
             updatedAt: Date;
-            courseId: string;
             userId: string;
+            courseId: string;
             progress: number;
             enrolledAt: Date;
         } | {
             id: string;
             updatedAt: Date;
-            courseId: string;
             userId: string;
+            courseId: string;
             progress: number;
             enrolledAt: Date;
         })[] | ({
@@ -116,16 +116,16 @@ export declare class UsersController {
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            userId: string;
             lessonId: string;
+            userId: string;
             completed: boolean;
             completedAt: Date | null;
         } | {
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            userId: string;
             lessonId: string;
+            userId: string;
             completed: boolean;
             completedAt: Date | null;
         })[] | ({
@@ -176,8 +176,8 @@ export declare class UsersController {
         }[] | {
             id: string;
             updatedAt: Date;
-            courseId: string;
             userId: string;
+            courseId: string;
             progress: number;
             enrolledAt: Date;
         }[] | {
@@ -213,8 +213,8 @@ export declare class UsersController {
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            userId: string;
             lessonId: string;
+            userId: string;
             completed: boolean;
             completedAt: Date | null;
         }[] | {

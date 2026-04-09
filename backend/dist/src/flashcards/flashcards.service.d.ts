@@ -8,9 +8,9 @@ export declare class FlashcardsService {
         updatedAt: Date;
         level: import("@prisma/client").$Enums.CourseLevel;
         word: string;
+        article: string;
         meaning: string;
         example: string | null;
-        article: string;
     }>;
     findAll(userId?: string): Promise<({
         users: {
@@ -25,9 +25,9 @@ export declare class FlashcardsService {
         updatedAt: Date;
         level: import("@prisma/client").$Enums.CourseLevel;
         word: string;
+        article: string;
         meaning: string;
         example: string | null;
-        article: string;
     })[]>;
     toggleMyList(userId: string, flashcardId: string): Promise<{
         id: string;
@@ -42,9 +42,9 @@ export declare class FlashcardsService {
             updatedAt: Date;
             level: import("@prisma/client").$Enums.CourseLevel;
             word: string;
+            article: string;
             meaning: string;
             example: string | null;
-            article: string;
         };
     } & {
         id: string;
@@ -58,9 +58,9 @@ export declare class FlashcardsService {
         updatedAt: Date;
         level: import("@prisma/client").$Enums.CourseLevel;
         word: string;
+        article: string;
         meaning: string;
         example: string | null;
-        article: string;
     }>;
     update(id: string, data: any): Promise<{
         id: string;
@@ -68,9 +68,9 @@ export declare class FlashcardsService {
         updatedAt: Date;
         level: import("@prisma/client").$Enums.CourseLevel;
         word: string;
+        article: string;
         meaning: string;
         example: string | null;
-        article: string;
     }>;
     getMyProgress(userId: string): Promise<({
         flashcard: {
@@ -79,9 +79,9 @@ export declare class FlashcardsService {
             updatedAt: Date;
             level: import("@prisma/client").$Enums.CourseLevel;
             word: string;
+            article: string;
             meaning: string;
             example: string | null;
-            article: string;
         };
     } & {
         id: string;
@@ -109,8 +109,8 @@ export declare class FlashcardsService {
         updatedAt: Date;
         level: import("@prisma/client").$Enums.CourseLevel;
         word: string;
+        article: string;
         meaning: string;
         example: string | null;
-        article: string;
     }>;
 }
