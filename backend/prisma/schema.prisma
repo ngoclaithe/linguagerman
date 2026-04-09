@@ -39,7 +39,7 @@ model User {
   speakingScore Int         @default(0)
 
   userQuests        UserQuest[]
-  aiConversations   AiConversation[]
+  aiSessions        AiSession[]
 
   @@map("users")
 }
@@ -364,35 +364,33 @@ model UserQuest {
   @@index([userId])
 }
 
-model AiConversation {
-  id        String   @id @default(cuid())
-  userId    String
-  title     String   // Ví dụ: "Giao tiếp cơ bản A1"
-  level     CourseLevel @default(A1)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  
-  messages  AiMessage[]
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+model AiSession {
+  id           String     @id @default(cuid())
+  userId       String
+  personaId    String
+  topic        String
+  cefrLevel    String
+  startedAt    DateTime   @default(now())
+  endedAt      DateTime?
+  messageCount Int        @default(0)
 
-  @@map("ai_conversations")
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages     AiMessage[]
+
+  @@map("ai_sessions")
   @@index([userId])
 }
 
 model AiMessage {
-  id             String         @id @default(cuid())
-  conversationId String
-  role           String         // "user" | "bot"
-  content        String         @db.Text
-  
-  // Phân tích lỗi ngữ pháp tiếng Đức bằng GPT
-  grammarError   Boolean        @default(false)
-  correctionJson Json?          // Lưu JSON { errorType, correction, explanation } theo đặc thù tiếng Đức
-  
-  createdAt      DateTime       @default(now())
+  id          String     @id @default(cuid())
+  sessionId   String
+  role        String     // "user" | "assistant"
+  content     String     @db.Text
+  annotations Json?      // grammar corrections, nullable
+  createdAt   DateTime   @default(now())
 
-  conversation   AiConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  session     AiSession  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 
   @@map("ai_messages")
-  @@index([conversationId])
+  @@index([sessionId])
 }

@@ -1,28 +1,47 @@
-import { Controller, Post, Get, Body } from '@nestjs/common';
-import { AiService } from './ai.service';
-import { ChatGermanDto } from './dto/chat-german.dto';
+import { Controller, Post, Get, Body, Param } from '@nestjs/common';
+import { PersonaService } from './services/persona.service';
+import { ContextService } from './services/context.service';
+import { SuggestionService } from './services/suggestion.service';
+import { randomUUID } from 'crypto';
 
 @Controller('ai')
 export class AiController {
-  constructor(private readonly aiService: AiService) {}
+  constructor(
+    private readonly personaService: PersonaService,
+    private readonly contextService: ContextService,
+    private readonly suggestionService: SuggestionService,
+  ) {}
 
   @Get('personas')
   getPersonas() {
-    return this.aiService.getPersonas();
+    return this.personaService.getPersonas();
   }
 
-  @Post('chat/german')
-  async chatGerman(@Body() chatDto: ChatGermanDto) {
-    return await this.aiService.processGermanChat(chatDto);
+  @Post('session/start')
+  async startSession(@Body() body: any) {
+    const { personaId, topic, cefrLevel, userId } = body;
+    const persona = this.personaService.getPersonaById(personaId);
+    const sessionId = randomUUID();
+    
+    // Simulate initial suggestions based on topic
+    const suggestions = await this.suggestionService.getSuggestions("Hallo! Lass uns anfangen.", topic, cefrLevel);
+    
+    // Default greeting from persona
+    const openingMessage = `Hallo! Ich bin ${persona.name}. Lass uns über ${topic} sprechen.`;
+    
+    // Save opening to context
+    await this.contextService.appendContext(userId, sessionId, { role: 'assistant', content: openingMessage });
+
+    return {
+      sessionId,
+      openingMessage,
+      suggestions: suggestions.length > 0 ? suggestions : ["Hallo!", "Wie geht's?", "Ja, gerne."],
+    };
   }
 
-  @Post('translate')
-  async translate(@Body() body: { text: string }) {
-    return await this.aiService.translateText(body.text);
-  }
-
-  @Post('chat/suggest-replies')
-  async suggestReplies(@Body() body: any) {
-    return await this.aiService.suggestReplies(body);
+  @Get('session/:sessionId/history')
+  async getHistory(@Param('sessionId') sessionId: string, @Body('userId') userId: string) {
+    // Note: User ID ideally comes from Auth Guard / Request, but keeping body simple for now
+    return this.contextService.getContext(userId || 'default-user', sessionId);
   }
 }

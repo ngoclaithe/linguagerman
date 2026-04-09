@@ -1,55 +1,95 @@
-# Kiến trúc Triển khai (Trợ lý Tiếng Đức Trí tuệ Nhân tạo)
+# Refactoring AI Chat Module to V2
 
-Dựa trên tài liệu Đặc tả chức năng (FSD) `trochuyenai.md`, giải pháp dưới đây tập trung vào việc tạo ra vòng lặp **Multi-turn Contextual Conversation** bằng cách sử dụng **OpenAI API (GPT-4o)** và tích hợp luồng JSON Output chuẩn mực.
+Theo yêu cầu từ tài liệu kỹ thuật `german-ai-chat-spec-v2.md`, quá trình triển khai sẽ tác động toàn diện từ AI Server đến Frontend để tách biệt logic, tăng hiệu năng và trải nghiệm người dùng (chia ra theo các phase rõ ràng).
 
-## 1. Mở rộng Backend (NestJS)
+## User Review Required
 
-### Cài đặt Thư viện
-- Cài đặt thêm package `openai` để dùng OpenAI SDK.
+> [!WARNING]
+> Mặc dù `schema.prisma` hiện tại đã có `AiConversation` và `AiMessage`, spec V2 yêu cầu thiết kế `AiSession` và điều chỉnh lại hệ thống ghi log tin nhắn (không ghi real-time, mà dùng Redis cache để tối ưu độ trễ xử lý realtime AI). Prisma Schema sẽ cần được migrate lại. Vui lòng kiểm tra và xác nhận có muốn xóa bảng cũ `ai_conversations` hay giữ để migrate dữ liệu sang `ai_sessions` mới!
 
-### DTOs (Data Transfer Objects)
-Tạo `src/ai/dto/chat-german.dto.ts`:
-```typescript
-export class ChatGermanDto {
-  userInput: string;
-  conversationLog: string[];
-  topic: string; // VD: Beruf, Familie, Alltag
-  level: string; // VD: A1, A2
-}
-```
+---
 
-### Prompt Engineering & Controller `AiController`
-Triển khai endpoint POST `POST /api/ai/chat/german`.
-Sử dụng công nghệ **Structured Outputs (Response Format: JSON Object)** của OpenAI để ép bot trả về chính xác định dạng:
-```typescript
-// System Prompt
-const systemPrompt = `Bạn là trợ giảng tiếng Đức thông minh.
-Chủ đề: ${topic}, level: ${level}
-Conversation so far: ${conversationLog}
+## Proposed Changes
 
-Yêu cầu đầu ra bắt buộc phải là 1 JSON Object chứa:
-{
-  "suggestion": "Câu gợi ý viết mượt và đúng ngữ pháp mà user nên dùng thay thế (bỏ trống nếu user nói hoàn hảo)",
-  "explanation": "Giải thích chi tiết bằng tiếng Việt nếu ngữ pháp/từ vựng sai (bỏ trống nếu user nói hoàn hảo)",
-  "nextPhrase": "Câu giao tiếp tiếp theo bằng tiếng Đức để bot phản hồi lại user, giúp duy trì cuộc nói chuyện"
-}`;
-```
+### LLM Server Layer
 
-## 2. Frontend UI/UX (Màn hình `ai-chat`)
+Sửa đổi kiến trúc monolithic của AI Server Python hiện tại để gánh được trọng tải đồng thời và dùng 2 models.
 
-- Xóa các Mock data (dữ liệu giả) ở file `app/(dashboard)/ai-chat/page.tsx`.
-- Viết hàm `fetch` móc nối vào API `POST http://localhost:3054/api/ai/chat/german`.
-- Định dạng dữ liệu hiển thị:
-   - Các Bong bóng Chat của User gõ lên.
-   - Nếu có `suggestion` và `explanation` -> Render thẻ `Gợi ý tự nhiên hơn`.
-   - Lấy `nextPhrase` gán vào Bong bóng màu Tím của Bot làm phản hồi tiếp theo.
-- Nút Action hỗ trợ (sẽ triển khai thêm theo FSD):
-  - Nhập bằng giọng nói (Voice input -> sẽ truyền vào userInput).
-  - Nghe lại (Speaker button).
+#### [MODIFY] [main.py](file:///d:/linguagerman/llm-server/main.py)
+- Import `asyncio`, triển khai `lock_model_a` và `lock_model_b` để xử lý Thread Safety cho llama-cpp vì thư viện này không thread-safe mặc định.
+- Load đồng thời 2 cấu hình Models: `MAIN_MODEL` (14B) để chat và `FAST_MODEL` (7B) để check grammar/suggest từ OS environment.
+- Giữ nguyên endpoint `/v1/chat/completions` tương thích OpenAI.
+- Thêm endpoint `POST /chat/stream`: Nhận mảng tin nhắn và stream SSE trả về Client (Model A).
+- Thêm endpoint `POST /suggest`: Nhận input tạo 3 câu gợi ý trả về array JSON (Model B).
+- Thêm endpoint `POST /grammar`: Nhận cú pháp sai trả về JSON chứa mảng `corrections` (Model B).
 
-## Open Questions (User Review Required)
-> [!IMPORTANT]
-> 1. Em đã kiểm tra file `backend/.env` thì hiện tại **Chưa có chuỗi mã API Key của OpenAI**. Anh/chị có sẵn một mã **`OPENAI_API_KEY=sk-...`** (API của ChatGPT) cho em mượn để gắn vào `.env` không ạ? Nếu gửi lên chat này sợ lộ, anh/chị có thể dán thẳng chuỗi đó vào file `backend/.env` giúp em nha.
-> 2. Về lịch sử Chat (`conversationLog`), tài liệu của mình cho phép phía Frontend truyền nguyên mảng chuỗi lên. Em sẽ code theo hướng này để tối ưu tốc độ nhanh nhất. Hệ thống không cần thiết phải "lật lại DB để đọc lịch sử cũ" mỗi lần gửi tin nhắn. Anh/chị chốt phương án này chuẩn chưa?
->
-> Anh/chị xem xét và duyệt plan để em bắt tay vào cài `openai` và gõ code nhé!
+---
+
+### Backend Layer (NestJS)
+
+Chia nhỏ khối monolithic Controller/Service hiện tại. Cập nhật Prisma Schema và tích hợp Redis để xử lý dữ liệu context streaming.
+
+#### [MODIFY] [schema.prisma](file:///d:/linguagerman/backend/prisma/schema.prisma)
+- Cập nhật chuẩn format theo Spec V2: sửa `AiConversation` -> `AiSession`.
+- Cập nhật field `annotations` trong `AiMessage` để mapping grammar fix JSON.
+
+#### [NEW] [package.json](file:///d:/linguagerman/backend/package.json)
+- Cài đặt thêm các package hỗ trợ cho SSE và context state: `npm install ioredis @nestjs/cache-manager`
+- Cài đặt `npm install uuid` hoặc dùng Prisma sinh CUID tùy thuộc. 
+
+#### [MODIFY] [ai.module.ts](file:///d:/linguagerman/backend/src/ai/ai.module.ts)
+- Khai báo các providers mới bao gồm: `AiGateway`, `PersonaService`, `ChatService`, `SuggestionService`, `GrammarService`, `ContextService` (Redis).
+
+#### [NEW] [ai.gateway.ts](file:///d:/linguagerman/backend/src/ai/ai.gateway.ts)
+- Controller chính để tiếp nhận EventSource (SSE). Xử lý mở port stream về Next.js.
+- Quản lý logic Promise.allSettled() gọi Grammar và Suggestion models song song để stream về Frontend sau khi chữ chat được tải về qua `/chat/stream`.
+
+#### [DELETE] [ai.service.ts](file:///d:/linguagerman/backend/src/ai/ai.service.ts)
+- Chuyển toàn bộ logic hiện có (translate, regex suggest) sang các module chia tách nhỏ. Thay regex hardcode bằng prompt AI Suggestion.
+
+#### [NEW] [personas.config.ts](file:///d:/linguagerman/backend/src/ai/config/personas.config.ts)
+- Khởi tạo 4 persona như Spec (Frau Schmidt, Max, Frau Bauer, Herr Weber) với system prompt tuỳ chỉnh và level CEFR tương ứng.
+
+---
+
+### Frontend Layer (Next.js)
+
+Tách toàn bộ trang `ai-chat/page.tsx` đồ sộ ra thành các Functional Components. 
+
+#### [MODIFY] [store.ts](file:///d:/linguagerman/frontend/lib/store.ts)
+- Mở rộng Zustand store thêm scope `AIChatSlice`.
+- Quản lý state tập trung cho các tín hiệu Streaming, danh sách Suggestions đang chờ (`pendingSuggestions`), và danh sách `grammarMap`.
+
+#### [DELETE] [page.tsx](file:///d:/linguagerman/frontend/app/(dashboard)/ai-chat/page.tsx)
+- Xóa code cũ, refactor page làm Root Controller render `PersonaSelector` hoặc `ChatWindow`.
+
+#### [NEW] Component Tree (`frontend/app/(dashboard)/ai-chat/components/`)
+- `PersonaSelector.tsx`: Hiển thị Topic A1-B2-C1.
+- `ChatWindow.tsx`: Khung chat chính.
+- `MessageBubble.tsx` & `GrammarTooltip.tsx`: Trọng tâm UI/UX, phân tích đoạn text, render thẻ span bị underline lỗi (lưới màu đỏ, vàng, lục) tương ứng JSON đẩy từ backend và popup tooltip khi lướt chuột.
+- `SuggestionChips.tsx`: Render 3 nút bấm đề xuất tự động.
+
+#### [NEW] Hooks (`frontend/app/(dashboard)/ai-chat/hooks/`)
+- `useChat.ts`: Mở một kết nối `EventSource`, listen events: `chat:token`, `chat:done`, `suggestions`, `grammar` cập nhật real-time vào Zustand.
+
+---
+
+## Open Questions
+
+> [!WARNING]
+> 1. DB (Prisma): Mới đây project đã cài đặt Prisma, nếu tôi xóa/đổi `AiConversation` sang `AiSession` như Spec V2, DB của bạn có cần backup không hay tôi có thể thực thi lệnh `npx prisma db push` / `npx prisma migrate dev` và thay đổi tuân thủ?
+> 2. System ENV: `llm-server` cần tải thêm một model `qwen2.5-14b-instruct-q4_k_m.gguf`. Bạn có đủ RAM/VRAM (> 24GB) không hay bạn muốn tôi vẫn cấu hình Model A & B đều dùng chung cái 7B hiện tạy để chạy cho nhẹ máy?
+
+---
+
+## Verification Plan
+
+### Automated Tests
+1. Chạy AI Server `main.py` xem tốc độ boot (giới hạn context/vram models chuẩn xác không).
+2. Viết dummy curl request để test độc lập các route `/grammar` và `/suggest` JSON response format.
+
+### Manual Verification
+1. Mở FrontEnd dashboard AI Chat, test Flow Persona -> Chat.
+2. Kiểm tra độ trễ hiển thị SSE Typing text (Từng token bật vào UI).
+3. Sau khi chat được render xong, xem Suggestion Pills có nẩy ra không.
+4. Gõ thử một câu sai (VD: `Ich ist gut`), chờ nó underline màu đỏ chữ `ist` -> `bin` với popup lý giải tiếng Việt.
