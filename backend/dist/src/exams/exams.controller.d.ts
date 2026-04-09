@@ -8,13 +8,13 @@ export declare class ExamsController {
             createdAt: Date;
             updatedAt: Date;
             order: number;
-            question: string;
             examId: string;
-            type: import("@prisma/client").$Enums.QuestionType;
-            audioUrl: string | null;
+            question: string;
             options: string[];
             correctAnswer: string;
             explanation: string | null;
+            type: import("@prisma/client").$Enums.QuestionType;
+            audioUrl: string | null;
         }[];
     } & {
         id: string;
@@ -32,13 +32,13 @@ export declare class ExamsController {
             createdAt: Date;
             updatedAt: Date;
             order: number;
-            question: string;
             examId: string;
-            type: import("@prisma/client").$Enums.QuestionType;
-            audioUrl: string | null;
+            question: string;
             options: string[];
             correctAnswer: string;
             explanation: string | null;
+            type: import("@prisma/client").$Enums.QuestionType;
+            audioUrl: string | null;
         }[];
     } & {
         id: string;
@@ -90,37 +90,37 @@ export declare class ExamsController {
             createdAt: Date;
             updatedAt: Date;
             order: number;
-            question: string;
             examId: string;
-            type: import("@prisma/client").$Enums.QuestionType;
-            audioUrl: string | null;
+            question: string;
             options: string[];
             correctAnswer: string;
             explanation: string | null;
+            type: import("@prisma/client").$Enums.QuestionType;
+            audioUrl: string | null;
         }[] | ({
             id: string;
             createdAt: Date;
             updatedAt: Date;
             order: number;
-            question: string;
             examId: string;
-            type: import("@prisma/client").$Enums.QuestionType;
-            audioUrl: string | null;
+            question: string;
             options: string[];
             correctAnswer: string;
             explanation: string | null;
+            type: import("@prisma/client").$Enums.QuestionType;
+            audioUrl: string | null;
         } | {
             id: string;
             createdAt: Date;
             updatedAt: Date;
             order: number;
-            question: string;
             examId: string;
-            type: import("@prisma/client").$Enums.QuestionType;
-            audioUrl: string | null;
+            question: string;
             options: string[];
             correctAnswer: string;
             explanation: string | null;
+            type: import("@prisma/client").$Enums.QuestionType;
+            audioUrl: string | null;
         })[];
         [x: number]: never;
         [x: symbol]: never;
@@ -160,13 +160,13 @@ export declare class ExamsController {
             createdAt: Date;
             updatedAt: Date;
             order: number;
-            question: string;
             examId: string;
-            type: import("@prisma/client").$Enums.QuestionType;
-            audioUrl: string | null;
+            question: string;
             options: string[];
             correctAnswer: string;
             explanation: string | null;
+            type: import("@prisma/client").$Enums.QuestionType;
+            audioUrl: string | null;
         }[];
     } & {
         id: string;

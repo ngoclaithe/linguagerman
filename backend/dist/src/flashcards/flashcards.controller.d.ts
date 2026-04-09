@@ -8,9 +8,9 @@ export declare class FlashcardsController {
         updatedAt: Date;
         level: import("@prisma/client").$Enums.CourseLevel;
         word: string;
-        article: string;
         meaning: string;
         example: string | null;
+        article: string;
     }>;
     update(id: string, data: any): Promise<{
         id: string;
@@ -18,9 +18,9 @@ export declare class FlashcardsController {
         updatedAt: Date;
         level: import("@prisma/client").$Enums.CourseLevel;
         word: string;
-        article: string;
         meaning: string;
         example: string | null;
+        article: string;
     }>;
     remove(id: string): Promise<{
         id: string;
@@ -28,9 +28,9 @@ export declare class FlashcardsController {
         updatedAt: Date;
         level: import("@prisma/client").$Enums.CourseLevel;
         word: string;
-        article: string;
         meaning: string;
         example: string | null;
+        article: string;
     }>;
     toggleMyList(req: any, flashcardId: string): Promise<{
         id: string;
@@ -45,9 +45,9 @@ export declare class FlashcardsController {
             updatedAt: Date;
             level: import("@prisma/client").$Enums.CourseLevel;
             word: string;
-            article: string;
             meaning: string;
             example: string | null;
+            article: string;
         };
     } & {
         id: string;
@@ -62,9 +62,9 @@ export declare class FlashcardsController {
             updatedAt: Date;
             level: import("@prisma/client").$Enums.CourseLevel;
             word: string;
-            article: string;
             meaning: string;
             example: string | null;
+            article: string;
         };
     } & {
         id: string;
@@ -82,9 +82,9 @@ export declare class FlashcardsController {
         updatedAt: Date;
         level: import("@prisma/client").$Enums.CourseLevel;
         word: string;
-        article: string;
         meaning: string;
         example: string | null;
+        article: string;
     }>;
     findAll(): Promise<({
         users: {
@@ -99,9 +99,9 @@ export declare class FlashcardsController {
         updatedAt: Date;
         level: import("@prisma/client").$Enums.CourseLevel;
         word: string;
-        article: string;
         meaning: string;
         example: string | null;
+        article: string;
     })[]>;
     updateProgress(req: any, flashcardId: string, known: boolean): Promise<{
         id: string;

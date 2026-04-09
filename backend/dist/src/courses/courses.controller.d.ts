@@ -32,10 +32,10 @@ export declare class CoursesController {
             createdAt: Date;
             updatedAt: Date;
             title: string;
-            videoUrl: string | null;
-            order: number;
             courseId: string;
+            videoUrl: string | null;
             content: string | null;
+            order: number;
             fileUrl: string | null;
             type: string;
         }[];
@@ -57,10 +57,10 @@ export declare class CoursesController {
             createdAt: Date;
             updatedAt: Date;
             title: string;
-            videoUrl: string | null;
-            order: number;
             courseId: string;
+            videoUrl: string | null;
             content: string | null;
+            order: number;
             fileUrl: string | null;
             type: string;
         }[];
@@ -82,10 +82,10 @@ export declare class CoursesController {
             createdAt: Date;
             updatedAt: Date;
             title: string;
-            videoUrl: string | null;
-            order: number;
             courseId: string;
+            videoUrl: string | null;
             content: string | null;
+            order: number;
             fileUrl: string | null;
             type: string;
         }[];
