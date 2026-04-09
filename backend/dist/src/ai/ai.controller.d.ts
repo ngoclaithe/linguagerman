@@ -1,31 +1,16 @@
-import { AiService } from './ai.service';
-import { ChatGermanDto } from './dto/chat-german.dto';
+import { PersonaService } from './services/persona.service';
+import { ContextService } from './services/context.service';
+import { SuggestionService } from './services/suggestion.service';
 export declare class AiController {
-    private readonly aiService;
-    constructor(aiService: AiService);
-    getPersonas(): {
-        id: string;
-        name: string;
-        role: string;
-        avatar: string;
-        color: string;
-        greeting: string;
-        topics: string[];
-    }[];
-    chatGerman(chatDto: ChatGermanDto): Promise<{
-        nextPhrase: string;
-        suggestion: string;
-        explanation: string;
+    private readonly personaService;
+    private readonly contextService;
+    private readonly suggestionService;
+    constructor(personaService: PersonaService, contextService: ContextService, suggestionService: SuggestionService);
+    getPersonas(): import("./config/personas.config").Persona[];
+    startSession(body: any): Promise<{
+        sessionId: `${string}-${string}-${string}-${string}-${string}`;
+        openingMessage: string;
+        suggestions: string[];
     }>;
-    translate(body: {
-        text: string;
-    }): Promise<{
-        translation: string;
-    }>;
-    suggestReplies(body: any): Promise<{
-        suggestions: {
-            german: string;
-            vietnamese: string;
-        }[];
-    }>;
+    getHistory(sessionId: string, userId: string): Promise<import("./services/context.service").ChatMessage[]>;
 }

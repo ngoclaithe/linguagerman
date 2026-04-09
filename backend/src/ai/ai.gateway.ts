@@ -1,5 +1,5 @@
 import { Body, Controller, Post, Res } from '@nestjs/common';
-import { Response } from 'express';
+import type { Response } from 'express';
 import { ContextService } from './services/context.service';
 import { PersonaService } from './services/persona.service';
 import { ChatService } from './services/chat.service';

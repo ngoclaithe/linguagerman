@@ -14,24 +14,37 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AiController = void 0;
 const common_1 = require("@nestjs/common");
-const ai_service_1 = require("./ai.service");
-const chat_german_dto_1 = require("./dto/chat-german.dto");
+const persona_service_1 = require("./services/persona.service");
+const context_service_1 = require("./services/context.service");
+const suggestion_service_1 = require("./services/suggestion.service");
+const crypto_1 = require("crypto");
 let AiController = class AiController {
-    aiService;
-    constructor(aiService) {
-        this.aiService = aiService;
+    personaService;
+    contextService;
+    suggestionService;
+    constructor(personaService, contextService, suggestionService) {
+        this.personaService = personaService;
+        this.contextService = contextService;
+        this.suggestionService = suggestionService;
     }
     getPersonas() {
-        return this.aiService.getPersonas();
+        return this.personaService.getPersonas();
     }
-    async chatGerman(chatDto) {
-        return await this.aiService.processGermanChat(chatDto);
+    async startSession(body) {
+        const { personaId, topic, cefrLevel, userId } = body;
+        const persona = this.personaService.getPersonaById(personaId);
+        const sessionId = (0, crypto_1.randomUUID)();
+        const suggestions = await this.suggestionService.getSuggestions("Hallo! Lass uns anfangen.", topic, cefrLevel);
+        const openingMessage = `Hallo! Ich bin ${persona.name}. Lass uns über ${topic} sprechen.`;
+        await this.contextService.appendContext(userId, sessionId, { role: 'assistant', content: openingMessage });
+        return {
+            sessionId,
+            openingMessage,
+            suggestions: suggestions.length > 0 ? suggestions : ["Hallo!", "Wie geht's?", "Ja, gerne."],
+        };
     }
-    async translate(body) {
-        return await this.aiService.translateText(body.text);
-    }
-    async suggestReplies(body) {
-        return await this.aiService.suggestReplies(body);
+    async getHistory(sessionId, userId) {
+        return this.contextService.getContext(userId || 'default-user', sessionId);
     }
 };
 exports.AiController = AiController;
@@ -42,28 +55,24 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AiController.prototype, "getPersonas", null);
 __decorate([
-    (0, common_1.Post)('chat/german'),
-    __param(0, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [chat_german_dto_1.ChatGermanDto]),
-    __metadata("design:returntype", Promise)
-], AiController.prototype, "chatGerman", null);
-__decorate([
-    (0, common_1.Post)('translate'),
+    (0, common_1.Post)('session/start'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
-], AiController.prototype, "translate", null);
+], AiController.prototype, "startSession", null);
 __decorate([
-    (0, common_1.Post)('chat/suggest-replies'),
-    __param(0, (0, common_1.Body)()),
+    (0, common_1.Get)('session/:sessionId/history'),
+    __param(0, (0, common_1.Param)('sessionId')),
+    __param(1, (0, common_1.Body)('userId')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
-], AiController.prototype, "suggestReplies", null);
+], AiController.prototype, "getHistory", null);
 exports.AiController = AiController = __decorate([
     (0, common_1.Controller)('ai'),
-    __metadata("design:paramtypes", [ai_service_1.AiService])
+    __metadata("design:paramtypes", [persona_service_1.PersonaService,
+        context_service_1.ContextService,
+        suggestion_service_1.SuggestionService])
 ], AiController);
 //# sourceMappingURL=ai.controller.js.map

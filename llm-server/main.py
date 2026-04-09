@@ -21,8 +21,8 @@ app.add_middleware(
 )
 
 # Configuration from env or defaults
-MAIN_MODEL_FILE = os.getenv("MAIN_MODEL_FILE", "qwen2.5-14b-instruct-q4_k_m.gguf")
-MAIN_REPO_ID = os.getenv("MAIN_REPO_ID", "Qwen/Qwen2.5-14B-Instruct-GGUF")
+MAIN_MODEL_FILE = os.getenv("MAIN_MODEL_FILE", "Qwen2.5-14B-Instruct-Q4_K_M.gguf")
+MAIN_REPO_ID = os.getenv("MAIN_REPO_ID", "bartowski/Qwen2.5-14B-Instruct-GGUF")
 
 FAST_MODEL_FILE = os.getenv("FAST_MODEL_FILE", "qwen2.5-7b-instruct-q4_k_m.gguf")
 FAST_REPO_ID = os.getenv("FAST_REPO_ID", "Qwen/Qwen2.5-7B-Instruct-GGUF")

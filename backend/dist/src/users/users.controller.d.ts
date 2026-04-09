@@ -146,18 +146,22 @@ export declare class UsersController {
             claimed: boolean;
         })[] | ({
             id: string;
-            createdAt: Date;
-            updatedAt: Date;
-            title: string;
-            level: import("@prisma/client").$Enums.CourseLevel;
             userId: string;
+            personaId: string;
+            topic: string;
+            cefrLevel: string;
+            startedAt: Date;
+            endedAt: Date | null;
+            messageCount: number;
         } | {
             id: string;
-            createdAt: Date;
-            updatedAt: Date;
-            title: string;
-            level: import("@prisma/client").$Enums.CourseLevel;
             userId: string;
+            personaId: string;
+            topic: string;
+            cefrLevel: string;
+            startedAt: Date;
+            endedAt: Date | null;
+            messageCount: number;
         })[] | {
             id: string;
             slug: string | null;
@@ -223,11 +227,13 @@ export declare class UsersController {
             claimed: boolean;
         }[] | {
             id: string;
-            createdAt: Date;
-            updatedAt: Date;
-            title: string;
-            level: import("@prisma/client").$Enums.CourseLevel;
             userId: string;
+            personaId: string;
+            topic: string;
+            cefrLevel: string;
+            startedAt: Date;
+            endedAt: Date | null;
+            messageCount: number;
         }[];
         [x: number]: never;
         [x: symbol]: never;

@@ -59,7 +59,7 @@ export class ContextService implements OnModuleInit, OnModuleDestroy {
          data = await this.redis.get(key);
       } catch (e) {}
     } else {
-      data = this.memoryFallback.get(key);
+      data = this.memoryFallback.get(key) ?? null;
     }
     
     if (data) {
