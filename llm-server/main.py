@@ -46,6 +46,7 @@ llm_main = Llama(
     n_ctx=8192,
     n_gpu_layers=-1, # Full GPU offload
     verbose=False,
+    chat_format="chatml"
 )
 
 print(f"[*] Loading FAST MODEL: {FAST_MODEL_FILE}")
@@ -55,6 +56,7 @@ llm_fast = Llama(
     n_ctx=2048,      # Short context for quick tasks
     n_gpu_layers=-1, # Full GPU offload (can tweak this if out of memory)
     verbose=False,
+    chat_format="chatml"
 )
 
 # Async Locks for thread safety

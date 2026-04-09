@@ -51,6 +51,8 @@ export interface AiMessage {
   role: 'user' | 'assistant';
   content: string;
   isStreaming?: boolean;
+  translation?: string;
+  isTranslating?: boolean;
 }
 
 export interface GrammarCorrection {
@@ -91,6 +93,7 @@ interface AIChatStore {
   setSuggestions: (suggestions: string[]) => void;
   setPendingSuggestions: (pending: boolean) => void;
   setGrammarResult: (messageId: string, result: GrammarResult) => void;
+  updateMessage: (messageId: string, updates: Partial<AiMessage>) => void;
   resetSession: () => void;
 }
 
@@ -121,6 +124,9 @@ export const useAIChatStore = create<AIChatStore>((set) => ({
   setPendingSuggestions: (pending) => set({ pendingSuggestions: pending }),
   setGrammarResult: (messageId, result) => set((state) => ({
     grammarMap: { ...state.grammarMap, [messageId]: result }
+  })),
+  updateMessage: (messageId, updates) => set((state) => ({
+    messages: state.messages.map(m => m.id === messageId ? { ...m, ...updates } : m)
   })),
   resetSession: () => set({
     sessionId: null, personaId: null, topic: null, 

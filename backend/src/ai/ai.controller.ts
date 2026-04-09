@@ -3,6 +3,7 @@ import { PersonaService } from './services/persona.service';
 import { ContextService } from './services/context.service';
 import { SuggestionService } from './services/suggestion.service';
 import { randomUUID } from 'crypto';
+import translate from 'google-translate-api-x';
 
 @Controller('ai')
 export class AiController {
@@ -43,5 +44,15 @@ export class AiController {
   async getHistory(@Param('sessionId') sessionId: string, @Body('userId') userId: string) {
     // Note: User ID ideally comes from Auth Guard / Request, but keeping body simple for now
     return this.contextService.getContext(userId || 'default-user', sessionId);
+  }
+
+  @Post('translate')
+  async translateText(@Body('text') text: string) {
+    try {
+      const res = await translate(text, { to: 'vi' });
+      return { translation: res.text };
+    } catch (error) {
+      return { translation: null, error: error.message };
+    }
   }
 }

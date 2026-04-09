@@ -13,4 +13,11 @@ export declare class AiController {
         suggestions: string[];
     }>;
     getHistory(sessionId: string, userId: string): Promise<import("./services/context.service").ChatMessage[]>;
+    translateText(text: string): Promise<{
+        translation: string;
+        error?: undefined;
+    } | {
+        translation: null;
+        error: any;
+    }>;
 }

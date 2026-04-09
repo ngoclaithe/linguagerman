@@ -11,6 +11,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AiController = void 0;
 const common_1 = require("@nestjs/common");
@@ -18,6 +21,7 @@ const persona_service_1 = require("./services/persona.service");
 const context_service_1 = require("./services/context.service");
 const suggestion_service_1 = require("./services/suggestion.service");
 const crypto_1 = require("crypto");
+const google_translate_api_x_1 = __importDefault(require("google-translate-api-x"));
 let AiController = class AiController {
     personaService;
     contextService;
@@ -46,6 +50,15 @@ let AiController = class AiController {
     async getHistory(sessionId, userId) {
         return this.contextService.getContext(userId || 'default-user', sessionId);
     }
+    async translateText(text) {
+        try {
+            const res = await (0, google_translate_api_x_1.default)(text, { to: 'vi' });
+            return { translation: res.text };
+        }
+        catch (error) {
+            return { translation: null, error: error.message };
+        }
+    }
 };
 exports.AiController = AiController;
 __decorate([
@@ -69,6 +82,13 @@ __decorate([
     __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
 ], AiController.prototype, "getHistory", null);
+__decorate([
+    (0, common_1.Post)('translate'),
+    __param(0, (0, common_1.Body)('text')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], AiController.prototype, "translateText", null);
 exports.AiController = AiController = __decorate([
     (0, common_1.Controller)('ai'),
     __metadata("design:paramtypes", [persona_service_1.PersonaService,
