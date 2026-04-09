@@ -10,7 +10,10 @@ export declare class AiController {
     startSession(body: any): Promise<{
         sessionId: `${string}-${string}-${string}-${string}-${string}`;
         openingMessage: string;
-        suggestions: string[];
+        suggestions: string[] | {
+            german: string;
+            vietnamese: string;
+        }[];
     }>;
     getHistory(sessionId: string, userId: string): Promise<import("./services/context.service").ChatMessage[]>;
     translateText(text: string): Promise<{

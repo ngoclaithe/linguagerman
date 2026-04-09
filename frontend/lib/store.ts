@@ -68,6 +68,11 @@ export interface GrammarResult {
   corrections: GrammarCorrection[];
 }
 
+export interface AiSuggestion {
+  german: string;
+  vietnamese: string;
+}
+
 interface AIChatStore {
   // Session
   sessionId: string | null;
@@ -81,7 +86,7 @@ interface AIChatStore {
   streamingContent: string;
 
   // Real-time features
-  suggestions: string[];
+  suggestions: AiSuggestion[];
   pendingSuggestions: boolean;
   grammarMap: Record<string, GrammarResult>;
 
@@ -90,7 +95,7 @@ interface AIChatStore {
   appendMessage: (message: AiMessage) => void;
   setStreaming: (isStreaming: boolean) => void;
   updateStreamingContent: (content: string) => void;
-  setSuggestions: (suggestions: string[]) => void;
+  setSuggestions: (suggestions: AiSuggestion[]) => void;
   setPendingSuggestions: (pending: boolean) => void;
   setGrammarResult: (messageId: string, result: GrammarResult) => void;
   updateMessage: (messageId: string, updates: Partial<AiMessage>) => void;

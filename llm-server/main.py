@@ -68,9 +68,9 @@ SUGGEST_PROMPT = """You are a German language learning assistant.
 Last AI message: "{last_ai_message}"
 Topic: {topic}, CEFR level: {cefr}
 
-Generate exactly 3 short response suggestions in German (max 10 words each) that the user could say next.
+Generate exactly 3 short response suggestions in German (max 10 words each) that the user could say next, and provide the exact Vietnamese translation for each.
 Vary types: 1 question, 1 statement, 1 reaction/emotion.
-Output JSON only: {{"suggestions": ["...", "...", "..."]}}"""
+Output JSON only in this exact format: {{"suggestions": [{{"german": "...", "vietnamese": "..."}}, {{"german": "...", "vietnamese": "..."}}, {{"german": "...", "vietnamese": "..."}}]}}"""
 
 GRAMMAR_PROMPT = """Check this German text for errors.
 Text: "{text}"
@@ -158,7 +158,11 @@ async def suggest(req: SuggestRequest):
         return data
     except Exception as e:
         print("Suggest parsing error:", e)
-        return {"suggestions": ["Ja.", "Nein.", "Ich verstehe."]}
+        return {"suggestions": [
+            {"german": "Ja.", "vietnamese": "Vâng."},
+            {"german": "Nein.", "vietnamese": "Không."},
+            {"german": "Ich verstehe.", "vietnamese": "Tôi hiểu."}
+        ]}
 
 @app.post("/grammar")
 async def grammar(req: GrammarRequest):

@@ -44,7 +44,11 @@ let AiController = class AiController {
         return {
             sessionId,
             openingMessage,
-            suggestions: suggestions.length > 0 ? suggestions : ["Hallo!", "Wie geht's?", "Ja, gerne."],
+            suggestions: suggestions.length > 0 ? suggestions : [
+                { german: "Hallo!", vietnamese: "Xin chào!" },
+                { german: "Wie geht's?", vietnamese: "Bạn khỏe không?" },
+                { german: "Ja, gerne.", vietnamese: "Vâng, sẵn lòng." }
+            ],
         };
     }
     async getHistory(sessionId, userId) {
